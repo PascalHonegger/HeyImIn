@@ -1,0 +1,76 @@
+@startuml
+left to right direction
+
+rectangle "Hey I'm in" {
+  Teilnehmer -u-|> Benutzer
+  Organisator -u-|> Teilnehmer
+
+  rectangle Allgemein {
+    Benutzer --> (Anmelden)
+    Benutzer --> (Registrieren)
+    Benutzer --> (Passwort zurücksetzen)
+    Benutzer --> (Persönliche Daten aktualisieren)
+    Benutzer --> (Passwort ändern)
+    Benutzer --> (Benutzerkonto löschen)
+  }
+
+  rectangle "Rolle Teilnehmer" {
+    Teilnehmer --> (Event teilnehmen)
+    Teilnehmer --> (Event verlassen)
+    Teilnehmer --> (Zusage eines Termin verwalten)
+    Teilnehmer --> (Notifikationen deaktivieren)
+  }
+
+  rectangle "Rolle Organisator" {
+    Organisator --> (Neuen Event organisieren)
+    Organisator --> (Informationen eines Events anpassen)
+    Organisator --> (Termine zu einem Event hinzufügen)
+    Organisator --> (Termin absagen)
+    Organisator --> (Teilnahme für verhinderten Teilnehmer absagen)
+    Organisator --> (Teilnehmer einladen)
+    Organisator --> (Inaktiven Benutzer entfernen)
+  }
+}
+
+@enduml
+
+------------------------------------------------------------------------------------
+
+@startuml
+
+rectangle "Hey I'm in" {
+  Teilnehmer -u-|> Benutzer
+  Organisator -u-|> Benutzer
+
+  rectangle Allgemein {
+    (Anmelden)
+    (Registrieren)
+    (Passwort zurücksetzen)
+    (Persönliche Daten aktualisieren)
+    (Passwort ändern)
+    (Benutzerkonto löschen)
+  }
+
+  rectangle "Rolle Teilnehmer" as rolleT {
+    (Event teilnehmen)
+    (Event verlassen)
+    (Zusage eines Termin verwalten)
+	(Notifikationen deaktivieren)
+  }
+
+  rectangle "Rolle Organisator" as rolleO {
+    (Neuen Event organisieren)
+    (Informationen eines Events anpassen)
+    (Termine zu einem Event hinzufügen)
+    (Termin absagen)
+    (Teilnahme für verhinderten Teilnehmer absagen)
+    (Teilnehmer einladen)
+    (Inaktiven Benutzer entfernen)
+  }
+  
+  Benutzer --> Allgemein
+  Teilnehmer --> rolleT
+  Organisator --> rolleO
+}
+
+@enduml
