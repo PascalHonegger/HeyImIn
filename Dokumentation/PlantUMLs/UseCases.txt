@@ -38,6 +38,7 @@ rectangle "Rolle Organisator" {
  Organisator --> (Teilnahme für verhinderten Teilnehmer absagen)
  Organisator --> (Teilnehmer einladen)
  Organisator --> (Inaktiven Benutzer entfernen)
+ Organisator --> (Event löschen)
 }
 
 @enduml
