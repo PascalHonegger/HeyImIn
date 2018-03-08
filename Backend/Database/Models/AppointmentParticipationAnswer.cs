@@ -2,8 +2,7 @@
 {
 	public enum AppointmentParticipationAnswer
 	{
-		NoAnswer = 0,
-		Accepted = 1,
-		Declined = 2
+		Accepted = 0,
+		Declined = 1
 	}
 }

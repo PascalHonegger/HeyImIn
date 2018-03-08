@@ -22,7 +22,7 @@ namespace HeyImIn.Database.Models
 		public int ParticipantId { get; set; }
 
 		[Required]
-		public AppointmentParticipationAnswer AppointmentParticipationAnswer { get; set; } = AppointmentParticipationAnswer.NoAnswer;
+		public AppointmentParticipationAnswer AppointmentParticipationAnswer { get; set; }
 
 		/// <summary>
 		///     Wheter a summary has already been sent

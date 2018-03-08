@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{ACBF91A9-1546-4A2E-8194-FF5BC052573C}</ProjectGuid>
+    <ProjectGuid>{7ED270F0-2043-4390-A3AC-5B0731CAD2FD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>HeyImIn.Database</RootNamespace>
-    <AssemblyName>HeyImIn.Database</AssemblyName>
+    <RootNamespace>HeyImIn.MailNotifier</RootNamespace>
+    <AssemblyName>HeyImIn.MailNotifier</AssemblyName>
     <TargetFrameworkVersion>v4.7</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -43,24 +43,19 @@
     <Compile Include="..\SharedFiles\AssemblyInfo-Shared.cs">
       <Link>Properties\AssemblyInfo-Shared.cs</Link>
     </Compile>
-    <Compile Include="Context\Impl\HeyImInDatabaseContext.cs" />
-    <Compile Include="Context\IDatabaseContext.cs" />
-    <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\EventParticipation.cs" />
-    <Compile Include="Models\AppointmentParticipationAnswer.cs" />
-    <Compile Include="Models\AppointmentParticipation.cs" />
-    <Compile Include="Models\Appointment.cs" />
-    <Compile Include="Models\EventInvitation.cs" />
-    <Compile Include="Models\PasswordReset.cs" />
-    <Compile Include="Models\Session.cs" />
-    <Compile Include="Models\Event.cs" />
-    <Compile Include="Models\User.cs" />
+    <Compile Include="INotificationService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="EntityFramework">
-      <Version>6.2.0</Version>
+    <PackageReference Include="Sendgrid">
+      <Version>9.9.0</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Database\Database.csproj">
+      <Project>{ACBF91A9-1546-4A2E-8194-FF5BC052573C}</Project>
+      <Name>Database</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

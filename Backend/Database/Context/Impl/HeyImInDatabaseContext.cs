@@ -7,11 +7,6 @@ namespace HeyImIn.Database.Context.Impl
 {
 	public class HeyImInDatabaseContext : DbContext, IDatabaseContext
 	{
-		// For Designer
-		/*public HeyImInDatabaseContext() : base("Data Source=(LocalDb)\\MSSQLLocalDB;Initial Catalog=HeyImIn;Integrated Security=SSPI;AttachDBFilename=|DataDirectory|\\HeyImIn.mdf")
-		{
-		}*/
-
 		public HeyImInDatabaseContext(string connectionString) : base(connectionString)
 		{
 		}
