@@ -1,0 +1,80 @@
+@import '~@angular/material/theming';
+
+// Palette generated using http://mcg.mbitson.com/
+$mat-primary-palette: (
+	50 : #e0edf4,
+	100 : #b3d1e3,
+	200 : #80b3d0,
+	300 : #4d94bd,
+	400 : #267daf,
+	500 : #0066a1,
+	600 : #005e99,
+	700 : #00538f,
+	800 : #004985,
+	900 : #003874,
+	A100 : #a2c7ff,
+	A200 : #6fa8ff,
+	A400 : #3c89ff,
+	A700 : #237aff,
+	contrast: (
+		50 : #000000,
+		100 : #000000,
+		200 : #000000,
+		300 : #000000,
+		400 : #ffffff,
+		500 : #ffffff,
+		600 : #ffffff,
+		700 : #ffffff,
+		800 : #ffffff,
+		900 : #ffffff,
+		A100 : #000000,
+		A200 : #000000,
+		A400 : #ffffff,
+		A700 : #ffffff,
+	)
+);
+
+$mat-secondary-palette: (
+	50 : #f4e5f5,
+	100 : #e4bee6,
+	200 : #d393d5,
+	300 : #c167c4,
+	400 : #b347b7,
+	500 : #a626aa,
+	600 : #9e22a3,
+	700 : #951c99,
+	800 : #8b1790,
+	900 : #7b0d7f,
+	A100 : #fbb1ff,
+	A200 : #f97eff,
+	A400 : #f74bff,
+	A700 : #f531ff,
+	contrast: (
+		50 : #000000,
+		100 : #000000,
+		200 : #000000,
+		300 : #000000,
+		400 : #ffffff,
+		500 : #ffffff,
+		600 : #ffffff,
+		700 : #ffffff,
+		800 : #ffffff,
+		900 : #ffffff,
+		A100 : #000000,
+		A200 : #000000,
+		A400 : #000000,
+		A700 : #000000,
+	)
+);
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue.
+$primary:	mat-palette($mat-primary-palette);
+$accent:	mat-palette($mat-secondary-palette);
+
+// The warn palette is optional (defaults to red).
+$warn:		mat-palette($mat-red);
+
+// Create the theme object (a Sass map containing all of the palettes).
+$theme:		mat-light-theme($primary, $accent, $warn);

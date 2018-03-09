@@ -1,0 +1,48 @@
+@import '~styles/palettes';
+
+$logo-margin: 5px;
+$menu-margin: 6px;
+
+.app-toolbar {
+	color: white !important;
+	text-transform: uppercase;
+	text-align: center;
+	z-index: 10;
+	position: relative;
+}
+
+.active-link {
+	background: map-get($primary, 700);
+}
+
+.app-title {
+	text-align: left;
+	font-weight: bold;
+}
+
+.app-logo {
+	height: 65%;
+	padding: 5px;
+	margin: $logo-margin $logo-margin $logo-margin 0;
+}
+
+.menu-link + .menu-link {
+	margin-left: $menu-margin;
+}
+
+.has-icon-min-width {
+	min-width: 175px;
+}
+
+.smaller-menu {
+	font-size: small;
+}
+
+.nav-flex-div {
+	width: 100%;
+}
+
+a {
+	text-decoration: none;
+	color: inherit;
+}
