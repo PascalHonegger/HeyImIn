@@ -13,7 +13,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 export class LoginComponent {
 	public form: FormGroup;
 
-	constructor(private authServer: AuthService,
+	constructor(private authService: AuthService,
 				private snackBar: MatSnackBar,
 				private router: Router,
 				formBuilder: FormBuilder) {
@@ -29,8 +29,8 @@ export class LoginComponent {
 		}
 
 		try {
-			await this.authServer.tryCreateSession(this.form.get('mailCtrl').value, this.form.get('passwordCtrl').value);
-			this.router.navigate([this.authServer.urlAfterLogin]);
+			await this.authService.tryCreateSession(this.form.get('mailCtrl').value, this.form.get('passwordCtrl').value);
+			this.router.navigate([this.authService.urlAfterLogin]);
 		} catch (err) {
 			if (err instanceof HttpErrorResponse && err.status === 401) {
 				this.snackBar.open('Ungültige Anmeldedaten', 'Ok');
