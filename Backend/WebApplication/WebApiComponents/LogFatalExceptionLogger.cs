@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,8 +23,8 @@ namespace HeyImIn.WebApplication.WebApiComponents
 			}
 			catch (Exception e)
 			{
-				Console.Error.Write($"{nameof(LogAsync)}(): Unhandled exception occured, ex={context.Exception}");
-				Console.Error.Write($"{nameof(LogAsync)}(): Failed to write to _log, ex={e}");
+				Trace.TraceError($"{nameof(LogAsync)}(): Unhandled exception occured, ex={context.Exception}");
+				Trace.TraceError($"{nameof(LogAsync)}(): Failed to write to _log, ex={e}");
 			}
 
 			return Task.CompletedTask;
