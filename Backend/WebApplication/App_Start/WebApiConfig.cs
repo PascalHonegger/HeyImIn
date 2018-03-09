@@ -1,17 +1,21 @@
 ﻿using System;
 using System.Configuration;
 using System.Net.Http.Formatting;
+using System.Reflection;
+using System.Web.Configuration;
 using System.Web.Http;
 using Autofac;
 using Autofac.Features.ResolveAnything;
 using Autofac.Integration.WebApi;
 using HeyImIn.Authentication;
+using HeyImIn.Authentication.Impl;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Context.Impl;
 using HeyImIn.External.DependencyInjection;
 using HeyImIn.MailNotifier;
 using HeyImIn.WebApplication.Controllers;
 using HeyImIn.WebApplication.WebApiComponents;
+using log4net;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using SendGrid;
@@ -80,9 +84,19 @@ namespace HeyImIn.WebApplication
 			string connectionString = ConfigurationManager.ConnectionStrings["HeyImIn"].ConnectionString;
 			string sendGridApiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
 
+			// Other configuration values
+			if (!int.TryParse(WebConfigurationManager.AppSettings["PasswordHashWorkFactor"], out int workFactor))
+			{
+				_log.WarnFormat("{0}(): The provided work factor is not valid, as it has to be a valid integer", nameof(BuildContainer));
+
+				// Default / fallback work factor
+				workFactor = 10;
+			}
+
 			// Register custom types
 			builder.Register(c => new HeyImInDatabaseContext(connectionString)).As<IDatabaseContext>();
 			builder.Register(c => new SendGridClient(sendGridApiKey)).As<ISendGridClient>();
+			builder.Register(c => new PasswordService(workFactor)).As<IPasswordService>();
 
 			// Register WebApi controllers & attributes
 			builder.RegisterApiControllers(typeof(HomeController).Assembly).InstancePerRequest();
@@ -95,5 +109,7 @@ namespace HeyImIn.WebApplication
 			IContainer container = builder.Build();
 			config.DependencyResolver = new AutofacWebApiDependencyResolver(container);
 		}
+
+		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 	}
 }
