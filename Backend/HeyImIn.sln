@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2036
-MinimumVisualStudioVersion = 10.0.40219.1
+MinimumVisualStudioVersion = 15.0.27130.2036
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApplication", "WebApplication\WebApplication.csproj", "{59940F94-9C16-4A08-917F-681BC26C72C9}"
 	ProjectSection(ProjectDependencies) = postProject
 		{7ED270F0-2043-4390-A3AC-5B0731CAD2FD} = {7ED270F0-2043-4390-A3AC-5B0731CAD2FD}
