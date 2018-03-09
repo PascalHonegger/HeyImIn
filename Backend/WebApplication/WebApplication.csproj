@@ -128,10 +128,21 @@
     </Compile>
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\ResetPasswordController.cs" />
+    <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Controllers\SessionController.cs" />
+    <Compile Include="FrontendModels\FrontendSession.cs" />
+    <Compile Include="FrontendModels\RegisterDto.cs" />
+    <Compile Include="FrontendModels\RequestPasswordResetDto.cs" />
+    <Compile Include="FrontendModels\ResetPasswordDto.cs" />
+    <Compile Include="FrontendModels\SetPasswordDto.cs" />
+    <Compile Include="FrontendModels\SetUserdataDto.cs" />
+    <Compile Include="FrontendModels\StartSessionDto.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\HttpActionExtensions.cs" />
+    <Compile Include="WebApiComponents\AuthenticateUserAttribute.cs" />
     <Compile Include="WebApiComponents\LogActionAttribute.cs" />
     <Compile Include="WebApiComponents\LogFatalExceptionLogger.cs" />
     <Compile Include="Helpers\LogHelpers.cs" />

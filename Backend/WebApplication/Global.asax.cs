@@ -38,7 +38,7 @@ namespace HeyImIn.WebApplication
 #if DEBUG
 				Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data");
 #else
-				"D:\\Home\\LogFiles\\HeyImIn";
+				"D:\\home\\LogFiles";
 #endif
 
 			if (!Directory.Exists(logFileDirectory))
