@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.ExceptionHandling;
+using HeyImIn.Database.Context;
 using HeyImIn.WebApplication.Helpers;
 using HeyImIn.WebApplication.WebApiComponents;
 using log4net;
@@ -19,6 +20,8 @@ namespace HeyImIn.WebApplication
 			ConfigureLog4Net();
 
 			LogStarted();
+
+			DatabaseConfiguration.ConfigureMigrations();
 
 			GlobalConfiguration.Configure(WebApiConfig.Register);
 

@@ -43,6 +43,7 @@
     <Compile Include="..\SharedFiles\AssemblyInfo-Shared.cs">
       <Link>Properties\AssemblyInfo-Shared.cs</Link>
     </Compile>
+    <Compile Include="Context\DatabaseConfiguration.cs" />
     <Compile Include="Context\Impl\HeyImInDatabaseContext.cs" />
     <Compile Include="Context\IDatabaseContext.cs" />
     <Compile Include="Migrations\Configuration.cs" />

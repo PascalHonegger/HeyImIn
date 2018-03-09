@@ -33,6 +33,7 @@ namespace HeyImIn.Database.Models
 		[MaxLength(60)]
 		public string PasswordHash { get; set; }
 
+		public virtual ICollection<Event> OrganizedEvents { get; set; }
 		public virtual ICollection<EventParticipation> EventParticipations { get; set; }
 	}
 }
