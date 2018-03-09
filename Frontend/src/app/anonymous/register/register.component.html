@@ -1,0 +1,33 @@
+<div>
+	<form [formGroup]="form">
+		<div class="register-container" fxLayout="column" fxLayoutAlign="start center" fxLayoutGap="20px">
+			<h2 class="mat-display-1">Registrieren</h2>
+			<mat-form-field>
+				<input matInput placeholder="Vollständiger Name" formControlName="nameCtrl" required autocomplete="name">
+				<mat-error *ngIf="	form.hasError('required', 'nameCtrl') ||
+									form.hasError('minlength', 'nameCtrl') ||
+									form.hasError('maxlength', 'nameCtrl')">
+					Bitte geben Sie einen Namen zwischen 2 und 40 Zeichen ein
+				</mat-error>
+			</mat-form-field>
+			<mat-form-field>
+				<input matInput placeholder="E-Mail-Adresse" formControlName="mailCtrl" required autocomplete="email">
+				<mat-error *ngIf="	form.hasError('required', 'mailCtrl') ||
+									form.hasError('email', 'mailCtrl') ||
+									form.hasError('maxlength', 'mailCtrl')">
+					Bitte geben Sie eine gültige E-Mail-Adresse mit maximal 40 Zeichen ein
+				</mat-error>
+			</mat-form-field>
+			<mat-form-field>
+				<input matInput placeholder="Passwort" formControlName="passwordCtrl" required type="password" autocomplete="new-password">
+				<mat-error *ngIf="form.hasError('required', 'passwordCtrl')">
+					Bitte geben Sie ein Passwort ein
+				</mat-error>
+			</mat-form-field>
+
+			<button mat-raised-button [disabled]="!form.valid" (click)="register()" color="primary" type="submit">
+				Registrieren
+			</button>
+		</div>
+	</form>
+</div>

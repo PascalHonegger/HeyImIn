@@ -15,8 +15,8 @@ export class CanActivateViaAuthGuard implements CanActivate, CanActivateChild {
 
 		// Allow to pass a session token in any url as a queryparam
 		// This enables acces links withing notification emails
-		// E.g. www.website.com/AnySubSite?authorizationToken=071DAF15-9AD9-4991-84F6-A6D104374C72
-		const providedAuthToken = next.queryParams.authorizationToken;
+		// E.g. www.website.com/AnySubSite?authToken=071DAF15-9AD9-4991-84F6-A6D104374C72
+		const providedAuthToken = next.queryParams.authToken;
 
 		if (providedAuthToken) {
 			try {
