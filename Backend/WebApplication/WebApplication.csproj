@@ -134,9 +134,7 @@
     <Compile Include="Helpers\HttpActionExtensions.cs" />
     <Compile Include="WebApiComponents\LogActionAttribute.cs" />
     <Compile Include="WebApiComponents\LogFatalExceptionLogger.cs" />
-    <None Include="Logs\.gitkeep">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <Content Include="Logs\.gitkeep" />
     <Compile Include="Helpers\LogHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

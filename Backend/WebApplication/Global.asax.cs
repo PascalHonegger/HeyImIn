@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.ExceptionHandling;
+using HeyImIn.WebApplication.Helpers;
 using HeyImIn.WebApplication.WebApiComponents;
 using log4net;
 using log4net.Config;
@@ -31,11 +33,26 @@ namespace HeyImIn.WebApplication
 
 		private void ConfigureLog4Net()
 		{
+			string logFileDirectory =
+#if DEBUG
+				Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data");
+#else
+				"D:\\Home\\LogFiles\\HeyImIn";
+#endif
+
+			if (!Directory.Exists(logFileDirectory))
+			{
+				// Make sure the directory exists
+				Directory.CreateDirectory(logFileDirectory);
+			}
+
+			GlobalContext.Properties[LogHelpers.LogFileDirectoryKey] = logFileDirectory;
+
 			// Hide (null) from logs => https://stackoverflow.com/a/22344774
 			SystemInfo.NullText = string.Empty;
 
 			// Expaned path to the configuration file
-			string fullTemplatePath = Server.MapPath("~/log4net.config");
+			string fullTemplatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "log4net.config");
 
 			var fileInfo = new FileInfo(fullTemplatePath);
 
@@ -72,7 +89,7 @@ namespace HeyImIn.WebApplication
 		{
 			if (_log == null)
 			{
-				Console.Error.WriteLine("No _log configured -> Startup probably failed");
+				Trace.TraceError("No _log configured -> Startup probably failed");
 				return;
 			}
 
