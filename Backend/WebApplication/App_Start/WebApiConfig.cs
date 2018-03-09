@@ -8,6 +8,7 @@ using HeyImIn.Database.Context;
 using HeyImIn.External.DependencyInjection;
 using HeyImIn.MailNotifier;
 using HeyImIn.WebApplication.Controllers;
+using HeyImIn.WebApplication.WebApiComponents;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -29,6 +30,8 @@ namespace HeyImIn.WebApplication
 			var enableForAllAttribute = new System.Web.Http.Cors.EnableCorsAttribute("*", "*", "*");
 			config.EnableCors(enableForAllAttribute);
 #endif
+			// Filters / Attributes which apply for all methods
+			config.Filters.Add(new LogActionAttribute());
 
 			// Web API routes
 			config.MapHttpAttributeRoutes();

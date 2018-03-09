@@ -3,6 +3,8 @@ using System.IO;
 using System.Reflection;
 using System.Web;
 using System.Web.Http;
+using System.Web.Http.ExceptionHandling;
+using HeyImIn.WebApplication.WebApiComponents;
 using log4net;
 using log4net.Config;
 using log4net.Util;
@@ -18,6 +20,8 @@ namespace HeyImIn.WebApplication
 			LogStarted();
 
 			GlobalConfiguration.Configure(WebApiConfig.Register);
+
+			GlobalConfiguration.Configuration.Services.Add(typeof(IExceptionLogger), new LogFatalExceptionLogger());
 		}
 
 		protected void Application_End()

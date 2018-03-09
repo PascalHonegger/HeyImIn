@@ -5,8 +5,8 @@ namespace HeyImIn.WebApplication.Helpers
 	public static class LogHelpers
 	{
 		// Have to be in sync with log4net.config
-		public const string UserIdPropertyKey = "UserId";
-		public const string SessionTokenPropertyKey = "SessionToken";
+		public const string UserIdLogKey = "UserId";
+		public const string SessionTokenLogKey = "SessionToken";
 		private const string AuditLoggerName = "AuditLogger";
 
 		public static ILog GetAuditLog()
