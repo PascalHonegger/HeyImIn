@@ -8,7 +8,6 @@ using System.Web.Http.ExceptionHandling;
 using HeyImIn.WebApplication.Helpers;
 using HeyImIn.WebApplication.WebApiComponents;
 using log4net;
-using log4net.Config;
 using log4net.Util;
 
 namespace HeyImIn.WebApplication
@@ -31,8 +30,10 @@ namespace HeyImIn.WebApplication
 			LogStopped();
 		}
 
-		private void ConfigureLog4Net()
+		private static void ConfigureLog4Net()
 		{
+			// The mapping to the log4net.conf file is done through the AssemblyInfo.cs
+
 			string logFileDirectory =
 #if DEBUG
 				Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "App_Data");
@@ -51,30 +52,7 @@ namespace HeyImIn.WebApplication
 			// Hide (null) from logs => https://stackoverflow.com/a/22344774
 			SystemInfo.NullText = string.Empty;
 
-			// Expaned path to the configuration file
-			string fullTemplatePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "log4net.config");
-
-			var fileInfo = new FileInfo(fullTemplatePath);
-
-			if (fileInfo.Exists)
-			{
-				// Use XML configuration which can be edited on the fly
-				XmlConfigurator.ConfigureAndWatch(fileInfo);
-				SetLoggerInstance();
-				_log.DebugFormat("{0}(): Loaded log4net configuration file from {1}", nameof(ConfigureLog4Net), fileInfo.FullName);
-			}
-			else
-			{
-				// Use log4net default configuration as a fallback
-				BasicConfigurator.Configure();
-				SetLoggerInstance();
-				_log.ErrorFormat("{0}(): Couldn't find log4net configuration file at {1}", nameof(ConfigureLog4Net), fileInfo.FullName);
-			}
-
-			void SetLoggerInstance()
-			{
-				_log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-			}
+			_log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 		}
 
 		private static void LogStarted()
