@@ -41,6 +41,7 @@ namespace HeyImIn.Authentication.Impl
 				Session session = context.Sessions.Create();
 
 				session.UserId = userId;
+				session.Created = DateTime.UtcNow;
 
 				if (active)
 				{
