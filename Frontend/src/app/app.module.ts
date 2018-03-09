@@ -21,6 +21,40 @@ import { ROUTES } from './app.routes';
 // App is our top level component
 import { AppComponent } from './app.component';
 
+// Main layout
+import { NavigationToolbarComponent } from './shared/navigation-toolbar/navigation-toolbar.component';
+import { AuthenticatedLayoutComponent } from './authenticated/authenticated-layout/authenticated-layout.component';
+import { AnonymousLayoutComponent } from './anonymous/anonymous-layout/anonymous-layout.component';
+
+// Different sites
+import { HomeComponent } from './authenticated/home/home.component';
+import { LoginComponent } from './anonymous/login/login.component';
+import { RegisterComponent } from './anonymous/register/register.component';
+import { ResetPasswordComponent } from './anonymous/reset-password/reset-password.component';
+
+// Dialog contents
+import { ErrorDialogComponent } from './shared/error-dialog/error-dialog.component';
+import { LoadingDialogComponent } from './shared/loading-dialog/loading-dialog.component';
+
+// 404 not found page
+import { NoContentComponent } from './shared/no-content/no-content.component';
+
+// Backend clients
+import { UserClient } from './shared/backend-clients/user.client';
+import { SessionClient } from './shared/backend-clients/session.client';
+import { ResetPasswordClient } from './shared/backend-clients/reset-password.client';
+
+// Services
+import { AuthService } from './shared/services/auth.service';
+
+// Interceptors
+import { AppendSessionTokenInterceptor } from './shared/interceptors/append-session-token.interceptor';
+import { ErrorHandlerInterceptor } from './shared/interceptors/error-handler.interceptor';
+import { ShowLoadingDialogInterceptor } from './shared/interceptors/show-loading-dialog.interceptor';
+
+// Guards
+import { CanActivateViaAuthGuard } from './shared/guards/can-activate-via-auth.guard';
+
 // Material 2
 import {
 	MatButtonModule,
@@ -45,7 +79,25 @@ import '../styles/styles.scss';
 @NgModule({
 	bootstrap: [ AppComponent ],
 	declarations: [
-		AppComponent
+		// Shared
+		AppComponent,
+		NavigationToolbarComponent,
+		ErrorDialogComponent,
+		LoadingDialogComponent,
+		NoContentComponent,
+		// Anonymous
+		AnonymousLayoutComponent,
+		LoginComponent,
+		RegisterComponent,
+		ResetPasswordComponent,
+		// Authenticated
+		AuthenticatedLayoutComponent,
+		HomeComponent
+	],
+	// Dialog contents have to be specified here
+	entryComponents: [
+		ErrorDialogComponent,
+		LoadingDialogComponent
 	],
 	/**
 	 * Import Angular's modules.
@@ -81,9 +133,34 @@ import '../styles/styles.scss';
 	 */
 	providers: [
 		environment.ENV_PROVIDERS,
+		// Guards
+		CanActivateViaAuthGuard,
+		// Services
+		AuthService,
+		// Backend clients
+		SessionClient,
+		ResetPasswordClient,
+		UserClient,
+		// Ensure 3rd party components use english
 		{
 			provide: LOCALE_ID,
 			useValue: 'de-CH'
+		},
+		// Hook up HTTP interceptors
+		{
+			provide: HTTP_INTERCEPTORS,
+			useClass: AppendSessionTokenInterceptor,
+			multi: true
+		},
+		{
+			provide: HTTP_INTERCEPTORS,
+			useClass: ShowLoadingDialogInterceptor,
+			multi: true
+		},
+		{
+			provide: HTTP_INTERCEPTORS,
+			useClass: ErrorHandlerInterceptor,
+			multi: true
 		}
 	]
 })
