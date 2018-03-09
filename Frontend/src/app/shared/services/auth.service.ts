@@ -8,6 +8,8 @@ const sessionTokenStorageKey = 'sessionToken';
 
 @Injectable()
 export class AuthService {
+	public urlAfterLogin: string = '/';
+
 	private _sessionToken: string;
 	private _session: FrontendSession = null;
 
@@ -37,19 +39,14 @@ export class AuthService {
 		this.sessionToken = value.token;
 	}
 
-	public async updateSessionIfValid(sessionToken: string): Promise<boolean> {
-		// Load session from server
-		// If success update local session
-		// Return wheter it was a success or not
-		return true;
+	public async tryUpdateSession(sessionToken: string): Promise<void> {
+		const loadedSession = await this.server.getSession(sessionToken).toPromise();
+		this.session = loadedSession;
 	}
 
-	public async tryCreateSession(email: string, password: string): Promise<boolean> {
-		// Create session from credentials
-		// If success apply session
-		// Return if it was a success
-
-		return true;
+	public async tryCreateSession(email: string, password: string): Promise<void> {
+		const createdSession = await this.server.startSession(email, password).toPromise();
+		this.session = createdSession;
 	}
 
 	public async hasValidSession(): Promise<boolean> {
@@ -63,13 +60,25 @@ export class AuthService {
 
 		// We have a saved token but no session => Check if the saved token is still valid
 
-		// Load session information from server
-		// If success apply session
-		// Return if it was a success
+		try {
+			const loadedSession = await this.server.getSession(this.sessionToken).toPromise();
+			this.session = loadedSession;
+			return true;
+		} catch (err) {
+			// If the error was due to the token being invalid (401),
+			// an interceptor will clear the local session automatically
+			console.info('Loading saved session failed', err);
+		}
 	}
 
 	public async logOut(): Promise<void> {
-		// Remove session in server
+		try {
+			await this.server.stopActiveSession().toPromise();
+		} catch (err) {
+			// The server session will automatically turn invalid after a while
+			console.info('Removing session from server failed', err);
+		}
+
 		this.clearLocalSession();
 	}
 
