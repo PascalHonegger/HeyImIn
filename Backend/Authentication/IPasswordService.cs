@@ -1,4 +1,4 @@
-﻿namespace Authentication
+﻿namespace HeyImIn.Authentication
 {
 	/// <summary>
 	///     Encapsulates

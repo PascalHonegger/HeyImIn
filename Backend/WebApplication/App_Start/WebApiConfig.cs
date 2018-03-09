@@ -1,16 +1,20 @@
-﻿using System.Net.Http.Formatting;
+﻿using System;
+using System.Configuration;
+using System.Net.Http.Formatting;
 using System.Web.Http;
-using Authentication;
 using Autofac;
 using Autofac.Features.ResolveAnything;
 using Autofac.Integration.WebApi;
+using HeyImIn.Authentication;
 using HeyImIn.Database.Context;
+using HeyImIn.Database.Context.Impl;
 using HeyImIn.External.DependencyInjection;
 using HeyImIn.MailNotifier;
 using HeyImIn.WebApplication.Controllers;
 using HeyImIn.WebApplication.WebApiComponents;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using SendGrid;
 
 namespace HeyImIn.WebApplication
 {
@@ -72,9 +76,13 @@ namespace HeyImIn.WebApplication
 				typeof(IAuthenticationService).Assembly		// Authentication
 			);
 
-			//TODO Add custom types
-			// -> DatabaseContext with connection string
-			// -> Mail with API-Key
+			// Custom types with sensitive / global configuration
+			string connectionString = ConfigurationManager.ConnectionStrings["HeyImIn"].ConnectionString;
+			string sendGridApiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
+
+			// Register custom types
+			builder.Register(c => new HeyImInDatabaseContext(connectionString)).As<IDatabaseContext>();
+			builder.Register(c => new SendGridClient(sendGridApiKey)).As<ISendGridClient>();
 
 			// Register WebApi controllers & attributes
 			builder.RegisterApiControllers(typeof(HomeController).Assembly).InstancePerRequest();
