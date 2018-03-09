@@ -134,7 +134,6 @@
     <Compile Include="Helpers\HttpActionExtensions.cs" />
     <Compile Include="WebApiComponents\LogActionAttribute.cs" />
     <Compile Include="WebApiComponents\LogFatalExceptionLogger.cs" />
-    <Content Include="Logs\.gitkeep" />
     <Compile Include="Helpers\LogHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
