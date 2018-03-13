@@ -2,9 +2,9 @@
 
 namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
 {
-	public class AppointmentParticipation
+	public class AppointmentParticipationInformation
 	{
-		public AppointmentParticipation(string participantName, int participantId, AppointmentParticipationAnswer? response)
+		public AppointmentParticipationInformation(string participantName, int participantId, AppointmentParticipationAnswer? response)
 		{
 			ParticipantName = participantName;
 			ParticipantId = participantId;

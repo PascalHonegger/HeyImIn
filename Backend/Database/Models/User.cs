@@ -36,5 +36,6 @@ namespace HeyImIn.Database.Models
 
 		public virtual ICollection<Event> OrganizedEvents { get; set; }
 		public virtual ICollection<EventParticipation> EventParticipations { get; set; }
+		public virtual ICollection<AppointmentParticipation> AppointmentParticipations { get; set; }
 	}
 }
