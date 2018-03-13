@@ -7,7 +7,7 @@ using HeyImIn.Authentication;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
 using HeyImIn.MailNotifier;
-using HeyImIn.WebApplication.FrontendModels;
+using HeyImIn.WebApplication.FrontendModels.ParameterTypes;
 using log4net;
 
 namespace HeyImIn.WebApplication.Controllers

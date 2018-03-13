@@ -33,6 +33,11 @@ namespace HeyImIn.Database.Models
 		public string Description { get; set; }
 
 		/// <summary>
+		///     Wheter the event is private or public. Private events require an invitation
+		/// </summary>
+		public bool IsPrivate { get; set; } = false;
+
+		/// <summary>
 		///     The amount of hours before an <see cref="Appointment" /> where the <see cref="EventParticipations" /> get a
 		///     reminder email
 		/// </summary>
