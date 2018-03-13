@@ -44,17 +44,23 @@ namespace HeyImIn.WebApplication.Controllers
 				List<Event> participatingEvents = currentUser.EventParticipations.Select(e => e.Event).ToList();
 				List<Event> publicEvents = await context.Events.Where(e => !e.IsPrivate).Except(participatingEvents).ToListAsync();
 
-				List<EventOverviewInformation> yourEventInformations = participatingEvents.Select(e => EventOverviewInformation.FromEvent(e, currentUser)).ToList();
-				List<EventOverviewInformation> publicEventInformations = publicEvents.Select(e => EventOverviewInformation.FromEvent(e, currentUser)).ToList();
+				List<EventOverviewInformation> yourEventInformations = participatingEvents
+					.Select(e => EventOverviewInformation.FromEvent(e, currentUser))
+					.OrderBy(e => e.LatestAppointmentInformation?.StartTime)
+					.ToList();
+				List<EventOverviewInformation> publicEventInformations = publicEvents
+					.Select(e => EventOverviewInformation.FromEvent(e, currentUser))
+					.OrderBy(e => e.LatestAppointmentInformation?.StartTime)
+					.ToList();
 
 				return Ok(new EventOverview(yourEventInformations, publicEventInformations));
 			}
 		}
 
 		/// <summary>
-		///     Loads the <see cref="Event" /> for the provided <paramref name="id" /> and upcoming <see cref="Appointment" />
+		///     Loads the <see cref="Event" /> for the provided <paramref name="eventId" /> and upcoming <see cref="Appointment" />
 		/// </summary>
-		/// <param name="id">
+		/// <param name="eventId">
 		///     <see cref="Event.Id" />
 		/// </param>
 		/// <returns>
@@ -62,11 +68,15 @@ namespace HeyImIn.WebApplication.Controllers
 		/// </returns>
 		[HttpGet]
 		[ResponseType(typeof(EventDetails))]
-		public async Task<IHttpActionResult> GetDetails(int id)
+		public async Task<IHttpActionResult> GetDetails(int eventId)
 		{
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
-				Event @event = await context.Events.FindAsync(id);
+				Event @event = await context.Events
+					.Include(e => e.Organizer)
+					.Include(e => e.EventParticipations)
+					.Include(e => e.Appointments)
+					.FirstOrDefaultAsync(e => e.Id == eventId);
 
 				if (@event == null)
 				{
@@ -77,20 +87,25 @@ namespace HeyImIn.WebApplication.Controllers
 
 				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
 
-				List<AppointmentDetails> upcomingAppointments = @event.Appointments.Where(a => a.StartTime >= DateTime.UtcNow).OrderBy(a => a.StartTime).Take(ShownAppointmentsPerEvent).Select(a => AppointmentDetails.FromAppointment(a, currentUser, allParticipants)).ToList();
+				List<AppointmentDetails> upcomingAppointments = @event.Appointments
+					.Where(a => a.StartTime >= DateTime.UtcNow)
+					.OrderBy(a => a.StartTime)
+					.Take(ShownAppointmentsPerEvent)
+					.Select(a => AppointmentDetails.FromAppointment(a, currentUser, allParticipants))
+					.ToList();
 
 				EventParticipation currentEventParticipation = @event.EventParticipations.FirstOrDefault(e => e.Participant == currentUser);
 
 				EventInformation eventInformation = EventInformation.FromEvent(@event, currentUser);
 
-				NotificationConfiguration notificationConfiguration = null;
+				NotificationConfigurationResponse notificationConfigurationResponse = null;
 
 				if (currentEventParticipation != null)
 				{
-					notificationConfiguration = NotificationConfiguration.FromParticipation(currentEventParticipation);
+					notificationConfigurationResponse = NotificationConfigurationResponse.FromParticipation(currentEventParticipation);
 				}
 
-				return Ok(new EventDetails(eventInformation, upcomingAppointments, notificationConfiguration));
+				return Ok(new EventDetails(eventInformation, upcomingAppointments, notificationConfigurationResponse));
 			}
 		}
 
@@ -116,12 +131,18 @@ namespace HeyImIn.WebApplication.Controllers
 
 				if (@event == null)
 				{
-					return NotFound();
+					return BadRequest(RequestStringMessages.EventNotFound);
 				}
 
 				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
 
-				JoinEventIfNotParticipating(@event, currentUser, context);
+				EventParticipation eventParticipation = context.EventParticipations.Create();
+				eventParticipation.Event = @event;
+				eventParticipation.Participant = currentUser;
+
+				context.EventParticipations.Add(eventParticipation);
+
+				_auditLog.InfoFormat("{0}(): Joined event {1}", nameof(JoinEvent), @event.Id);
 
 				await context.SaveChangesAsync();
 
@@ -163,13 +184,6 @@ namespace HeyImIn.WebApplication.Controllers
 					return BadRequest(RequestStringMessages.UserNotFound);
 				}
 
-				EventParticipation participation = @event.EventParticipations.FirstOrDefault(e => e.Participant == userToRemove);
-
-				if (participation == null)
-				{
-					return BadRequest(RequestStringMessages.UserNotPartOfEvent);
-				}
-
 				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
 
 				bool changingOtherUser = currentUser != userToRemove;
@@ -181,10 +195,18 @@ namespace HeyImIn.WebApplication.Controllers
 					return BadRequest(RequestStringMessages.OrganizorRequired);
 				}
 
+				EventParticipation participation = @event.EventParticipations.FirstOrDefault(e => e.Participant == userToRemove);
+
+				if (participation == null)
+				{
+					return BadRequest(RequestStringMessages.UserNotPartOfEvent);
+				}
+
+				// Remove event participation
 				context.EventParticipations.Remove(participation);
 
-				List<AppointmentParticipation> appointmentParticipations = userToRemove.AppointmentParticipations.ToList();
-
+				// Remove appointment participations within the event
+				List<AppointmentParticipation> appointmentParticipations = userToRemove.AppointmentParticipations.Where(a => a.Appointment.Event == @event).ToList();
 				context.AppointmentParticipations.RemoveRange(appointmentParticipations);
 
 				await context.SaveChangesAsync();
@@ -203,7 +225,6 @@ namespace HeyImIn.WebApplication.Controllers
 
 				foreach (AppointmentParticipation appointmentParticipation in appointmentParticipations)
 				{
-					//TODO remove appointment => Possibly send notification
 					await _notificationService.SendLastMinuteChangeIfRequiredAsync(appointmentParticipation.Appointment);
 				}
 
@@ -212,116 +233,46 @@ namespace HeyImIn.WebApplication.Controllers
 		}
 
 		/// <summary>
-		///     Sets the response to an appointment
-		///     Will add the user to the event if he's not part of it yet
+		///     Configures the enabled notifications of the current user for the specified event
 		/// </summary>
-		/// <param name="setAppointmentResponseDto">
-		///     <see cref="User.Id" />
-		///     <see cref="Appointment.Id" />
-		/// </param>
 		[HttpPost]
 		[ResponseType(typeof(void))]
-		public async Task<IHttpActionResult> SetAppointmentResponse([FromBody] SetAppointmentResponseDto setAppointmentResponseDto)
+		public async Task<IHttpActionResult> ConfigureNotifications([FromBody] NotificationConfigurationDto notificationConfigurationDto)
 		{
 			// Validate parameters
-			if (!ModelState.IsValid || (setAppointmentResponseDto == null))
+			if (!ModelState.IsValid || (notificationConfigurationDto == null))
 			{
 				return BadRequest();
 			}
 
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
-				Appointment appointment = await context.Appointments.FindAsync(setAppointmentResponseDto.AppointmentId);
+				Event @event = await context.Events.FindAsync(notificationConfigurationDto.EventId);
 
-				if (appointment == null)
+				if (@event == null)
 				{
-					return BadRequest(RequestStringMessages.AppointmentNotFound);
-				}
-
-				User userToSetResponseFor = await context.Users.FindAsync(setAppointmentResponseDto.UserId);
-
-				if (userToSetResponseFor == null)
-				{
-					return BadRequest(RequestStringMessages.UserNotFound);
+					return BadRequest(RequestStringMessages.EventNotFound);
 				}
 
 				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
 
-				bool changingOtherUser = currentUser != userToSetResponseFor;
-
-				if (changingOtherUser)
-				{
-					if (appointment.Event.Organizer != currentUser)
-					{
-						// Only the organizer is allowed to change another user
-						_log.InfoFormat("{0}(): Tried to set response for user {1} for the appointment {2}, which he's not organizing", nameof(LeaveEvent), userToSetResponseFor.Id, appointment.Id);
-
-						return BadRequest(RequestStringMessages.OrganizorRequired);
-					}
-
-					if (appointment.Event.EventParticipations.Select(e => e.Participant).Contains(userToSetResponseFor))
-					{
-						// A organizer shouldn't be able to add a user to the event, unless the user is participating in the event
-						// This should prevent that a user gets added to an event he never had anything to do with
-						return BadRequest(RequestStringMessages.UserNotPartOfEvent);
-					}
-				}
-
-				AppointmentParticipation participation = appointment.AppointmentParticipations.FirstOrDefault(e => e.Participant == userToSetResponseFor);
+				EventParticipation participation = @event.EventParticipations.FirstOrDefault(e => e.Participant == currentUser);
 
 				if (participation == null)
 				{
-					participation = context.AppointmentParticipations.Create();
-					participation.Participant = userToSetResponseFor;
-					participation.Appointment = appointment;
-					context.AppointmentParticipations.Add(participation);
+					return BadRequest(RequestStringMessages.UserNotPartOfEvent);
 				}
 
-				if (setAppointmentResponseDto.Response.HasValue)
-				{
-					participation.AppointmentParticipationAnswer = setAppointmentResponseDto.Response.Value;
-				}
-				else
-				{
-					context.AppointmentParticipations.Remove(participation);
-				}
-
-				JoinEventIfNotParticipating(appointment.Event, userToSetResponseFor, context);
+				participation.SendReminderEmail = notificationConfigurationDto.SendReminderEmail;
+				participation.SendSummaryEmail = notificationConfigurationDto.SendSummaryEmail;
+				participation.SendLastMinuteChangesEmail = notificationConfigurationDto.SendLastMinuteChangesEmail;
 
 				await context.SaveChangesAsync();
 
-				// Handle notifications
-				if (changingOtherUser)
-				{
-					_auditLog.InfoFormat("{0}(response={1}): The organizer set the response to the appointment {2} for user {3}", nameof(LeaveEvent), setAppointmentResponseDto.Response, appointment.Id, userToSetResponseFor.Id);
-
-					await _notificationService.NotifyOrganizerUpdatedUserInfoAsync(appointment.Event, userToSetResponseFor, $"Der Organisator hat Ihre Zusage vom Termin am {appointment.StartTime.ToHeyImInString()} editiert");
-				}
-
-				await _notificationService.SendLastMinuteChangeIfRequiredAsync(appointment);
+				_log.InfoFormat("{0}(): Updated notification settings", nameof(ConfigureNotifications));
 
 				return Ok();
 			}
-		}
-
-		/// <summary>
-		///     Ensures the current user is participating in the event, not just the appointments
-		/// </summary>
-		private void JoinEventIfNotParticipating(Event @event, User currentUser, IDatabaseContext context)
-		{
-			if (@event.EventParticipations.Select(e => e.Participant).Contains(currentUser))
-			{
-				return;
-			}
-
-			EventParticipation participation = context.EventParticipations.Create();
-
-			participation.Event = @event;
-			participation.Participant = currentUser;
-
-			context.EventParticipations.Add(participation);
-
-			_auditLog.InfoFormat("{0}(): Joined event {1}", nameof(JoinEvent), @event.Id);
 		}
 
 		private readonly INotificationService _notificationService;
