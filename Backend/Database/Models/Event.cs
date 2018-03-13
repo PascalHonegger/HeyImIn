@@ -24,12 +24,14 @@ namespace HeyImIn.Database.Models
 		///     The place to meet at
 		/// </summary>
 		[Required]
+		[MaxLength(FieldLengths.MeetingPlaceMaxLength)]
 		public string MeetingPlace { get; set; }
 
 		/// <summary>
 		///     A short description on what to expect from this event
 		/// </summary>
 		[Required]
+		[MaxLength(FieldLengths.DescriptionMaxLength)]
 		public string Description { get; set; }
 
 		/// <summary>
@@ -55,7 +57,7 @@ namespace HeyImIn.Database.Models
 		public int SummaryTimeWindowInHours { get; set; }
 
 		public virtual ICollection<Appointment> Appointments { get; set; }
-
 		public virtual ICollection<EventParticipation> EventParticipations { get; set; }
+		public virtual ICollection<EventInvitation> EventInvitations { get; set; }
 	}
 }

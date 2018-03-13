@@ -8,6 +8,7 @@ using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
 using HeyImIn.MailNotifier;
 using HeyImIn.WebApplication.FrontendModels.ParameterTypes;
+using HeyImIn.WebApplication.Helpers;
 using log4net;
 
 namespace HeyImIn.WebApplication.Controllers
@@ -41,7 +42,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				if (user == null)
 				{
-					return BadRequest("Für diese E-Mail-Adresse ist kein Konto hinterlegt");
+					return BadRequest(RequestStringMessages.NoProfileWithEmailFound);
 				}
 
 				PasswordReset passwordReset = context.PasswordResets.Create();
@@ -80,14 +81,14 @@ namespace HeyImIn.WebApplication.Controllers
 				{
 					_log.DebugFormat("{0}(resetToken={1}): Couldn't find the password reset token", nameof(ResetPassword), resetPasswordDto.PasswordResetToken);
 
-					return BadRequest("Der angegebene Code ist ungültig");
+					return BadRequest(RequestStringMessages.ResetCodeInvalid);
 				}
 
 				if (passwordReset.Used || (passwordReset.Requested - DateTime.UtcNow > _resetTokenValidTimeSpan))
 				{
 					_log.InfoFormat("{0}(resetToken={1:D}): Tried to reset password for user {2} with an expired or used token", nameof(ResetPassword), resetPasswordDto.PasswordResetToken, passwordReset.UserId);
 
-					return BadRequest("Der angegebene Code ist abgelaufen oder wurde bereits verwendet");
+					return BadRequest(RequestStringMessages.ResetCodeAlreadyUsed);
 				}
 
 				passwordReset.User.PasswordHash = _passwordService.HashPassword(resetPasswordDto.NewPassword);

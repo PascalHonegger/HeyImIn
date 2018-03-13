@@ -153,21 +153,21 @@ namespace HeyImIn.WebApplication.Controllers
 
 				if (@event == null)
 				{
-					return BadRequest("Der angegebene Event wurde nicht gefunden");
+					return BadRequest(RequestStringMessages.EventNotFound);
 				}
 
 				User userToRemove = await context.Users.FindAsync(leaveEventDto.UserId);
 
 				if (userToRemove == null)
 				{
-					return BadRequest("Der angegebene Benutzer wurde nicht gefunden");
+					return BadRequest(RequestStringMessages.UserNotFound);
 				}
 
 				EventParticipation participation = @event.EventParticipations.FirstOrDefault(e => e.Participant == userToRemove);
 
 				if (participation == null)
 				{
-					return BadRequest("Der zu entfernende Benutzer nimmt nicht an diesem Event teil");
+					return BadRequest(RequestStringMessages.UserNotPartOfEvent);
 				}
 
 				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
@@ -178,7 +178,7 @@ namespace HeyImIn.WebApplication.Controllers
 				{
 					_log.InfoFormat("{0}(): Tried to remove user {1} from then event {2}, which he's not organizing", nameof(LeaveEvent), userToRemove.Id, @event.Id);
 
-					return BadRequest("Sie organisieren diesen Event nicht");
+					return BadRequest(RequestStringMessages.OrganizorRequired);
 				}
 
 				context.EventParticipations.Remove(participation);
@@ -204,6 +204,7 @@ namespace HeyImIn.WebApplication.Controllers
 				foreach (AppointmentParticipation appointmentParticipation in appointmentParticipations)
 				{
 					//TODO remove appointment => Possibly send notification
+					await _notificationService.SendLastMinuteChangeIfRequiredAsync(appointmentParticipation.Appointment);
 				}
 
 				return Ok();
@@ -234,14 +235,14 @@ namespace HeyImIn.WebApplication.Controllers
 
 				if (appointment == null)
 				{
-					return BadRequest("Der angegebene Termin wurde nicht gefunden");
+					return BadRequest(RequestStringMessages.AppointmentNotFound);
 				}
 
 				User userToSetResponseFor = await context.Users.FindAsync(setAppointmentResponseDto.UserId);
 
 				if (userToSetResponseFor == null)
 				{
-					return BadRequest("Der angegebene Benutzer wurde nicht gefunden");
+					return BadRequest(RequestStringMessages.UserNotFound);
 				}
 
 				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
@@ -255,14 +256,14 @@ namespace HeyImIn.WebApplication.Controllers
 						// Only the organizer is allowed to change another user
 						_log.InfoFormat("{0}(): Tried to set response for user {1} for the appointment {2}, which he's not organizing", nameof(LeaveEvent), userToSetResponseFor.Id, appointment.Id);
 
-						return BadRequest("Sie organisieren diesen Event nicht");
+						return BadRequest(RequestStringMessages.OrganizorRequired);
 					}
 
 					if (appointment.Event.EventParticipations.Select(e => e.Participant).Contains(userToSetResponseFor))
 					{
 						// A organizer shouldn't be able to add a user to the event, unless the user is participating in the event
 						// This should prevent that a user gets added to an event he never had anything to do with
-						return BadRequest("Der angegebene Benutzer nimmt nicht am Event teil");
+						return BadRequest(RequestStringMessages.UserNotPartOfEvent);
 					}
 				}
 

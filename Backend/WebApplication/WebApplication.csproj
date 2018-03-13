@@ -127,12 +127,15 @@
       <Link>Properties\AssemblyInfo-Shared.cs</Link>
     </Compile>
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\CronController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ParticipateEventController.cs" />
     <Compile Include="Controllers\ResetPasswordController.cs" />
     <Compile Include="Controllers\OrganizeEventController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\SessionController.cs" />
+    <Compile Include="FrontendModels\ParameterTypes\AddAppointmentsDto.cs" />
+    <Compile Include="FrontendModels\ParameterTypes\UpdatedEventInfoDto.cs" />
     <Compile Include="FrontendModels\ParameterTypes\SetAppointmentResponseDto.cs" />
     <Compile Include="FrontendModels\ParameterTypes\LeaveEventDto.cs" />
     <Compile Include="FrontendModels\ParameterTypes\JoinEventDto.cs" />
@@ -157,7 +160,9 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\CurrentUserNotFoundException.cs" />
+    <Compile Include="Helpers\DateTimeExtensions.cs" />
     <Compile Include="Helpers\HttpActionExtensions.cs" />
+    <Compile Include="Helpers\RequestStringMessages.cs" />
     <Compile Include="WebApiComponents\AuthenticateUserAttribute.cs" />
     <Compile Include="WebApiComponents\LogActionAttribute.cs" />
     <Compile Include="WebApiComponents\LogFatalExceptionLogger.cs" />

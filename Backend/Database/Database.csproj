@@ -53,6 +53,7 @@
     <Compile Include="Models\Appointment.cs" />
     <Compile Include="Models\EventInvitation.cs" />
     <Compile Include="Models\PasswordReset.cs" />
+    <Compile Include="Models\FieldLengths.cs" />
     <Compile Include="Models\Session.cs" />
     <Compile Include="Models\Event.cs" />
     <Compile Include="Models\User.cs" />
