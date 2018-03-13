@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material';
 import { Router } from '@angular/router';
 import { AuthService } from '../../shared/services/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Constants } from '../../shared/constants';
 
 @Component({
 	selector: 'login',
@@ -18,7 +19,7 @@ export class LoginComponent {
 				private router: Router,
 				formBuilder: FormBuilder) {
 					this.form = formBuilder.group({
-						mailCtrl: ['', [Validators.required, Validators.email, Validators.maxLength(40)]],
+						mailCtrl: ['', [Validators.required, Validators.email, Validators.maxLength(Constants.userEmailMaxLength)]],
 						passwordCtrl: ['', Validators.required]
 					});
 				}
