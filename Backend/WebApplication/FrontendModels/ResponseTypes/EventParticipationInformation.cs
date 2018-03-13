@@ -1,8 +1,8 @@
 ﻿namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
 {
-	public class EventParticipation
+	public class EventParticipationInformation
 	{
-		public EventParticipation(int participantId, string participantName, string participantEmail)
+		public EventParticipationInformation(int participantId, string participantName, string participantEmail)
 		{
 			ParticipantId = participantId;
 			ParticipantName = participantName;

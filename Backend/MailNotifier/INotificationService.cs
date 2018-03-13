@@ -11,5 +11,13 @@ namespace HeyImIn.MailNotifier
 	public interface INotificationService
 	{
 		Task SendPasswordResetTokenAsync(Guid token, User recipient);
+
+		Task NotifyOrganizerUpdatedUserInfoAsync(Event @event, User affectedUser, string change);
+
+		Task SendSummaryAsync(Event @event);
+
+		Task SendLastMinuteChangeIfRequiredAsync(Appointment appointment);
+
+		Task NotifyAppointmentDeletedAsync(Appointment appointment);
 	}
 }

@@ -4,7 +4,7 @@ namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
 {
 	public class EditEventDetails
 	{
-		public EditEventDetails(EventInformation information, List<AppointmentDetails> upcomingAppointments, int reminderTimeWindowInHours, int summaryTimeWindowInHours, List<EventParticipation> participants)
+		public EditEventDetails(EventInformation information, List<AppointmentDetails> upcomingAppointments, int reminderTimeWindowInHours, int summaryTimeWindowInHours, List<EventParticipationInformation> participants)
 		{
 			Information = information;
 			UpcomingAppointments = upcomingAppointments;
@@ -21,6 +21,6 @@ namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
 
 		public int SummaryTimeWindowInHours { get; }
 
-		public List<EventParticipation> Participants { get; }
+		public List<EventParticipationInformation> Participants { get; }
 	}
 }

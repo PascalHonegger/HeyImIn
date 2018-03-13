@@ -133,9 +133,12 @@
     <Compile Include="Controllers\OrganizeEventController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\SessionController.cs" />
+    <Compile Include="FrontendModels\ParameterTypes\SetAppointmentResponseDto.cs" />
+    <Compile Include="FrontendModels\ParameterTypes\LeaveEventDto.cs" />
+    <Compile Include="FrontendModels\ParameterTypes\JoinEventDto.cs" />
     <Compile Include="FrontendModels\ResponseTypes\NotificationConfiguration.cs" />
-    <Compile Include="FrontendModels\ResponseTypes\EventParticipation.cs" />
-    <Compile Include="FrontendModels\ResponseTypes\AppointmentParticipation.cs" />
+    <Compile Include="FrontendModels\ResponseTypes\EventParticipationInformation.cs" />
+    <Compile Include="FrontendModels\ResponseTypes\AppointmentParticipationInformation.cs" />
     <Compile Include="FrontendModels\ResponseTypes\AppointmentDetails.cs" />
     <Compile Include="FrontendModels\ResponseTypes\AppointmentInformation.cs" />
     <Compile Include="FrontendModels\ResponseTypes\EditEventDetails.cs" />
