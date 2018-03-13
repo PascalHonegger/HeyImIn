@@ -19,10 +19,11 @@ namespace HeyImIn.MailNotifier
 		Task SendPasswordResetTokenAsync(Guid token, User recipient);
 
 		/// <summary>
-		/// Sends an invite link for each provided invitation 
+		///     Sends an invite link for each provided invitation
 		/// </summary>
-		/// <param name="invitations"></param>
-		Task SendInvitationLinkAsync(List<(string email, EventInvitation invite)> invitations);
+		/// <param name="userInvitations">Existing users</param>
+		/// <param name="newInvitations">New users</param>
+		Task SendInvitationLinkAsync(List<(User user, EventInvitation invite)> userInvitations, List<(string email, EventInvitation invite)> newInvitations);
 
 		/// <summary>
 		///     Sends a notifications after the organizer of an event changed some data for a user

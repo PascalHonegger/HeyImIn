@@ -5,7 +5,7 @@ namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
 {
 	public class EventInformation
 	{
-		public EventInformation(int eventId, int organizerId, string organizerName, string meetingPlace, string description, int totalParticipants, bool isPrivate, bool currentUserDoesParticipate)
+		public EventInformation(int eventId, int organizerId, string organizerName, string meetingPlace, string description, int totalParticipants, bool isPrivate, bool currentUserDoesParticipate, string title)
 		{
 			EventId = eventId;
 			OrganizerId = organizerId;
@@ -15,13 +15,14 @@ namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
 			TotalParticipants = totalParticipants;
 			IsPrivate = isPrivate;
 			CurrentUserDoesParticipate = currentUserDoesParticipate;
+			Title = title;
 		}
 
 		public static EventInformation FromEvent(Event @event, User currentUser)
 		{
 			bool currentUserDoesParticipate = @event.EventParticipations.Select(p => p.Participant).Contains(currentUser);
 
-			return new EventInformation(@event.Id, @event.OrganizerId, @event.Organizer.FullName, @event.MeetingPlace, @event.Description, @event.EventParticipations.Count, @event.IsPrivate, currentUserDoesParticipate);
+			return new EventInformation(@event.Id, @event.OrganizerId, @event.Organizer.FullName, @event.MeetingPlace, @event.Description, @event.EventParticipations.Count, @event.IsPrivate, currentUserDoesParticipate, @event.Title);
 		}
 
 		public int EventId { get; }
@@ -29,6 +30,8 @@ namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
 		public int OrganizerId { get; }
 
 		public string OrganizerName { get; }
+
+		public string Title { get; }
 
 		public string MeetingPlace { get; }
 

@@ -10,6 +10,10 @@ namespace HeyImIn.WebApplication.FrontendModels.ParameterTypes
 		// In the future make the organizer changeable? => public int OrganizerId { get; }
 
 		[Required]
+		[MaxLength(FieldLengths.TitleMaxLength)]
+		public string Title { get; set; }
+
+		[Required]
 		[MaxLength(FieldLengths.MeetingPlaceMaxLength)]
 		public string MeetingPlace { get; set; }
 

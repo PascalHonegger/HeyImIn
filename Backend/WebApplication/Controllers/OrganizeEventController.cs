@@ -120,6 +120,7 @@ namespace HeyImIn.WebApplication.Controllers
 					return BadRequest(RequestStringMessages.OrganizorRequired);
 				}
 
+				@event.Title = updatedEventInfoDto.Title;
 				@event.MeetingPlace = updatedEventInfoDto.MeetingPlace;
 				@event.Description = updatedEventInfoDto.Description;
 				@event.IsPrivate = updatedEventInfoDto.IsPrivate;

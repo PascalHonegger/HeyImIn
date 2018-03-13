@@ -13,6 +13,7 @@ using HeyImIn.Database.Context;
 using HeyImIn.Database.Context.Impl;
 using HeyImIn.External.DependencyInjection;
 using HeyImIn.MailNotifier;
+using HeyImIn.MailNotifier.Impl;
 using HeyImIn.WebApplication.Controllers;
 using HeyImIn.WebApplication.Services;
 using HeyImIn.WebApplication.Services.Impl;
@@ -87,6 +88,8 @@ namespace HeyImIn.WebApplication
 			string sendGridApiKey = Environment.GetEnvironmentVariable("SENDGRID_API_KEY");
 
 			// Other configuration values
+			string baseWebUrl = WebConfigurationManager.AppSettings["FrontendBaseUrl"];
+
 			if (!int.TryParse(WebConfigurationManager.AppSettings["PasswordHashWorkFactor"], out int workFactor))
 			{
 				_log.WarnFormat("{0}(): The provided work factor is not valid, as it has to be a valid integer", nameof(BuildContainer));
@@ -99,6 +102,7 @@ namespace HeyImIn.WebApplication
 			builder.Register(c => new HeyImInDatabaseContext(connectionString)).As<IDatabaseContext>();
 			builder.Register(c => new SendGridClient(sendGridApiKey)).As<ISendGridClient>();
 			builder.Register(c => new PasswordService(workFactor)).As<IPasswordService>();
+			builder.Register(c => new NotificationService(c.Resolve<IMailSender>(), baseWebUrl)).As<INotificationService>();
 			builder.RegisterTypes(typeof(CronSendNotificationsService)).As<ICronService>(); // Add future cron services here
 
 			// Register WebApi controllers & attributes

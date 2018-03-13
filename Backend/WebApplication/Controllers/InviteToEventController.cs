@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -59,20 +60,40 @@ namespace HeyImIn.WebApplication.Controllers
 				}
 
 				var mailInvites = new List<(string email, EventInvitation invite)>();
+				var userInvites = new List<(User user, EventInvitation invite)>();
 
 				foreach (string emailAddress in inviteParticipantsDto.EmailAddresses)
 				{
+					// Create new invite
 					EventInvitation invite = context.EventInvitations.Create();
 					invite.Requested = DateTime.UtcNow;
 					invite.Event = @event;
 					context.EventInvitations.Add(invite);
 
-					mailInvites.Add((emailAddress, invite));
+					// Check if a profile with this email exists
+					User existingUser = await context.Users.FirstOrDefaultAsync(u => u.Email == emailAddress);
+
+					if (existingUser == null)
+					{
+						// No user exists
+						mailInvites.Add((emailAddress, invite));
+					}
+					else
+					{
+						// User with mail exists => Check if he's already part of the event
+						if (@event.EventParticipations.Any(e => e.Participant.Email == emailAddress))
+						{
+							return BadRequest($"Die E-Mail-Adresse {emailAddress} nimmt bereits am Event teil");
+						}
+
+						userInvites.Add((existingUser, invite));
+					}
+
 				}
 
 				await context.SaveChangesAsync();
 
-				await _notificationService.SendInvitationLinkAsync(mailInvites);
+				await _notificationService.SendInvitationLinkAsync(userInvites, mailInvites);
 
 				return Ok();
 			}
