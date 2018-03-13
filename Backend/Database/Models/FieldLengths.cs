@@ -10,6 +10,7 @@
 		public const int UserEmailMaxLength = 40;
 		public const int UserPasswordHashMaxLength = 60;
 
+		public const int TitleMaxLength = 40;
 		public const int MeetingPlaceMaxLength = 40;
 		public const int DescriptionMaxLength = 120;
 	}

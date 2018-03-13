@@ -21,6 +21,13 @@ namespace HeyImIn.Database.Models
 		public int OrganizerId { get; set; }
 
 		/// <summary>
+		///     The title of the event
+		/// </summary>
+		[Required]
+		[MaxLength(FieldLengths.TitleMaxLength)]
+		public string Title { get; set; }
+
+		/// <summary>
 		///     The place to meet at
 		/// </summary>
 		[Required]
