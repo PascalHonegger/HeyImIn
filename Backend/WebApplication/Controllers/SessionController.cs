@@ -13,17 +13,16 @@ namespace HeyImIn.WebApplication.Controllers
 {
 	public class SessionController : ApiController
 	{
-		private readonly IAuthenticationService _authenticationService;
-		private readonly ISessionService _sessionService;
-		private static readonly ILog _auditLog = LogHelpers.GetAuditLog();
-
-
 		public SessionController(IAuthenticationService authenticationService, ISessionService sessionService)
 		{
 			_authenticationService = authenticationService;
 			_sessionService = sessionService;
 		}
 
+		/// <summary>
+		///     Tries to start a new session for the provided credentials
+		/// </summary>
+		/// <returns>The created <see cref="FrontendSession" /> containing user information</returns>
 		[HttpPost]
 		[ResponseType(typeof(FrontendSession))]
 		[AllowAnonymous]
@@ -49,6 +48,11 @@ namespace HeyImIn.WebApplication.Controllers
 			return Ok(new FrontendSession(sessionToken, foundUser.FullName, foundUser.Email));
 		}
 
+		/// <summary>
+		///     Loads an already active session
+		/// </summary>
+		/// <param name="sessionToken">Unique session token</param>
+		/// <returns>The found <see cref="FrontendSession" /></returns>
 		[HttpGet]
 		[ResponseType(typeof(FrontendSession))]
 		[AllowAnonymous]
@@ -64,6 +68,9 @@ namespace HeyImIn.WebApplication.Controllers
 			return Ok(new FrontendSession(session.Token, session.User.FullName, session.User.Email));
 		}
 
+		/// <summary>
+		///     Stops the active session => Log out and invalidate session
+		/// </summary>
 		[HttpPost]
 		[ResponseType(typeof(void))]
 		[AuthenticateUser]
@@ -77,5 +84,9 @@ namespace HeyImIn.WebApplication.Controllers
 
 			return Ok();
 		}
+
+		private readonly IAuthenticationService _authenticationService;
+		private readonly ISessionService _sessionService;
+		private static readonly ILog _auditLog = LogHelpers.GetAuditLog();
 	}
 }

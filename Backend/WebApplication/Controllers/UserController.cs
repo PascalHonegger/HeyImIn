@@ -25,6 +25,11 @@ namespace HeyImIn.WebApplication.Controllers
 			_getDatabaseContext = getDatabaseContext;
 		}
 
+		/// <summary>
+		///     Updates the current user's data
+		///     Doesn't invalidate any active sessions
+		/// </summary>
+		/// <param name="setUserDataDto">New user data</param>
 		[HttpPost]
 		[ResponseType(typeof(void))]
 		[AuthenticateUser]
@@ -58,6 +63,11 @@ namespace HeyImIn.WebApplication.Controllers
 			}
 		}
 
+		/// <summary>
+		///     Changes the current user's password
+		///     Doesn't invalidate any active sessions
+		/// </summary>
+		/// <param name="setPasswordDto">Current and new password</param>
 		[HttpPost]
 		[ResponseType(typeof(void))]
 		[AuthenticateUser]
@@ -97,6 +107,10 @@ namespace HeyImIn.WebApplication.Controllers
 			}
 		}
 
+		/// <summary>
+		///     Deletes the current user's account and all connections
+		///     E.g. sends cancelation for organized and participating events
+		/// </summary>
 		[HttpPost]
 		[ResponseType(typeof(void))]
 		[AuthenticateUser]
@@ -124,6 +138,10 @@ namespace HeyImIn.WebApplication.Controllers
 			}
 		}
 
+		/// <summary>
+		///     Registeres a new user
+		/// </summary>
+		/// <returns>A newly created <see cref="FrontendSession" /> so the registering user doesn't have to log in manually</returns>
 		[HttpPost]
 		[ResponseType(typeof(FrontendSession))]
 		[AllowAnonymous]
