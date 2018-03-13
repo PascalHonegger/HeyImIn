@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace HeyImIn.WebApplication.FrontendModels
+namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
 {
 	public class FrontendSession
 	{

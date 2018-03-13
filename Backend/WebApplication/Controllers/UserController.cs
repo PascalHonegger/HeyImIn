@@ -8,7 +8,8 @@ using HeyImIn.Authentication;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
 using HeyImIn.MailNotifier;
-using HeyImIn.WebApplication.FrontendModels;
+using HeyImIn.WebApplication.FrontendModels.ParameterTypes;
+using HeyImIn.WebApplication.FrontendModels.ResponseTypes;
 using HeyImIn.WebApplication.Helpers;
 using HeyImIn.WebApplication.WebApiComponents;
 using log4net;
@@ -41,16 +42,9 @@ namespace HeyImIn.WebApplication.Controllers
 				return BadRequest();
 			}
 
-			int currentUserId = ActionContext.Request.GetUserId();
-
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
-				User currentUser = await context.Users.FindAsync(currentUserId);
-
-				if (currentUser == null)
-				{
-					return LoadCurrentUserFailed(nameof(SetNewUserData));
-				}
+				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
 
 				currentUser.Email = setUserDataDto.NewEmail;
 				currentUser.FullName = setUserDataDto.NewFullName;
@@ -79,16 +73,9 @@ namespace HeyImIn.WebApplication.Controllers
 				return BadRequest();
 			}
 
-			int currentUserId = ActionContext.Request.GetUserId();
-
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
-				User currentUser = await context.Users.FindAsync(currentUserId);
-
-				if (currentUser == null)
-				{
-					return LoadCurrentUserFailed(nameof(SetNewUserData));
-				}
+				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
 
 				bool currentPasswordCorrect = _passwordService.VerifyPassword(setPasswordDto.CurrentPassword, currentUser.PasswordHash);
 
@@ -116,23 +103,16 @@ namespace HeyImIn.WebApplication.Controllers
 		[AuthenticateUser]
 		public async Task<IHttpActionResult> DeleteAccount()
 		{
-			int currentUserId = ActionContext.Request.GetUserId();
-
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
-				User currentUser = await context.Users.FindAsync(currentUserId);
-
-				if (currentUser == null)
-				{
-					return LoadCurrentUserFailed(nameof(SetNewUserData));
-				}
+				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
 
 				// TODO Send notifications => Call DeleteEvent for organized & LeaveEvent for participating events
 				context.Users.Remove(currentUser);
 
 				await context.SaveChangesAsync();
 
-				_auditLog.InfoFormat("{0}(): Deleted user {1} ({2}) and all of his events", nameof(DeleteAccount), currentUserId, currentUser.FullName);
+				_auditLog.InfoFormat("{0}(): Deleted user {1} ({2}) and all of his events", nameof(DeleteAccount), currentUser.Id, currentUser.FullName);
 
 				return Ok();
 			}
@@ -177,13 +157,6 @@ namespace HeyImIn.WebApplication.Controllers
 
 				return Ok(new FrontendSession(createdSessionToken, registerDto.FullName, registerDto.Email));
 			}
-		}
-
-		private IHttpActionResult LoadCurrentUserFailed(string methodName)
-		{
-			_log.ErrorFormat("{0}(): Couldn't load the current user from the database", methodName);
-
-			return BadRequest("Der angegebene Benutzer existiert nicht");
 		}
 
 		private readonly IPasswordService _passwordService;

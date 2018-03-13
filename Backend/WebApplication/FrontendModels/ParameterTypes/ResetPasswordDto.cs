@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace HeyImIn.WebApplication.FrontendModels
+namespace HeyImIn.WebApplication.FrontendModels.ParameterTypes
 {
 	public class ResetPasswordDto
 	{

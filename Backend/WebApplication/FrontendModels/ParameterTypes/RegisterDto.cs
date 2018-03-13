@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace HeyImIn.WebApplication.FrontendModels
+namespace HeyImIn.WebApplication.FrontendModels.ParameterTypes
 {
 	public class RegisterDto
 	{
