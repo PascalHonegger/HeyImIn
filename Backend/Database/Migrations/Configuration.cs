@@ -8,6 +8,9 @@ namespace HeyImIn.Database.Migrations
 		public Configuration()
 		{
 			AutomaticMigrationsEnabled = true;
+
+			// TODO Remove once production data could be affected
+			AutomaticMigrationDataLossAllowed = true;
 		}
 
 		protected override void Seed(HeyImInDatabaseContext context)

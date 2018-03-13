@@ -1,4 +1,8 @@
-import { Component, } from '@angular/core';
+import { Component, ViewChild, } from '@angular/core';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Constants } from '../../shared/constants';
+import { MatStepper } from '@angular/material';
+import { ResetPasswordClient } from '../../shared/backend-clients/reset-password.client';
 
 @Component({
 	selector: 'reset-password',
@@ -6,5 +10,32 @@ import { Component, } from '@angular/core';
 	templateUrl: './reset-password.component.html'
 })
 export class ResetPasswordComponent {
-	
+	@ViewChild('stepper')
+	public stepper: MatStepper;
+
+	public requestTokenForm: FormGroup;
+	public setNewPasswordForm: FormGroup;
+
+	constructor(private server: ResetPasswordClient, formBuilder: FormBuilder) {
+		this.requestTokenForm = formBuilder.group({
+			mailCtrl: ['', [Validators.required, Validators.email, Validators.maxLength(Constants.userEmailMaxLength)]],
+		});
+
+		this.setNewPasswordForm = formBuilder.group({
+			codeCtrl: ['', [Validators.required, Validators.pattern(Constants.guidRegex)]],
+			passwordCtrl: ['', Validators.required]
+		});
+	}
+
+	public requestResetCode() {
+		this.server.requestPasswordReset(this.requestTokenForm.get('mailCtrl').value).subscribe(
+			() => this.stepper.next()
+		);
+	}
+
+	public resetPassword() {
+		this.server.resetPassword(this.setNewPasswordForm.get('codeCtrl').value, this.setNewPasswordForm.get('passwordCtrl').value).subscribe(
+			() => this.stepper.next()
+		);
+	}
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Entity;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -38,7 +39,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
-				User user = await context.Users.FindAsync(requestPasswordResetDto.Email);
+				User user = await context.Users.FirstOrDefaultAsync(u => u.Email == requestPasswordResetDto.Email);
 
 				if (user == null)
 				{

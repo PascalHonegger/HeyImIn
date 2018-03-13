@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../shared/services/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { UserClient } from '../../shared/backend-clients/user.client';
+import { Constants } from '../../shared/constants';
 
 @Component({
 	selector: 'register',
@@ -18,8 +19,8 @@ export class RegisterComponent {
 				private router: Router,
 				formBuilder: FormBuilder) {
 					this.form = formBuilder.group({
-						nameCtrl: ['', [Validators.required, Validators.minLength(2), Validators.maxLength(40)]],
-						mailCtrl: ['', [Validators.required, Validators.email, Validators.maxLength(40)]],
+						nameCtrl: ['', [Validators.required, Validators.maxLength(Constants.userFullNameMaxLength)]],
+						mailCtrl: ['', [Validators.required, Validators.email, Validators.maxLength(Constants.userEmailMaxLength)]],
 						passwordCtrl: ['', Validators.required]
 					});
 				}
