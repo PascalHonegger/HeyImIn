@@ -5,9 +5,9 @@ namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
 {
 	public class EventInformation
 	{
-		public EventInformation(int id, int organizerId, string organizerName, string meetingPlace, string description, int totalParticipants, bool isPrivate, bool currentUserDoesParticipate)
+		public EventInformation(int eventId, int organizerId, string organizerName, string meetingPlace, string description, int totalParticipants, bool isPrivate, bool currentUserDoesParticipate)
 		{
-			Id = id;
+			EventId = eventId;
 			OrganizerId = organizerId;
 			OrganizerName = organizerName;
 			MeetingPlace = meetingPlace;
@@ -24,7 +24,7 @@ namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
 			return new EventInformation(@event.Id, @event.OrganizerId, @event.Organizer.FullName, @event.MeetingPlace, @event.Description, @event.EventParticipations.Count, @event.IsPrivate, currentUserDoesParticipate);
 		}
 
-		public int Id { get; }
+		public int EventId { get; }
 
 		public int OrganizerId { get; }
 

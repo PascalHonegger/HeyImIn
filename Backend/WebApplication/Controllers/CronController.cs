@@ -7,14 +7,13 @@ using System.Web.Http;
 namespace HeyImIn.WebApplication.Controllers
 {
 	[AllowAnonymous]
-	public class HomeController : ApiController
+	public class CronController : ApiController
 	{
 		/// <summary>
 		///     Default / fallback route which redirects to index.html
 		/// </summary>
-		[HttpGet]
-		[Route("")]
-		public HttpResponseMessage Index()
+		[HttpPost]
+		public HttpResponseMessage Run()
 		{
 			// Taken from MediaGateway project
 			HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.MovedPermanently);

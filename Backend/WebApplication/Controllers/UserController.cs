@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Web.Http;
@@ -81,7 +83,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				if (!currentPasswordCorrect)
 				{
-					return BadRequest("Das angegebene jetzige Passwort ist nicht korrekt");
+					return BadRequest(RequestStringMessages.CurrentPasswordWrong);
 				}
 
 				currentUser.PasswordHash = _passwordService.HashPassword(setPasswordDto.NewPassword);
@@ -98,7 +100,7 @@ namespace HeyImIn.WebApplication.Controllers
 		///     Deletes the current user's account and all connections
 		///     E.g. sends cancelation for organized and participating events
 		/// </summary>
-		[HttpPost]
+		[HttpDelete]
 		[ResponseType(typeof(void))]
 		[AuthenticateUser]
 		public async Task<IHttpActionResult> DeleteAccount()
@@ -107,12 +109,46 @@ namespace HeyImIn.WebApplication.Controllers
 			{
 				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
 
-				// TODO Send notifications => Call DeleteEvent for organized & LeaveEvent for participating events
+				// User himself
 				context.Users.Remove(currentUser);
+
+				// Token based relations
+				context.Sessions.RemoveRange(currentUser.Sessions);
+				context.PasswordResets.RemoveRange(currentUser.PasswordResets);
+
+				// Events the user is part of
+				List<EventParticipation> userEventParticipations = currentUser.EventParticipations.ToList();
+				context.EventParticipations.RemoveRange(userEventParticipations);
+
+				// Appointments the user is part of
+				List<AppointmentParticipation> userAppointmentParticipations = currentUser.AppointmentParticipations.ToList();
+				context.AppointmentParticipations.RemoveRange(userAppointmentParticipations);
+
+				// Events the user organized
+				List<Event> organizedEvents = currentUser.OrganizedEvents.ToList();
+				List<EventParticipation> organizedParticipations = organizedEvents.SelectMany(o => o.EventParticipations).ToList();
+				List<EventInvitation> organizedInvitations = organizedEvents.SelectMany(o => o.EventInvitations).ToList();
+				List<Appointment> organizedAppointments = organizedEvents.SelectMany(o => o.Appointments).ToList();
+				List<AppointmentParticipation> organizedAppointmentParticipations = organizedAppointments.SelectMany(o => o.AppointmentParticipations).ToList();
+				context.Events.RemoveRange(organizedEvents);
+				context.EventParticipations.RemoveRange(organizedParticipations);
+				context.EventInvitations.RemoveRange(organizedInvitations);
+				context.Appointments.RemoveRange(organizedAppointments);
+				context.AppointmentParticipations.RemoveRange(organizedAppointmentParticipations);
 
 				await context.SaveChangesAsync();
 
 				_auditLog.InfoFormat("{0}(): Deleted user {1} ({2}) and all of his events", nameof(DeleteAccount), currentUser.Id, currentUser.FullName);
+
+				foreach (Event organizedEvent in organizedEvents)
+				{
+					await _notificationService.NotifyEventDeletedAsync(organizedEvent);
+				}
+
+				foreach (Appointment appointment in userAppointmentParticipations.Select(a => a.Appointment))
+				{
+					await _notificationService.SendLastMinuteChangeIfRequiredAsync(appointment);
+				}
 
 				return Ok();
 			}
@@ -139,7 +175,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				if (userWithSameMailExists)
 				{
-					return BadRequest("Für diese E-Mail-Adresse ist bereits ein Konto hinterlegt");
+					return BadRequest(RequestStringMessages.EmailAlreadyInUse);
 				}
 
 				User newUser = context.Users.Create();

@@ -6,6 +6,7 @@ using HeyImIn.Database.Models;
 
 namespace HeyImIn.Database.Context.Impl
 {
+	// ReSharper disable once ClassWithVirtualMembersNeverInherited.Global => Entity Framework
 	public class HeyImInDatabaseContext : DbContext, IDatabaseContext
 	{
 		public HeyImInDatabaseContext(string connectionString) : base(connectionString)

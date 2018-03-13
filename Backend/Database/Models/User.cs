@@ -14,8 +14,7 @@ namespace HeyImIn.Database.Models
 		///     The full name of the user, which is used to refer to him
 		/// </summary>
 		[Required]
-		[MinLength(2)]
-		[MaxLength(40)]
+		[MaxLength(FieldLengths.UserFullNameMaxLength)]
 		public string FullName { get; set; }
 
 		/// <summary>
@@ -23,7 +22,7 @@ namespace HeyImIn.Database.Models
 		/// </summary>
 		[Required]
 		[EmailAddress]
-		[MaxLength(40)]
+		[MaxLength(FieldLengths.UserEmailMaxLength)]
 		[Index(IsUnique = true)]
 		public string Email { get; set; }
 
@@ -31,9 +30,11 @@ namespace HeyImIn.Database.Models
 		///     The secure password hash
 		/// </summary>
 		[Required]
-		[MaxLength(60)]
+		[MaxLength(FieldLengths.UserPasswordHashMaxLength)]
 		public string PasswordHash { get; set; }
 
+		public virtual ICollection<Session> Sessions { get; set; }
+		public virtual ICollection<PasswordReset> PasswordResets { get; set; }
 		public virtual ICollection<Event> OrganizedEvents { get; set; }
 		public virtual ICollection<EventParticipation> EventParticipations { get; set; }
 		public virtual ICollection<AppointmentParticipation> AppointmentParticipations { get; set; }
