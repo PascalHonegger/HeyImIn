@@ -1,25 +1,33 @@
-﻿using System;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
+﻿using System.Collections.Generic;
+using System.Reflection;
+using System.Threading.Tasks;
 using System.Web.Http;
+using HeyImIn.WebApplication.Services;
+using log4net;
 
 namespace HeyImIn.WebApplication.Controllers
 {
 	[AllowAnonymous]
 	public class CronController : ApiController
 	{
+		private readonly IEnumerable<ICronService> _cronRunners;
+
+		public CronController(IEnumerable<ICronService> cronRunners)
+		{
+			_cronRunners = cronRunners;
+		}
+
 		/// <summary>
 		///     Default / fallback route which redirects to index.html
 		/// </summary>
 		[HttpPost]
-		public HttpResponseMessage Run()
+		public void Run()
 		{
-			// Taken from MediaGateway project
-			HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.MovedPermanently);
-			response.Headers.Location = new Uri("client/index.html", UriKind.Relative);
-			response.Headers.CacheControl = CacheControlHeaderValue.Parse("no-cache, no-store, must-revalidate");
-			return response;
+			_log.DebugFormat("{0}(): Running Cron jobs", nameof(Run));
+			
+			Parallel.ForEach(_cronRunners, async runner => await runner.RunAsync());
 		}
+
+		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 	}
 }

@@ -14,6 +14,8 @@ using HeyImIn.Database.Context.Impl;
 using HeyImIn.External.DependencyInjection;
 using HeyImIn.MailNotifier;
 using HeyImIn.WebApplication.Controllers;
+using HeyImIn.WebApplication.Services;
+using HeyImIn.WebApplication.Services.Impl;
 using HeyImIn.WebApplication.WebApiComponents;
 using log4net;
 using Newtonsoft.Json;
@@ -97,6 +99,7 @@ namespace HeyImIn.WebApplication
 			builder.Register(c => new HeyImInDatabaseContext(connectionString)).As<IDatabaseContext>();
 			builder.Register(c => new SendGridClient(sendGridApiKey)).As<ISendGridClient>();
 			builder.Register(c => new PasswordService(workFactor)).As<IPasswordService>();
+			builder.RegisterTypes(typeof(CronSendNotificationsService)).As<ICronService>(); // Add future cron services here
 
 			// Register WebApi controllers & attributes
 			builder.RegisterApiControllers(typeof(HomeController).Assembly).InstancePerRequest();

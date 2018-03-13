@@ -21,5 +21,8 @@
 
 		public const string ResetCodeInvalid = "Der angegebene Code ist ungültig";
 		public const string ResetCodeAlreadyUsed = "Der angegebene Code ist abgelaufen oder wurde bereits verwendet";
+
+		public const string InvitationInvalid = "Die Einladung ist ungültig";
+		public const string InvitationAlreadyUsed = "Die Einladung wurde bereits verwendet";
 	}
 }

@@ -4,17 +4,17 @@ namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
 {
 	public class EventDetails
 	{
-		public EventDetails(EventInformation information, List<AppointmentDetails> upcomingAppointments, NotificationConfiguration notificationConfiguration)
+		public EventDetails(EventInformation information, List<AppointmentDetails> upcomingAppointments, NotificationConfigurationResponse notificationConfigurationResponse)
 		{
 			Information = information;
 			UpcomingAppointments = upcomingAppointments;
-			NotificationConfiguration = notificationConfiguration;
+			NotificationConfigurationResponse = notificationConfigurationResponse;
 		}
 
 		public EventInformation Information { get; }
 
 		public List<AppointmentDetails> UpcomingAppointments { get; }
 
-		public NotificationConfiguration NotificationConfiguration { get; }
+		public NotificationConfigurationResponse NotificationConfigurationResponse { get; }
 	}
 }
