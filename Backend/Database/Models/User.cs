@@ -24,6 +24,7 @@ namespace HeyImIn.Database.Models
 		[Required]
 		[EmailAddress]
 		[MaxLength(40)]
+		[Index(IsUnique = true)]
 		public string Email { get; set; }
 
 		/// <summary>

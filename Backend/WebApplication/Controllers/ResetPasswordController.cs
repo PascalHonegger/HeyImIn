@@ -21,6 +21,9 @@ namespace HeyImIn.WebApplication.Controllers
 			_getDatabaseContext = getDatabaseContext;
 		}
 
+		/// <summary>
+		///     Sends a password reset code to the provided email address, if a user with than email is registered
+		/// </summary>
 		[HttpPost]
 		[ResponseType(typeof(void))]
 		[AllowAnonymous]
@@ -55,6 +58,9 @@ namespace HeyImIn.WebApplication.Controllers
 			}
 		}
 
+		/// <summary>
+		///     Sets a new password for a password reset code
+		/// </summary>
 		[HttpPost]
 		[ResponseType(typeof(void))]
 		[AllowAnonymous]
