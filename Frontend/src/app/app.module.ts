@@ -34,6 +34,7 @@ import { ResetPasswordComponent } from './anonymous/reset-password/reset-passwor
 import { ProfileComponent } from './authenticated/profile/profile.component';
 import { CreateEventComponent } from './authenticated/create-event/create-event.component';
 import { EditEventComponent } from './authenticated/edit-event/edit-event.component';
+import { ViewEventComponent } from './authenticated/view-event/view-event.component';
 
 // Components used by the different sites
 import { EditGeneralEventInfoComponent } from './authenticated/edit-general-event-details/edit-general-event-info.component';
@@ -109,6 +110,7 @@ import '../styles/styles.scss';
 		ProfileComponent,
 		CreateEventComponent,
 		EditEventComponent,
+		ViewEventComponent,
 		EditGeneralEventInfoComponent
 	],
 	// Dialog contents have to be specified here

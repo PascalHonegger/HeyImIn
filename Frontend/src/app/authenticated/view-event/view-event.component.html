@@ -1,0 +1,63 @@
+<ng-container *ngIf="eventDetails; else noEventDataTemplate">
+	<div fxLayout="row" fxLayoutAlign="start center">
+		<h2 fxFlex class="mat-display-1">{{eventDetails.information.title}}</h2>
+		<button mat-raised-button color="primary" *ngIf="currentUserId === eventDetails.information.organizerId" [routerLink]="['/EditEvent', eventId]">Editieren</button>
+	</div>
+	<div fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="25px">
+		<mat-card>
+			<mat-card-header>
+				<mat-card-title>Details zum Event</mat-card-title>
+			</mat-card-header>
+			<mat-card-content>
+				{{eventDetails.information | json}}
+			</mat-card-content>
+			<mat-card-actions>
+				<ng-container *ngIf="eventDetails.information.currentUserDoesParticipate; else notParticipatingTemplate">
+					<button mat-raised-button (click)="leaveEvent()" color="warn" type="button">
+						Verlassen
+					</button>
+				</ng-container>
+				<ng-template #notParticipatingTemplate>
+					<button mat-raised-button (click)="joinEvent()" color="primary" type="button">
+						Teilnehmen
+					</button>
+				</ng-template>
+			</mat-card-actions>
+		</mat-card>
+		<mat-card>
+			<mat-card-header>
+				<mat-card-title>Termine</mat-card-title>
+			</mat-card-header>
+			<mat-card-content>
+				<div *ngIf="eventDetails.upcomingAppointments.length === 0">
+					Keine bevorstehenden Termine
+				</div>
+				<div *ngFor="let item of eventDetails.upcomingAppointments">
+					{{item | json}}
+				</div>
+			</mat-card-content>
+		</mat-card>
+		<mat-card *ngIf="eventDetails.information.currentUserDoesParticipate">
+			<mat-card-header>
+				<mat-card-title>Notifikationen</mat-card-title>
+			</mat-card-header>
+			<mat-card-content>
+				<div *ngIf="eventDetails.upcomingAppointments.length === 0">
+					Keine bevorstehenden Termine
+				</div>
+				<div *ngFor="let item of eventDetails.upcomingAppointments">
+					{{item | json}}
+				</div>
+			</mat-card-content>
+			<mat-card-actions>
+				<!-- <edit-notifications></edit-notifications> -->
+				<button mat-raised-button (click)="setNotifications()" color="primary" type="button">
+					Speichern
+				</button>
+			</mat-card-actions>
+		</mat-card>
+	</div>
+</ng-container>
+<ng-template #noEventDataTemplate>
+	Daten des Events konnten nicht geladen werden.
+</ng-template>

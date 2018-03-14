@@ -1,6 +1,9 @@
-<ng-container *ngIf="eventDetails; else elseTemplate">
-	<h2 class="mat-display-1">{{eventDetails.information.title}}</h2>
-	<div fxLayout="column" fxLayoutAlign="start center" fxLayoutGap="25px">
+<ng-container *ngIf="eventDetails; else noEventDataTemplate">
+	<div fxLayout="row" fxLayoutAlign="start center">
+		<h2 fxFlex class="mat-display-1">{{eventDetails.information.title}}</h2>
+		<button mat-raised-button [routerLink]="['/ViewEvent', eventId]">Standardansicht</button>
+	</div>
+	<div fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="25px">
 		<mat-card>
 			<mat-card-header>
 				<mat-card-title>Details zum Event</mat-card-title>
@@ -19,6 +22,6 @@
 		</mat-card>
 	</div>
 </ng-container>
-<ng-template #elseTemplate>
+<ng-template #noEventDataTemplate>
 	Daten des Events konnten nicht geladen werden.
 </ng-template>

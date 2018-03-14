@@ -11,6 +11,7 @@ import { ResetPasswordComponent } from './anonymous/reset-password/reset-passwor
 import { ProfileComponent } from './authenticated/profile/profile.component';
 import { EditEventComponent } from './authenticated/edit-event/edit-event.component';
 import { CreateEventComponent } from './authenticated/create-event/create-event.component';
+import { ViewEventComponent } from './authenticated/view-event/view-event.component';
 
 export const ROUTES: Routes = [
 	{
@@ -24,7 +25,7 @@ export const ROUTES: Routes = [
 			{ path: 'Events', component: HomeComponent },
 			{ path: 'CreateEvent', component: CreateEventComponent },
 			{ path: 'EditEvent/:id', component: EditEventComponent },
-			{ path: 'ViewEvent/:id', component: HomeComponent },
+			{ path: 'ViewEvent/:id', component: ViewEventComponent },
 			{ path: 'AcceptInvitation/:token', component: HomeComponent }
 		]
 	},

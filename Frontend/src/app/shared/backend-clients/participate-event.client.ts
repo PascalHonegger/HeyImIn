@@ -19,7 +19,7 @@ export class ParticipateEventClient extends ServerClientBase {
 	}
 
 	public getDetails(eventId: number) {
-		return this.httpClient.get<EventDetails>(this.baseUrl + '/GetEditDetails', {
+		return this.httpClient.get<EventDetails>(this.baseUrl + '/GetDetails', {
 			params: new HttpParams({ fromObject: { eventId: eventId.toString() } })
 		});
 	}
