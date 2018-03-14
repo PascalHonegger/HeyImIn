@@ -131,6 +131,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="FrontendModels\NotificationConfigurationDto.cs" />
     <Compile Include="FrontendModels\ParameterTypes\NotificationConfigurationDto.cs" />
+    <Compile Include="FrontendModels\ParameterTypes\EventInfoDto.cs" />
     <Compile Include="Services\ICronService.cs" />
     <Compile Include="Controllers\InviteToEventController.cs" />
     <Compile Include="Controllers\OrganizeAppointmentController.cs" />
