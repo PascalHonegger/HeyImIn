@@ -87,7 +87,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				if (passwordReset.Used || (passwordReset.Requested - DateTime.UtcNow > _resetTokenValidTimeSpan))
 				{
-					_log.InfoFormat("{0}(resetToken={1:D}): Tried to reset password for user {2} with an expired or used token", nameof(ResetPassword), resetPasswordDto.PasswordResetToken, passwordReset.UserId);
+					_log.InfoFormat("{0}(resetToken={1}): Tried to reset password for user {2} with an expired or used token", nameof(ResetPassword), resetPasswordDto.PasswordResetToken, passwordReset.UserId);
 
 					return BadRequest(RequestStringMessages.ResetCodeAlreadyUsed);
 				}

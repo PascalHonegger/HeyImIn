@@ -216,16 +216,16 @@ namespace HeyImIn.WebApplication.Controllers
 				{
 					_auditLog.InfoFormat("{0}(): The organizer removed the user {1} from the event {2}", nameof(LeaveEvent), userToRemove.Id, @event.Id);
 
-					await _notificationService.NotifyOrganizerUpdatedUserInfoAsync(@event, userToRemove, "Der Organisator hat Sie vom Event entfernt");
+					await _notificationService.NotifyOrganizerUpdatedUserInfoAsync(@event, userToRemove, "Der Organisator hat Sie vom Event entfernt.");
 				}
 				else
 				{
 					_auditLog.InfoFormat("{0}(): Left the event {1}", nameof(LeaveEvent), @event.Id);
 				}
 
-				foreach (AppointmentParticipation appointmentParticipation in appointmentParticipations)
+				foreach (Appointment appointment in appointmentParticipations.Select(a => a.Appointment))
 				{
-					await _notificationService.SendLastMinuteChangeIfRequiredAsync(appointmentParticipation.Appointment);
+					await _notificationService.SendLastMinuteChangeIfRequiredAsync(appointment);
 				}
 
 				return Ok();

@@ -58,6 +58,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Authentication\Authentication.csproj">
+      <Project>{325499A7-9468-4642-A1B0-B50AD0C09A7A}</Project>
+      <Name>Authentication</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Database\Database.csproj">
       <Project>{ACBF91A9-1546-4A2E-8194-FF5BC052573C}</Project>
       <Name>Database</Name>

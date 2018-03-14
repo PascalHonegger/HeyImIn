@@ -35,22 +35,24 @@ namespace HeyImIn.MailNotifier
 		Task NotifyOrganizerUpdatedUserInfoAsync(Event @event, User affectedUser, string change);
 
 		/// <summary>
+		///     Sends a reminder to all users who haven't received one yet
+		///     Updates the appointment object -> Execute save() after this method was called
+		/// </summary>
+		/// <param name="appointment">Only users who accepted this appointment will get reminders</param>
+		Task SendAndUpdateRemindersAsync(Appointment appointment);
+
+		/// <summary>
 		///     Sends a summary to all users who haven't recieved one yet
+		///     Updates the appointment object -> Execute save() after this method was called
 		/// </summary>
 		/// <param name="appointment">Appointment for which to send summaries</param>
-		Task SendSummaryIfRequiredAsync(Appointment appointment);
+		Task SendAndUpdateSummariesAsync(Appointment appointment);
 
 		/// <summary>
 		///     Sends an updated summary to all users who have already received a summary
 		/// </summary>
 		/// <param name="appointment">Only users who accepted this appointment will get updated summaries</param>
 		Task SendLastMinuteChangeIfRequiredAsync(Appointment appointment);
-
-		/// <summary>
-		///     Sends a reminder to all users who haven't received one yet
-		/// </summary>
-		/// <param name="appointment">Only users who accepted this appointment will get reminders</param>
-		Task SendReminderIfRequiredAsync(Appointment appointment);
 
 		/// <summary>
 		///     Sends a notification that a specific appointment got canceled

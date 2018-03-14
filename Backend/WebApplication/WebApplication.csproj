@@ -168,7 +168,6 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\CurrentUserNotFoundException.cs" />
-    <Compile Include="Helpers\DateTimeExtensions.cs" />
     <Compile Include="Helpers\HttpActionExtensions.cs" />
     <Compile Include="Helpers\RequestStringMessages.cs" />
     <Compile Include="Services\Impl\CronSendNotificationsService.cs" />

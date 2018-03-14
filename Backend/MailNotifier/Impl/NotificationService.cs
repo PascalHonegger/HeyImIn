@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using HeyImIn.Authentication;
 using HeyImIn.Database.Models;
 using log4net;
 
@@ -9,10 +11,22 @@ namespace HeyImIn.MailNotifier.Impl
 {
 	public class NotificationService : INotificationService
 	{
-		public NotificationService(IMailSender mailSender, string baseWebUrl)
+		public NotificationService(IMailSender mailSender, ISessionService sessionService, string baseWebUrl, string mailTimeZoneName)
 		{
 			_mailSender = mailSender;
+			_sessionService = sessionService;
 			_baseWebUrl = baseWebUrl;
+
+			try
+			{
+				_mailTimeZone = TimeZoneInfo.FindSystemTimeZoneById(mailTimeZoneName);
+			}
+			catch (Exception e)
+			{
+				_log.ErrorFormat("{0}(): Configured time zone '{1}' was not valid, error={2}", nameof(NotificationService), mailTimeZoneName, e);
+
+				_mailTimeZone = TimeZoneInfo.Utc;
+			}
 		}
 
 		public async Task SendPasswordResetTokenAsync(Guid token, User recipient)
@@ -37,11 +51,13 @@ Sie können diesen Code unter {_baseWebUrl}ResetPassword eingeben und Ihr Passwo
 
 			foreach ((User user, EventInvitation invite) in userInvitations)
 			{
+				string authTokenSuffix = await CreateAuthTokenSuffixAsync(user);
+
 				string personalizedMessage = $@"Hallo {user.FullName}
 
-Sie wurden von {invite.Event.Organizer.FullName} zum Event ""{invite.Event.Title}"" eingeladen.
+Sie wurden von {invite.Event.Organizer.FullName} zum Event '{invite.Event.Title}' eingeladen.
 
-Sie können diese Einladung unter {_baseWebUrl}AcceptInvitation/{invite.Token} annehmen.";
+Sie können diese Einladung unter {_baseWebUrl}AcceptInvitation/{invite.Token}{authTokenSuffix} annehmen.";
 
 
 				await _mailSender.SendMailAsync(user.Email, EventInviteSubject, personalizedMessage);
@@ -51,7 +67,7 @@ Sie können diese Einladung unter {_baseWebUrl}AcceptInvitation/{invite.Token} a
 			{
 				string generalizedMessage = $@"Hallo
 
-Sie wurden von {invite.Event.Organizer.FullName} zum Event ""{invite.Event.Title}"" eingeladen.
+Sie wurden von {invite.Event.Organizer.FullName} zum Event '{invite.Event.Title}' eingeladen.
 
 Sie können diese Einladung unter {_baseWebUrl}AcceptInvitation/{invite.Token} annehmen.";
 
@@ -59,49 +75,207 @@ Sie können diese Einladung unter {_baseWebUrl}AcceptInvitation/{invite.Token} a
 				await _mailSender.SendMailAsync(email, EventInviteSubject, generalizedMessage);
 			}
 
-			_log.InfoFormat("{0}(): Sent {1} invites", nameof(SendPasswordResetTokenAsync), userInvitations.Count + newInvitations.Count);
+			_log.InfoFormat("{0}(): Sent {1} invites", nameof(SendInvitationLinkAsync), userInvitations.Count + newInvitations.Count);
 		}
 
-		public Task NotifyOrganizerUpdatedUserInfoAsync(Event @event, User affectedUser, string change)
+		public async Task NotifyOrganizerUpdatedUserInfoAsync(Event @event, User affectedUser, string change)
 		{
-			throw new NotImplementedException();
+			const string OrganizerUpdatedUserSubject = "Ein Organisator hat Änderungen für Sie vorgenommen";
+
+			string authTokenSuffix = await CreateAuthTokenSuffixAsync(affectedUser);
+
+			string message = $@"Hallo {affectedUser.FullName}
+
+{@event.Organizer.FullName}, der Organisator des Events '{@event.Title}', hat folgende Änderungen für Sie vorgenommen:
+
+{change}
+
+Sie können den betroffenen Event unter {_baseWebUrl}ViewEvent/{@event.Id}{authTokenSuffix} ansehen.";
+
+
+			await _mailSender.SendMailAsync(affectedUser.Email, OrganizerUpdatedUserSubject, message);
+
+			_log.InfoFormat("{0}(): Sent notification as a organizer of event {1} changed something about the user {2}", nameof(NotifyOrganizerUpdatedUserInfoAsync), @event.Id, affectedUser.Id);
 		}
 
-		public Task SendSummaryIfRequiredAsync(Appointment appointment)
+		public async Task SendAndUpdateRemindersAsync(Appointment appointment)
 		{
-			throw new NotImplementedException();
-		}
+			DateTime startTime = TargetTimeZone(appointment.StartTime);
 
-		public Task SendLastMinuteChangeIfRequiredAsync(Appointment appointment)
-		{
-			TimeSpan summaryTimeSpan = TimeSpan.FromHours(appointment.Event.SummaryTimeWindowInHours);
+			string reminderSubject = $"Reminder Event '{appointment.Event.Title}' zum Termin am {startTime:g}";
 
-			if ((appointment.StartTime >= DateTime.UtcNow) && (appointment.StartTime - summaryTimeSpan <= DateTime.UtcNow))
+			List<AppointmentParticipation> participationsAwaitingReminder = appointment.AppointmentParticipations.Where(p => !p.SentReminder).ToList();
+
+			foreach (AppointmentParticipation participation in participationsAwaitingReminder)
 			{
-				// Send
+				string authTokenSuffix = await CreateAuthTokenSuffixAsync(participation.Participant);
+
+				string message = $@"Hallo {participation.Participant.FullName}
+
+Sie haben dem Termin am {startTime:g} zum Event '{appointment.Event.Title}' zugesagt.
+
+Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{appointment.Event.Id}{authTokenSuffix} ansehen.";
+
+
+				await _mailSender.SendMailAsync(participation.Participant.Email, reminderSubject, message);
 			}
 
-			throw new NotImplementedException();
+			_log.InfoFormat("{0}(): Sent {1} reminders for appointment {2}", nameof(SendAndUpdateRemindersAsync), participationsAwaitingReminder.Count, appointment.Id);
 		}
 
-		public Task SendReminderIfRequiredAsync(Appointment appointment)
+		public async Task SendAndUpdateSummariesAsync(Appointment appointment)
 		{
-			throw new NotImplementedException();
+			DateTime startTime = TargetTimeZone(appointment.StartTime);
+
+			string summarySubject = $"Zusammenfassung Event '{appointment.Event.Title}' zum Termin am {startTime:g}";
+
+			string participants = ParticipationsList(appointment.AppointmentParticipations);
+
+			string messageBody = $@"Die Teilnehmer treffen sich am {startTime:g} am Treffpunkt '{appointment.Event.MeetingPlace}'
+
+Die finale Teilnehmerliste:
+{participants}";
+
+			List<AppointmentParticipation> participationsAwaitingSummary = appointment.AppointmentParticipations.Where(p => !p.SentSummary).ToList();
+
+			foreach (AppointmentParticipation participation in participationsAwaitingSummary)
+			{
+				string authTokenSuffix = await CreateAuthTokenSuffixAsync(participation.Participant);
+
+				string message = $@"Hallo {participation.Participant.FullName}
+
+{messageBody}
+
+Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{appointment.Event.Id}{authTokenSuffix} ansehen.";
+
+
+				await _mailSender.SendMailAsync(participation.Participant.Email, summarySubject, message);
+			}
+
+			_log.InfoFormat("{0}(): Sent {1} summaries for appointment {2}", nameof(SendAndUpdateSummariesAsync), participationsAwaitingSummary.Count, appointment.Id);
 		}
 
-		public Task NotifyAppointmentExplicitlyCanceledAsync(Appointment appointment)
+		public async Task SendLastMinuteChangeIfRequiredAsync(Appointment appointment)
 		{
-			throw new NotImplementedException();
+			if (appointment.StartTime <= DateTime.UtcNow)
+			{
+				return;
+			}
+
+			DateTime startTime = TargetTimeZone(appointment.StartTime);
+
+			string lastMinuteChangeSubject = $"Kurzfristige Änderung zum Termin am {startTime:g}";
+
+			string participants = ParticipationsList(appointment.AppointmentParticipations);
+
+			string messageBody = $@"Die Teilnehmer des Events '{appointment.Event.Title}' haben sich geändert. Die aktualisierte Teilnehmerliste:
+{participants}";
+
+			List<AppointmentParticipation> participationsAwaitingSummary = appointment.AppointmentParticipations.Where(p => !p.SentSummary).ToList();
+
+			foreach (AppointmentParticipation participation in participationsAwaitingSummary)
+			{
+				string authTokenSuffix = await CreateAuthTokenSuffixAsync(participation.Participant);
+
+				string message = $@"Hallo {participation.Participant.FullName}
+
+{messageBody}
+
+Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{appointment.Event.Id}{authTokenSuffix} ansehen.";
+
+
+				await _mailSender.SendMailAsync(participation.Participant.Email, lastMinuteChangeSubject, message);
+			}
+
+			_log.InfoFormat("{0}(): Sent {1} summaries for appointment {2}", nameof(SendAndUpdateSummariesAsync), participationsAwaitingSummary.Count, appointment.Id);
 		}
 
-		public Task NotifyEventDeletedAsync(Event @event)
+		public async Task NotifyAppointmentExplicitlyCanceledAsync(Appointment appointment)
 		{
-			throw new NotImplementedException();
+			DateTime startTime = TargetTimeZone(appointment.StartTime);
+
+			string summarySubject = $"Termin am {startTime:g} zum Event '{appointment.Event.Title}' abgesagt";
+
+			string messageBody = $"Sie haben dem Termin ({startTime:g}) zugesagt, welcher vom Organisator abgesagt wurde.";
+
+			List<AppointmentParticipation> acceptedParticipations = appointment.AppointmentParticipations.Where(p => p.AppointmentParticipationAnswer == AppointmentParticipationAnswer.Accepted).ToList();
+
+			foreach (AppointmentParticipation participation in acceptedParticipations)
+			{
+				string authTokenSuffix = await CreateAuthTokenSuffixAsync(participation.Participant);
+
+				string message = $@"Hallo {participation.Participant.FullName}
+
+{messageBody}
+
+Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{appointment.Event.Id}{authTokenSuffix} ansehen.";
+
+
+				await _mailSender.SendMailAsync(participation.Participant.Email, summarySubject, message);
+			}
+
+			_log.InfoFormat("{0}(): Sent {1} notifications about cancelation of appointment {2}", nameof(SendAndUpdateSummariesAsync), acceptedParticipations.Count, appointment.Id);
 		}
 
-		public Task NotifyEventUpdatedAsync(Event @event)
+		public async Task NotifyEventDeletedAsync(Event @event)
 		{
-			throw new NotImplementedException();
+			string deletedSubject = $"Der Event '{@event.Title}' wurde gelöscht";
+
+			string messageBody = $"Der Event '{@event.Title}', an welchem Sie teilgenommen haben, wurde zusammen mit allen Terminen gelöscht.";
+
+			foreach (EventParticipation participation in @event.EventParticipations)
+			{
+				string message = $@"Hallo {participation.Participant.FullName}
+
+{messageBody}";
+
+
+				await _mailSender.SendMailAsync(participation.Participant.Email, deletedSubject, message);
+			}
+
+			_log.InfoFormat("{0}(): Sent {1} notifications about the deletion of the event {2}", nameof(NotifyEventDeletedAsync), @event.EventParticipations.Count, @event.Id);
+		}
+
+		public async Task NotifyEventUpdatedAsync(Event @event)
+		{
+			string updatedSubject = $"Der Event '{@event.Title}' wurde editiert";
+
+			string messageBody = $"Die Informationen zum Event '{@event.Title}', an welchem Sie teilnehmen, wurden aktualisiert.";
+
+			foreach (EventParticipation participation in @event.EventParticipations)
+			{
+				string authTokenSuffix = await CreateAuthTokenSuffixAsync(participation.Participant);
+
+				string message = $@"Hallo {participation.Participant.FullName}
+
+{messageBody}
+
+Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{@event.Id}{authTokenSuffix} ansehen.";
+
+
+				await _mailSender.SendMailAsync(participation.Participant.Email, updatedSubject, message);
+			}
+
+			_log.InfoFormat("{0}(): Sent {1} notifications about a change of the event {2}", nameof(NotifyEventUpdatedAsync), @event.EventParticipations.Count, @event.Id);
+		}
+
+		private async Task<string> CreateAuthTokenSuffixAsync(User user)
+		{
+			Guid createdSessionToken = await _sessionService.CreateSessionAsync(user.Id, false);
+
+			return $"?authToken={createdSessionToken}";
+		}
+
+		private DateTime TargetTimeZone(DateTime utcDateTime)
+		{
+			return TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, _mailTimeZone);
+		}
+
+		private static string ParticipationsList(IEnumerable<AppointmentParticipation> allParticipations)
+		{
+			return string.Join(Environment.NewLine, allParticipations
+				.Where(a => a.AppointmentParticipationAnswer == AppointmentParticipationAnswer.Accepted)
+				.Select(a => a.Participant.FullName));
 		}
 
 		private readonly IMailSender _mailSender;
@@ -111,6 +285,9 @@ Sie können diese Einladung unter {_baseWebUrl}AcceptInvitation/{invite.Token} a
 		/// </summary>
 		private readonly string _baseWebUrl;
 
+		private readonly ISessionService _sessionService;
+
 		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+		private readonly TimeZoneInfo _mailTimeZone;
 	}
 }

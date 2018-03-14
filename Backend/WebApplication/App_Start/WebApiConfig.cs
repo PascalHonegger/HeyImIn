@@ -89,6 +89,7 @@ namespace HeyImIn.WebApplication
 
 			// Other configuration values
 			string baseWebUrl = WebConfigurationManager.AppSettings["FrontendBaseUrl"];
+			string mailTimeZoneName = WebConfigurationManager.AppSettings["MailTimeZoneName"];
 
 			if (!int.TryParse(WebConfigurationManager.AppSettings["PasswordHashWorkFactor"], out int workFactor))
 			{
@@ -99,10 +100,10 @@ namespace HeyImIn.WebApplication
 			}
 
 			// Register custom types
-			builder.Register(c => new HeyImInDatabaseContext(connectionString)).As<IDatabaseContext>();
+			builder.Register(c => new HeyImInDatabaseContext(connectionString)).As<IDatabaseContext>().InstancePerDependency();
 			builder.Register(c => new SendGridClient(sendGridApiKey)).As<ISendGridClient>();
 			builder.Register(c => new PasswordService(workFactor)).As<IPasswordService>();
-			builder.Register(c => new NotificationService(c.Resolve<IMailSender>(), baseWebUrl)).As<INotificationService>();
+			builder.Register(c => new NotificationService(c.Resolve<IMailSender>(), c.Resolve<ISessionService>(), baseWebUrl, mailTimeZoneName)).As<INotificationService>();
 			builder.RegisterTypes(typeof(CronSendNotificationsService)).As<ICronService>(); // Add future cron services here
 
 			// Register WebApi controllers & attributes
