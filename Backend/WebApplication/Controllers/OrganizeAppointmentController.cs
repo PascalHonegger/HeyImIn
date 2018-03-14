@@ -59,8 +59,8 @@ namespace HeyImIn.WebApplication.Controllers
 
 				// Appointment itself
 				List<AppointmentParticipation> participations = appointment.AppointmentParticipations.ToList();
-				context.Appointments.Remove(appointment);
 				context.AppointmentParticipations.RemoveRange(participations);
+				context.Appointments.Remove(appointment);
 
 				await context.SaveChangesAsync();
 

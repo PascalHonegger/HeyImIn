@@ -62,9 +62,6 @@ namespace HeyImIn.WebApplication.Controllers
 					return BadRequest(RequestStringMessages.OrganizorRequired);
 				}
 
-				// Event itself
-				context.Events.Remove(@event);
-
 				// Participations for the event
 				context.EventParticipations.RemoveRange(@event.EventParticipations);
 
@@ -75,6 +72,9 @@ namespace HeyImIn.WebApplication.Controllers
 
 				// Invitations to the event
 				context.EventInvitations.RemoveRange(@event.EventInvitations);
+
+				// Event itself
+				context.Events.Remove(@event);
 
 				await context.SaveChangesAsync();
 

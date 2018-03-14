@@ -8,6 +8,7 @@ import { AuthenticatedLayoutComponent } from './authenticated/authenticated-layo
 import { AnonymousLayoutComponent } from './anonymous/anonymous-layout/anonymous-layout.component';
 import { RegisterComponent } from './anonymous/register/register.component';
 import { ResetPasswordComponent } from './anonymous/reset-password/reset-password.component';
+import { ProfileComponent } from './authenticated/profile/profile.component';
 
 export const ROUTES: Routes = [
 	{
@@ -17,7 +18,7 @@ export const ROUTES: Routes = [
 		children: [
 			// TODO Use real components
 			{ path: '', redirectTo: 'Events', pathMatch: 'full' },
-			{ path: 'Profile', component: HomeComponent },
+			{ path: 'Profile', component: ProfileComponent },
 			{ path: 'Events', component: HomeComponent },
 			{ path: 'CreateEvent', component: HomeComponent },
 			{ path: 'EditEvent/:id', component: HomeComponent },
