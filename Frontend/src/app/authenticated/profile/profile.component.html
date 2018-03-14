@@ -1,0 +1,63 @@
+<div class="profile-container" fxLayout="column" fxLayoutAlign="start center" fxLayoutGap="25px">
+	<form [formGroup]="userDataForm">
+		<mat-card>
+			<mat-card-header>
+				<mat-card-title>Persönliche Daten</mat-card-title>
+			</mat-card-header>
+			<mat-card-content>
+				<div fxLayout="column" fxLayoutAlign="start center" fxLayoutGap="20px">
+					<mat-form-field>
+						<input matInput placeholder="Vollständiger Name" formControlName="nameCtrl" required autocomplete="email">
+						<mat-error *ngIf="	userDataForm.hasError('required', 'nameCtrl') ||
+											userDataForm.hasError('maxlength', 'nameCtrl')">
+							Bitte geben Sie einen Namen mit maximal 40 Zeichen ein
+						</mat-error>
+					</mat-form-field>
+					<mat-form-field>
+						<input matInput placeholder="E-Mail-Adresse" formControlName="mailCtrl" required autocomplete="email">
+						<mat-error *ngIf="	userDataForm.hasError('required', 'mailCtrl') ||
+											userDataForm.hasError('email', 'mailCtrl') ||
+											userDataForm.hasError('maxlength', 'mailCtrl')">
+							Bitte geben Sie eine gültige E-Mail-Adresse mit maximal 40 Zeichen ein
+						</mat-error>
+					</mat-form-field>
+				</div>
+			</mat-card-content>
+			<mat-card-actions>
+				<button mat-raised-button [disabled]="userDataForm.pristine || !userDataForm.valid" (click)="setUserData()" color="primary" type="submit">
+					Speichern
+				</button>
+			</mat-card-actions>
+		</mat-card>
+	</form>
+	<form [formGroup]="passwordForm">
+		<mat-card>
+			<mat-card-header>
+				<mat-card-title>Persönliche Daten</mat-card-title>
+			</mat-card-header>
+			<mat-card-content>
+				<div fxLayout="column" fxLayoutAlign="start center" fxLayoutGap="20px">
+					<mat-form-field>
+						<input matInput placeholder="Jetziges Passwort" formControlName="currentPasswordCtrl" required type="password" autocomplete="current-password">
+						<mat-error *ngIf="passwordForm.hasError('required', 'currentPasswordCtrl')">
+							Bitte geben Sie Ihr jetziges Passwort ein
+						</mat-error>
+					</mat-form-field>
+					<mat-form-field>
+						<input matInput placeholder="Neues Passwort" formControlName="newPasswordCtrl" required type="password" autocomplete="new-password">
+						<mat-error *ngIf="passwordForm.hasError('required', 'newPasswordCtrl')">
+							Bitte geben Sie Ihr neues Passwort ein
+						</mat-error>
+					</mat-form-field>
+				</div>
+			</mat-card-content>
+			<mat-card-actions>
+				<button mat-raised-button [disabled]="userDataForm.pristine || !userDataForm.valid" (click)="setUserData()" color="primary" type="submit">
+					Speichern
+				</button>
+			</mat-card-actions>
+		</mat-card>
+	</form>
+	<button mat-raised-button (click)="logOut()">Abmelden</button>
+	<button mat-raised-button color="warn" (click)="deleteProfile()">Profil löschen</button>
+</div>

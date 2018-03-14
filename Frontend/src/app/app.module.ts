@@ -31,15 +31,21 @@ import { HomeComponent } from './authenticated/home/home.component';
 import { LoginComponent } from './anonymous/login/login.component';
 import { RegisterComponent } from './anonymous/register/register.component';
 import { ResetPasswordComponent } from './anonymous/reset-password/reset-password.component';
+import { ProfileComponent } from './authenticated/profile/profile.component';
 
 // Dialog contents
 import { ErrorDialogComponent } from './shared/error-dialog/error-dialog.component';
 import { LoadingDialogComponent } from './shared/loading-dialog/loading-dialog.component';
+import { AreYouSureDialogComponent } from './shared/are-you-sure-dialog/are-you-sure-dialog.component';
 
 // 404 not found page
 import { NoContentComponent } from './shared/no-content/no-content.component';
 
 // Backend clients
+import { OrganizeEventClient } from './shared/backend-clients/organize-event.client';
+import { ParticipateEventClient } from './shared/backend-clients/participate-event.client';
+import { OrganizeAppointmentClient } from './shared/backend-clients/organize-appointment.client';
+import { InviteToEventClient } from './shared/backend-clients/invite-to-event.client';
 import { UserClient } from './shared/backend-clients/user.client';
 import { SessionClient } from './shared/backend-clients/session.client';
 import { ResetPasswordClient } from './shared/backend-clients/reset-password.client';
@@ -84,6 +90,7 @@ import '../styles/styles.scss';
 		NavigationToolbarComponent,
 		ErrorDialogComponent,
 		LoadingDialogComponent,
+		AreYouSureDialogComponent,
 		NoContentComponent,
 		// Anonymous
 		AnonymousLayoutComponent,
@@ -92,12 +99,14 @@ import '../styles/styles.scss';
 		ResetPasswordComponent,
 		// Authenticated
 		AuthenticatedLayoutComponent,
-		HomeComponent
+		HomeComponent,
+		ProfileComponent
 	],
 	// Dialog contents have to be specified here
 	entryComponents: [
 		ErrorDialogComponent,
-		LoadingDialogComponent
+		LoadingDialogComponent,
+		AreYouSureDialogComponent
 	],
 	/**
 	 * Import Angular's modules.
@@ -138,6 +147,10 @@ import '../styles/styles.scss';
 		// Services
 		AuthService,
 		// Backend clients
+		InviteToEventClient,
+		OrganizeAppointmentClient,
+		OrganizeEventClient,
+		ParticipateEventClient,
 		SessionClient,
 		ResetPasswordClient,
 		UserClient,

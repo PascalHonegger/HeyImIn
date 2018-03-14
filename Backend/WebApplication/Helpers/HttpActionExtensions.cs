@@ -29,7 +29,7 @@ namespace HeyImIn.WebApplication.Helpers
 		}
 		public static void SetSessionToken(this HttpRequestMessage requestMessage, Guid sessionToken)
 		{
-			requestMessage.Properties[UserIdPropertiesKey] = sessionToken;
+			requestMessage.Properties[SessionTokenPropertiesKey] = sessionToken;
 		}
 
 		// Wrapper for UserId property

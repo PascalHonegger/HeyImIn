@@ -48,6 +48,16 @@ namespace HeyImIn.WebApplication.Controllers
 			{
 				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
 
+				if (currentUser.Email != setUserDataDto.NewEmail)
+				{
+					bool newMailTaken = await context.Users.AnyAsync(u => u.Email == setUserDataDto.NewEmail);
+					if (newMailTaken)
+					{
+						return BadRequest(RequestStringMessages.EmailAlreadyInUse);
+					}
+				}
+
+
 				currentUser.Email = setUserDataDto.NewEmail;
 				currentUser.FullName = setUserDataDto.NewFullName;
 
@@ -109,16 +119,12 @@ namespace HeyImIn.WebApplication.Controllers
 			{
 				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
 
-				// User himself
-				context.Users.Remove(currentUser);
-
 				// Token based relations
 				context.Sessions.RemoveRange(currentUser.Sessions);
 				context.PasswordResets.RemoveRange(currentUser.PasswordResets);
 
 				// Events the user is part of
-				List<EventParticipation> userEventParticipations = currentUser.EventParticipations.ToList();
-				context.EventParticipations.RemoveRange(userEventParticipations);
+				context.EventParticipations.RemoveRange(currentUser.EventParticipations);
 
 				// Appointments the user is part of
 				List<AppointmentParticipation> userAppointmentParticipations = currentUser.AppointmentParticipations.ToList();
@@ -130,11 +136,14 @@ namespace HeyImIn.WebApplication.Controllers
 				List<EventInvitation> organizedInvitations = organizedEvents.SelectMany(o => o.EventInvitations).ToList();
 				List<Appointment> organizedAppointments = organizedEvents.SelectMany(o => o.Appointments).ToList();
 				List<AppointmentParticipation> organizedAppointmentParticipations = organizedAppointments.SelectMany(o => o.AppointmentParticipations).ToList();
-				context.Events.RemoveRange(organizedEvents);
 				context.EventParticipations.RemoveRange(organizedParticipations);
 				context.EventInvitations.RemoveRange(organizedInvitations);
 				context.Appointments.RemoveRange(organizedAppointments);
 				context.AppointmentParticipations.RemoveRange(organizedAppointmentParticipations);
+				context.Events.RemoveRange(organizedEvents);
+
+				// User himself
+				context.Users.Remove(currentUser);
 
 				await context.SaveChangesAsync();
 
