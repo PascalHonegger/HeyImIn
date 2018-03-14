@@ -1,0 +1,16 @@
+<div fxLayout="column" fxLayoutGap="25px">
+	<h2 class="mat-display-1">Neuen Event erstellen</h2>
+	<mat-card>
+		<mat-card-header>
+			<mat-card-title>Details zum Event</mat-card-title>
+		</mat-card-header>
+		<mat-card-content>
+			<edit-general-event-info #eventInfoEdit [eventInfo]="defaultEventInfo"></edit-general-event-info>
+		</mat-card-content>
+		<mat-card-actions>
+			<button mat-raised-button [disabled]="!eventInfoEdit.formValid" (click)="createEvent(eventInfoEdit.updatedEventInfo)" color="primary" type="button">
+				Erstellen
+			</button>
+		</mat-card-actions>
+	</mat-card>
+</div>
