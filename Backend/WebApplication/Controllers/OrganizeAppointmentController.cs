@@ -190,7 +190,7 @@ namespace HeyImIn.WebApplication.Controllers
 				}
 
 				// Ensure a user can't participate in a private event without an invitation
-				if (!userIsPartOfEvent && appointment.Event.IsPrivate)
+				if (!userIsPartOfEvent && appointment.Event.IsPrivate && (appointment.Event.Organizer != currentUser))
 				{
 					return BadRequest(RequestStringMessages.InvitationRequired);
 				}

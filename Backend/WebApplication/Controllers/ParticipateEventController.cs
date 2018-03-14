@@ -88,7 +88,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				ViewEventInformation viewEventInformation = ViewEventInformation.FromEvent(@event, currentUser);
 
-				if (!viewEventInformation.CurrentUserDoesParticipate && @event.IsPrivate)
+				if (!viewEventInformation.CurrentUserDoesParticipate && @event.IsPrivate && (@event.Organizer != currentUser))
 				{
 					return BadRequest(RequestStringMessages.InvitationRequired);
 				}
@@ -117,7 +117,7 @@ namespace HeyImIn.WebApplication.Controllers
 		}
 
 		/// <summary>
-		///     Explizitly adds the current user to an event
+		///     Explicitly adds the current user to an event
 		/// </summary>
 		/// <param name="joinEventDto">
 		///     <see cref="Event.Id" />
@@ -141,12 +141,12 @@ namespace HeyImIn.WebApplication.Controllers
 					return BadRequest(RequestStringMessages.EventNotFound);
 				}
 
-				if (@event.IsPrivate)
+				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
+
+				if (@event.IsPrivate && (@event.Organizer != currentUser))
 				{
 					return BadRequest(RequestStringMessages.InvitationRequired);
 				}
-
-				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
 
 				EventParticipation eventParticipation = context.EventParticipations.Create();
 				eventParticipation.Event = @event;
@@ -154,9 +154,9 @@ namespace HeyImIn.WebApplication.Controllers
 
 				context.EventParticipations.Add(eventParticipation);
 
-				_auditLog.InfoFormat("{0}(): Joined event {1}", nameof(JoinEvent), @event.Id);
-
 				await context.SaveChangesAsync();
+
+				_auditLog.InfoFormat("{0}(): Joined event {1}", nameof(JoinEvent), @event.Id);
 
 				return Ok();
 			}
