@@ -4,14 +4,17 @@ namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
 {
 	public class FrontendSession
 	{
-		public FrontendSession(Guid token, string fullName, string email)
+		public FrontendSession(Guid token, int userId, string fullName, string email)
 		{
 			Token = token;
+			UserId = userId;
 			FullName = fullName;
 			Email = email;
 		}
 
 		public Guid Token { get; }
+
+		public int UserId { get; }
 
 		public string FullName { get; }
 

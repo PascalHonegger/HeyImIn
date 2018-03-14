@@ -46,7 +46,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 			_auditLog.InfoFormat("{0}(userId={1}): User logged in", nameof(StartSession), foundUser.Id);
 
-			return Ok(new FrontendSession(sessionToken, foundUser.FullName, foundUser.Email));
+			return Ok(new FrontendSession(sessionToken, foundUser.Id, foundUser.FullName, foundUser.Email));
 		}
 
 		/// <summary>
@@ -66,7 +66,7 @@ namespace HeyImIn.WebApplication.Controllers
 				return Unauthorized();
 			}
 
-			return Ok(new FrontendSession(session.Token, session.User.FullName, session.User.Email));
+			return Ok(new FrontendSession(session.Token, session.UserId, session.User.FullName, session.User.Email));
 		}
 
 		/// <summary>

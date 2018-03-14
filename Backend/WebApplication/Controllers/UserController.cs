@@ -200,7 +200,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				Guid createdSessionToken = await _sessionService.CreateSessionAsync(newUser.Id, true);
 
-				return Ok(new FrontendSession(createdSessionToken, registerDto.FullName, registerDto.Email));
+				return Ok(new FrontendSession(createdSessionToken, newUser.Id, registerDto.FullName, registerDto.Email));
 			}
 		}
 
