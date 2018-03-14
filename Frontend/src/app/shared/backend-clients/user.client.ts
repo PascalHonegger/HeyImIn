@@ -19,7 +19,7 @@ export class UserClient extends ServerClientBase {
 	}
 
 	public deleteAccount() {
-		return this.httpClient.post<void>(this.baseUrl + '/Register', null);
+		return this.httpClient.delete<void>(this.baseUrl + '/DeleteAccount');
 	}
 
 	public register(fullName: string, email: string, password: string) {

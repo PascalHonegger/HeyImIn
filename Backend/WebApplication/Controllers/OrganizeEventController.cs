@@ -9,6 +9,7 @@ using System.Web.Http.Description;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
 using HeyImIn.MailNotifier;
+using HeyImIn.WebApplication.FrontendModels;
 using HeyImIn.WebApplication.FrontendModels.ParameterTypes;
 using HeyImIn.WebApplication.FrontendModels.ResponseTypes;
 using HeyImIn.WebApplication.Helpers;
@@ -145,10 +146,10 @@ namespace HeyImIn.WebApplication.Controllers
 		/// </returns>
 		[HttpPost]
 		[ResponseType(typeof(int))]
-		public async Task<IHttpActionResult> CreateEvent([FromBody] EventInfoDto eventInfoDto)
+		public async Task<IHttpActionResult> CreateEvent([FromBody] GeneralEventInformation generalEventInformation)
 		{
 			// Validate parameters
-			if (!ModelState.IsValid || (eventInfoDto == null))
+			if (!ModelState.IsValid || (generalEventInformation == null))
 			{
 				return BadRequest();
 			}
@@ -157,12 +158,12 @@ namespace HeyImIn.WebApplication.Controllers
 			{
 				Event newEvent = context.Events.Create();
 
-				newEvent.Title = eventInfoDto.Title;
-				newEvent.Description = eventInfoDto.Description;
-				newEvent.MeetingPlace = eventInfoDto.MeetingPlace;
-				newEvent.IsPrivate = eventInfoDto.IsPrivate;
-				newEvent.ReminderTimeWindowInHours = eventInfoDto.ReminderTimeWindowInHours;
-				newEvent.SummaryTimeWindowInHours = eventInfoDto.SummaryTimeWindowInHours;
+				newEvent.Title = generalEventInformation.Title;
+				newEvent.Description = generalEventInformation.Description;
+				newEvent.MeetingPlace = generalEventInformation.MeetingPlace;
+				newEvent.IsPrivate = generalEventInformation.IsPrivate;
+				newEvent.ReminderTimeWindowInHours = generalEventInformation.ReminderTimeWindowInHours;
+				newEvent.SummaryTimeWindowInHours = generalEventInformation.SummaryTimeWindowInHours;
 
 				context.Events.Add(newEvent);
 
@@ -212,9 +213,9 @@ namespace HeyImIn.WebApplication.Controllers
 
 				List<EventParticipantInformation> currentEventParticipation = @event.EventParticipations.Select(EventParticipantInformation.FromParticipation).ToList();
 
-				EventInformation eventInformation = EventInformation.FromEvent(@event, currentUser);
+				ViewEventInformation viewEventInformation = ViewEventInformation.FromEvent(@event, currentUser);
 
-				return Ok(new EditEventDetails(eventInformation, upcomingAppointments, @event.ReminderTimeWindowInHours, @event.SummaryTimeWindowInHours, currentEventParticipation));
+				return Ok(new EditEventDetails(viewEventInformation, upcomingAppointments, currentEventParticipation));
 			}
 		}
 

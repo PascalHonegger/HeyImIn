@@ -131,7 +131,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="FrontendModels\NotificationConfigurationDto.cs" />
     <Compile Include="FrontendModels\ParameterTypes\NotificationConfigurationDto.cs" />
-    <Compile Include="FrontendModels\ParameterTypes\EventInfoDto.cs" />
+    <Compile Include="FrontendModels\GeneralEventInformation.cs" />
     <Compile Include="Services\ICronService.cs" />
     <Compile Include="Controllers\InviteToEventController.cs" />
     <Compile Include="Controllers\OrganizeAppointmentController.cs" />
@@ -145,7 +145,7 @@
     <Compile Include="FrontendModels\ParameterTypes\AcceptInviteDt.cs" />
     <Compile Include="FrontendModels\ParameterTypes\UpdatedEventInfoDto.cs" />
     <Compile Include="FrontendModels\ParameterTypes\SetAppointmentResponseDto.cs" />
-    <Compile Include="FrontendModels\ParameterTypes\LeaveEventDto.cs" />
+    <Compile Include="FrontendModels\ParameterTypes\RemoveFromEventDto.cs" />
     <Compile Include="FrontendModels\ParameterTypes\JoinEventDto.cs" />
     <Compile Include="FrontendModels\ResponseTypes\NotificationConfigurationResponse.cs" />
     <Compile Include="FrontendModels\ResponseTypes\EventParticipantInformation.cs" />
@@ -155,7 +155,7 @@
     <Compile Include="FrontendModels\ResponseTypes\EditEventDetails.cs" />
     <Compile Include="FrontendModels\ResponseTypes\EventOverview.cs" />
     <Compile Include="FrontendModels\ResponseTypes\EventOverviewInformation.cs" />
-    <Compile Include="FrontendModels\ResponseTypes\EventInformation.cs" />
+    <Compile Include="FrontendModels\ResponseTypes\ViewEventInformation.cs" />
     <Compile Include="FrontendModels\ResponseTypes\EventDetails.cs" />
     <Compile Include="FrontendModels\ResponseTypes\FrontendSession.cs" />
     <Compile Include="FrontendModels\ParameterTypes\RegisterDto.cs" />
