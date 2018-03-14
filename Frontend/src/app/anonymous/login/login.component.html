@@ -3,15 +3,15 @@
 		<h2 class="mat-display-1">Anmelden</h2>
 		<mat-form-field>
 			<input matInput placeholder="E-Mail-Adresse" formControlName="mailCtrl" required autocomplete="email">
-			<mat-error *ngIf="	form.hasError('required', 'mailCtrl') ||
-								form.hasError('email', 'mailCtrl') ||
-								form.hasError('maxlength', 'mailCtrl')">
+			<mat-error *ngIf="	form.get('mailCtrl').hasError('required') ||
+								form.get('mailCtrl').hasError('email') ||
+								form.get('mailCtrl').hasError('maxlength')">
 				Bitte geben Sie eine gültige E-Mail-Adresse mit maximal 40 Zeichen ein
 			</mat-error>
 		</mat-form-field>
 		<mat-form-field>
 			<input matInput placeholder="Passwort" formControlName="passwordCtrl" required type="password" autocomplete="current-password">
-			<mat-error *ngIf="form.hasError('required', 'passwordCtrl')">
+			<mat-error *ngIf="form.get('passwordCtrl').hasError('required')">
 				Bitte geben Sie Ihr Passwort ein
 			</mat-error>
 		</mat-form-field>
