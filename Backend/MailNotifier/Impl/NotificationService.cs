@@ -104,7 +104,7 @@ Sie können den betroffenen Event unter {_baseWebUrl}ViewEvent/{@event.Id}{authT
 
 			string reminderSubject = $"Reminder Event '{appointment.Event.Title}' zum Termin am {startTime:g}";
 
-			List<AppointmentParticipation> participationsAwaitingReminder = appointment.AppointmentParticipations.Where(p => !p.SentReminder).ToList();
+			List<AppointmentParticipation> participationsAwaitingReminder = FilterParticipations(appointment.AppointmentParticipations, p => !p.SentReminder, e => e.SendReminderEmail);
 
 			foreach (AppointmentParticipation participation in participationsAwaitingReminder)
 			{
@@ -136,7 +136,7 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{appointment.
 Die finale Teilnehmerliste:
 {participants}";
 
-			List<AppointmentParticipation> participationsAwaitingSummary = appointment.AppointmentParticipations.Where(p => !p.SentSummary).ToList();
+			List<AppointmentParticipation> participationsAwaitingSummary = FilterParticipations(appointment.AppointmentParticipations, p => !p.SentSummary, e => e.SendSummaryEmail);
 
 			foreach (AppointmentParticipation participation in participationsAwaitingSummary)
 			{
@@ -171,7 +171,7 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{appointment.
 			string messageBody = $@"Die Teilnehmer des Events '{appointment.Event.Title}' haben sich geändert. Die aktualisierte Teilnehmerliste:
 {participants}";
 
-			List<AppointmentParticipation> participationsAwaitingSummary = appointment.AppointmentParticipations.Where(p => !p.SentSummary).ToList();
+			List<AppointmentParticipation> participationsAwaitingSummary = FilterParticipations(appointment.AppointmentParticipations, p => p.SentSummary, e => e.SendLastMinuteChangesEmail);
 
 			foreach (AppointmentParticipation participation in participationsAwaitingSummary)
 			{
@@ -259,6 +259,20 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{@event.Id}{a
 			_log.InfoFormat("{0}(): Sent {1} notifications about a change of the event {2}", nameof(NotifyEventUpdatedAsync), @event.EventParticipations.Count, @event.Id);
 		}
 
+		/// <summary>
+		///     Returns all participations which pass the provided filters and were accepted
+		/// </summary>
+		private List<AppointmentParticipation> FilterParticipations(IEnumerable<AppointmentParticipation> participations,
+																	Func<AppointmentParticipation, bool> participationFilter,
+																	Func<EventParticipation, bool> eventFilter)
+		{
+			return participations
+				.Where(p => p.AppointmentParticipationAnswer == AppointmentParticipationAnswer.Accepted)
+				.Where(participationFilter)
+				.Where(p => eventFilter(p.Appointment.Event.EventParticipations.First(e => e.Participant == p.Participant)))
+				.ToList();
+		}
+
 		private async Task<string> CreateAuthTokenSuffixAsync(User user)
 		{
 			Guid createdSessionToken = await _sessionService.CreateSessionAsync(user.Id, false);
@@ -286,8 +300,8 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{@event.Id}{a
 		private readonly string _baseWebUrl;
 
 		private readonly ISessionService _sessionService;
+		private readonly TimeZoneInfo _mailTimeZone;
 
 		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-		private readonly TimeZoneInfo _mailTimeZone;
 	}
 }
