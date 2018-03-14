@@ -28,7 +28,7 @@ namespace HeyImIn.WebApplication.WebApiComponents
 			{
 				// Don't insert the full ID as that could be a security problem
 				// E.g. User who can access the logs could then impersonate any user
-				string semiUniqueId = sessionToken.Value.ToString("D").Substring(0, 16);
+				string semiUniqueId = sessionToken.Value.ToString("D").Substring(0, 8);
 				LogicalThreadContext.Properties[LogHelpers.SessionTokenLogKey] = semiUniqueId;
 			}
 
