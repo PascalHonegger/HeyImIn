@@ -1,6 +1,6 @@
 <ng-container *ngIf="eventDetails; else elseTemplate">
 	<h2 class="mat-display-1">{{eventDetails.information.title}}</h2>
-	<div class="edit-event-container" fxLayout="column" fxLayoutAlign="start center" fxLayoutGap="25px">
+	<div fxLayout="column" fxLayoutAlign="start center" fxLayoutGap="25px">
 		<mat-card>
 			<mat-card-header>
 				<mat-card-title>Details zum Event</mat-card-title>
@@ -12,7 +12,7 @@
 				<button mat-raised-button (click)="deleteEvent()" color="warn" type="button">
 					Löschen
 				</button>
-				<button mat-raised-button [disabled]="!eventInfoEdit.valid" (click)="saveEvent(eventInfoEdit.updatedEventInfo)" color="primary" type="submit">
+				<button mat-raised-button [disabled]="!eventInfoEdit.valid" (click)="saveEvent(eventInfoEdit.updatedEventInfo)" color="primary" type="button">
 					Speichern
 				</button>
 			</mat-card-actions>

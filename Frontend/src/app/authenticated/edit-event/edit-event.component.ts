@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatSnackBar, MatDialog } from '@angular/material';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -20,9 +20,7 @@ import { GeneralEventInfo } from '../../shared/server-model/general-event-info.m
 	styleUrls: ['./edit-event.component.scss'],
 	templateUrl: './edit-event.component.html'
 })
-export class EditEventComponent {
-	public form: FormGroup;
-
+export class EditEventComponent implements OnDestroy {
 	public eventDetails: EditEventDetails;
 
 	private subscription: Subscription;
@@ -51,11 +49,11 @@ export class EditEventComponent {
 					this.subscription = route.params.subscribe(params => this.eventId = +params['id']);
 				}
 
-	public saveEvent(newEventInfo: GeneralEventInfo) {
-		if (!this.form.valid) {
-			return;
-		}
+	public ngOnDestroy() {
+		this.subscription.unsubscribe();
+	}
 
+	public saveEvent(newEventInfo: GeneralEventInfo) {
 		this.organizeEventServer
 			.updateEventInfo(this.eventId, newEventInfo)
 			.subscribe(() => {

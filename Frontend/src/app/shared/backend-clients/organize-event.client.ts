@@ -24,8 +24,8 @@ export class OrganizeEventClient extends ServerClientBase {
 		return this.httpClient.post<void>(this.baseUrl + '/UpdateEventInfo', combinedDto);
 	}
 
-	public createEventInfo(eventInfo: GeneralEventInfo) {
-		return this.httpClient.post<void>(this.baseUrl + '/CreateEventInfo', eventInfo);
+	public createEvent(eventInfo: GeneralEventInfo) {
+		return this.httpClient.post<void>(this.baseUrl + '/CreateEvent', eventInfo);
 	}
 
 	public getEditDetails(eventId: number) {

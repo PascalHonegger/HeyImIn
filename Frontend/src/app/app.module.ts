@@ -32,6 +32,7 @@ import { LoginComponent } from './anonymous/login/login.component';
 import { RegisterComponent } from './anonymous/register/register.component';
 import { ResetPasswordComponent } from './anonymous/reset-password/reset-password.component';
 import { ProfileComponent } from './authenticated/profile/profile.component';
+import { CreateEventComponent } from './authenticated/create-event/create-event.component';
 import { EditEventComponent } from './authenticated/edit-event/edit-event.component';
 
 // Components used by the different sites
@@ -77,7 +78,8 @@ import {
 	MatIconModule,
 	MatTableModule,
 	MatProgressSpinnerModule,
-	MatStepperModule
+	MatStepperModule,
+	MatSlideToggleModule
 } from '@angular/material';
 
 // Import global styles & theme
@@ -105,6 +107,7 @@ import '../styles/styles.scss';
 		AuthenticatedLayoutComponent,
 		HomeComponent,
 		ProfileComponent,
+		CreateEventComponent,
 		EditEventComponent,
 		EditGeneralEventInfoComponent
 	],
@@ -139,6 +142,7 @@ import '../styles/styles.scss';
 		MatIconModule,
 		MatProgressSpinnerModule,
 		MatStepperModule,
+		MatSlideToggleModule,
 		MatTableModule,
 		// Flex layout
 		FlexLayoutModule

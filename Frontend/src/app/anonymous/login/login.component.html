@@ -1,28 +1,26 @@
-<div>
-	<form [formGroup]="form">
-		<div class="login-container" fxLayout="column" fxLayoutAlign="start center" fxLayoutGap="20px">
-			<h2 class="mat-display-1">Anmelden</h2>
-			<mat-form-field>
-				<input matInput placeholder="E-Mail-Adresse" formControlName="mailCtrl" required autocomplete="email">
-				<mat-error *ngIf="	form.hasError('required', 'mailCtrl') ||
-									form.hasError('email', 'mailCtrl') ||
-									form.hasError('maxlength', 'mailCtrl')">
-					Bitte geben Sie eine gültige E-Mail-Adresse mit maximal 40 Zeichen ein
-				</mat-error>
-			</mat-form-field>
-			<mat-form-field>
-				<input matInput placeholder="Passwort" formControlName="passwordCtrl" required type="password" autocomplete="current-password">
-				<mat-error *ngIf="form.hasError('required', 'passwordCtrl')">
-					Bitte geben Sie Ihr Passwort ein
-				</mat-error>
-			</mat-form-field>
+<form [formGroup]="form">
+	<div fxLayout="column" fxLayoutAlign="start center" fxLayoutGap="20px">
+		<h2 class="mat-display-1">Anmelden</h2>
+		<mat-form-field>
+			<input matInput placeholder="E-Mail-Adresse" formControlName="mailCtrl" required autocomplete="email">
+			<mat-error *ngIf="	form.hasError('required', 'mailCtrl') ||
+								form.hasError('email', 'mailCtrl') ||
+								form.hasError('maxlength', 'mailCtrl')">
+				Bitte geben Sie eine gültige E-Mail-Adresse mit maximal 40 Zeichen ein
+			</mat-error>
+		</mat-form-field>
+		<mat-form-field>
+			<input matInput placeholder="Passwort" formControlName="passwordCtrl" required type="password" autocomplete="current-password">
+			<mat-error *ngIf="form.hasError('required', 'passwordCtrl')">
+				Bitte geben Sie Ihr Passwort ein
+			</mat-error>
+		</mat-form-field>
 
-			<button mat-raised-button [disabled]="!form.valid" (click)="login()" color="primary" type="submit">
-				Anmelden
-			</button>
-			<button mat-raised-button routerLink="/ResetPassword" type="button">
-				Passwort vergessen?
-			</button>
-		</div>
-	</form>
-</div>
+		<button mat-raised-button [disabled]="!form.valid" (click)="login()" color="primary" type="submit">
+			Anmelden
+		</button>
+		<button mat-raised-button routerLink="/ResetPassword" type="button">
+			Passwort vergessen?
+		</button>
+	</div>
+</form>

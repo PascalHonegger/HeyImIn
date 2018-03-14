@@ -164,6 +164,7 @@ namespace HeyImIn.WebApplication.Controllers
 				newEvent.IsPrivate = generalEventInformation.IsPrivate;
 				newEvent.ReminderTimeWindowInHours = generalEventInformation.ReminderTimeWindowInHours;
 				newEvent.SummaryTimeWindowInHours = generalEventInformation.SummaryTimeWindowInHours;
+				newEvent.OrganizerId = ActionContext.Request.GetUserId();
 
 				context.Events.Add(newEvent);
 
