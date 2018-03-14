@@ -169,6 +169,8 @@ namespace HeyImIn.WebApplication.Controllers
 
 				bool changingOtherUser = currentUser != userToSetResponseFor;
 
+				bool userIsPartOfEvent = appointment.Event.EventParticipations.Select(e => e.Participant).Contains(userToSetResponseFor);
+
 				if (changingOtherUser)
 				{
 					if (appointment.Event.Organizer != currentUser)
@@ -179,12 +181,18 @@ namespace HeyImIn.WebApplication.Controllers
 						return BadRequest(RequestStringMessages.OrganizorRequired);
 					}
 
-					if (appointment.Event.EventParticipations.Select(e => e.Participant).Contains(userToSetResponseFor))
+					if (!userIsPartOfEvent)
 					{
 						// A organizer shouldn't be able to add a user to the event, unless the user is participating in the event
 						// This should prevent that a user gets added to an event he never had anything to do with
 						return BadRequest(RequestStringMessages.UserNotPartOfEvent);
 					}
+				}
+
+				// Ensure a user can't participate in a private event without an invitation
+				if (!userIsPartOfEvent && appointment.Event.IsPrivate)
+				{
+					return BadRequest(RequestStringMessages.InvitationRequired);
 				}
 
 				AppointmentParticipation appointmentParticipation = appointment.AppointmentParticipations.FirstOrDefault(e => e.Participant == userToSetResponseFor);
