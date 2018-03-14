@@ -1,6 +1,6 @@
 ﻿namespace HeyImIn.WebApplication.FrontendModels.ParameterTypes
 {
-	public class UpdatedEventInfoDto : EventInfoDto
+	public class UpdatedEventInfoDto : GeneralEventInformation
 	{
 		public int EventId { get; set; }
 

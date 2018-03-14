@@ -6,29 +6,32 @@ namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
 {
 	public class EventOverviewInformation
 	{
-		public EventOverviewInformation(EventInformation eventInformation, AppointmentInformation latestAppointmentInformation)
+		public EventOverviewInformation(int eventId, ViewEventInformation viewEventInformation, AppointmentInformation latestAppointmentInformation)
 		{
-			EventInformation = eventInformation;
+			EventId = eventId;
+			ViewEventInformation = viewEventInformation;
 			LatestAppointmentInformation = latestAppointmentInformation;
 		}
 
 		public static EventOverviewInformation FromEvent(Event @event, User currentUser)
 		{
-			EventInformation eventInformation = EventInformation.FromEvent(@event, currentUser);
+			ViewEventInformation viewEventInformation = ViewEventInformation.FromEvent(@event, currentUser);
 
 			Appointment firstUpcomingAppointment = @event.Appointments.FirstOrDefault(a => a.StartTime >= DateTime.UtcNow);
 
 			if (firstUpcomingAppointment == null)
 			{
-				return new EventOverviewInformation(eventInformation, null);
+				return new EventOverviewInformation(@event.Id, viewEventInformation, null);
 			}
 
 			AppointmentInformation appointmentInformation = AppointmentInformation.FromAppointment(firstUpcomingAppointment, currentUser, @event.EventParticipations.Count);
 
-			return new EventOverviewInformation(eventInformation, appointmentInformation);
+			return new EventOverviewInformation(@event.Id, viewEventInformation, appointmentInformation);
 		}
 
-		public EventInformation EventInformation { get; }
+		public int EventId { get; }
+
+		public ViewEventInformation ViewEventInformation { get; }
 
 		public AppointmentInformation LatestAppointmentInformation { get; }
 	}

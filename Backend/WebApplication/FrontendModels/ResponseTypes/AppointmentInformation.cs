@@ -6,9 +6,9 @@ namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
 {
 	public class AppointmentInformation
 	{
-		public AppointmentInformation(int id, DateTime startTime, AppointmentParticipationAnswer? currentResponse, int acceptedParticipants, int declinedParticipants, int notAnsweredParticipants)
+		public AppointmentInformation(int appointmentId, DateTime startTime, AppointmentParticipationAnswer? currentResponse, int acceptedParticipants, int declinedParticipants, int notAnsweredParticipants)
 		{
-			Id = id;
+			AppointmentId = appointmentId;
 			StartTime = startTime;
 			CurrentResponse = currentResponse;
 			AcceptedParticipants = acceptedParticipants;
@@ -28,7 +28,7 @@ namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
 			return appointmentInformation;
 		}
 
-		public int Id { get; }
+		public int AppointmentId { get; }
 
 		public DateTime StartTime { get; }
 

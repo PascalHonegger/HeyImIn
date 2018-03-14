@@ -41,6 +41,7 @@ namespace HeyImIn.WebApplication.Controllers
 			{
 				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
 
+				// TODO Load relations for better performance
 				List<Event> participatingEvents = currentUser.EventParticipations.Select(e => e.Event).ToList();
 				List<Event> publicEvents = await context.Events.Where(e => !e.IsPrivate).Except(participatingEvents).ToListAsync();
 
@@ -96,7 +97,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				EventParticipation currentEventParticipation = @event.EventParticipations.FirstOrDefault(e => e.Participant == currentUser);
 
-				EventInformation eventInformation = EventInformation.FromEvent(@event, currentUser);
+				ViewEventInformation viewEventInformation = ViewEventInformation.FromEvent(@event, currentUser);
 
 				NotificationConfigurationResponse notificationConfigurationResponse = null;
 
@@ -105,7 +106,7 @@ namespace HeyImIn.WebApplication.Controllers
 					notificationConfigurationResponse = NotificationConfigurationResponse.FromParticipation(currentEventParticipation);
 				}
 
-				return Ok(new EventDetails(eventInformation, upcomingAppointments, notificationConfigurationResponse));
+				return Ok(new EventDetails(viewEventInformation, upcomingAppointments, notificationConfigurationResponse));
 			}
 		}
 
@@ -154,30 +155,30 @@ namespace HeyImIn.WebApplication.Controllers
 		///     Removes the specified user from an event. A user can remove himself any the <see cref="Event.Organizer" /> can
 		///     remove any user
 		/// </summary>
-		/// <param name="leaveEventDto">
+		/// <param name="removeFromEventDto">
 		///     <see cref="User.Id" />
 		///     <see cref="Event.Id" />
 		/// </param>
 		[HttpPost]
 		[ResponseType(typeof(void))]
-		public async Task<IHttpActionResult> LeaveEvent([FromBody] LeaveEventDto leaveEventDto)
+		public async Task<IHttpActionResult> RemoveFromEvent([FromBody] RemoveFromEventDto removeFromEventDto)
 		{
 			// Validate parameters
-			if (!ModelState.IsValid || (leaveEventDto == null))
+			if (!ModelState.IsValid || (removeFromEventDto == null))
 			{
 				return BadRequest();
 			}
 
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
-				Event @event = await context.Events.FindAsync(leaveEventDto.EventId);
+				Event @event = await context.Events.FindAsync(removeFromEventDto.EventId);
 
 				if (@event == null)
 				{
 					return BadRequest(RequestStringMessages.EventNotFound);
 				}
 
-				User userToRemove = await context.Users.FindAsync(leaveEventDto.UserId);
+				User userToRemove = await context.Users.FindAsync(removeFromEventDto.UserId);
 
 				if (userToRemove == null)
 				{
@@ -190,7 +191,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				if (changingOtherUser && (@event.Organizer != currentUser))
 				{
-					_log.InfoFormat("{0}(): Tried to remove user {1} from then event {2}, which he's not organizing", nameof(LeaveEvent), userToRemove.Id, @event.Id);
+					_log.InfoFormat("{0}(): Tried to remove user {1} from then event {2}, which he's not organizing", nameof(RemoveFromEvent), userToRemove.Id, @event.Id);
 
 					return BadRequest(RequestStringMessages.OrganizorRequired);
 				}
@@ -214,13 +215,13 @@ namespace HeyImIn.WebApplication.Controllers
 				// Handle notifications
 				if (changingOtherUser)
 				{
-					_auditLog.InfoFormat("{0}(): The organizer removed the user {1} from the event {2}", nameof(LeaveEvent), userToRemove.Id, @event.Id);
+					_auditLog.InfoFormat("{0}(): The organizer removed the user {1} from the event {2}", nameof(RemoveFromEvent), userToRemove.Id, @event.Id);
 
 					await _notificationService.NotifyOrganizerUpdatedUserInfoAsync(@event, userToRemove, "Der Organisator hat Sie vom Event entfernt.");
 				}
 				else
 				{
-					_auditLog.InfoFormat("{0}(): Left the event {1}", nameof(LeaveEvent), @event.Id);
+					_auditLog.InfoFormat("{0}(): Left the event {1}", nameof(RemoveFromEvent), @event.Id);
 				}
 
 				foreach (Appointment appointment in appointmentParticipations.Select(a => a.Appointment))
