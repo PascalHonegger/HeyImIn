@@ -1,0 +1,16 @@
+<form [formGroup]="form">
+	<div fxLayout="column" fxLayoutAlign="start center" fxLayoutGap="20px">
+		<mat-form-field>
+			<input matInput placeholder="Vollständiger Name" formControlName="titleCtrl" required autocomplete="email">
+			<mat-error *ngIf="form.hasError('required', 'titleCtrl') || form.hasError('maxlength', 'titleCtrl')">
+				Bitte geben Sie einen Titel mit maximal 40 Zeichen ein
+			</mat-error>
+		</mat-form-field>
+		<mat-form-field>
+			<input matInput placeholder="Vollständiger Name" formControlName="titleCtrl" required autocomplete="email">
+			<mat-error *ngIf="form.hasError('required', 'titleCtrl') || form.hasError('maxlength', 'titleCtrl')">
+				Bitte geben Sie einen Titel mit maximal 40 Zeichen ein
+			</mat-error>
+		</mat-form-field>
+	</div>
+</form>

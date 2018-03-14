@@ -33,7 +33,7 @@
 	<form [formGroup]="passwordForm">
 		<mat-card>
 			<mat-card-header>
-				<mat-card-title>Persönliche Daten</mat-card-title>
+				<mat-card-title>Password</mat-card-title>
 			</mat-card-header>
 			<mat-card-content>
 				<div fxLayout="column" fxLayoutAlign="start center" fxLayoutGap="20px">
@@ -52,7 +52,7 @@
 				</div>
 			</mat-card-content>
 			<mat-card-actions>
-				<button mat-raised-button [disabled]="userDataForm.pristine || !userDataForm.valid" (click)="setUserData()" color="primary" type="submit">
+				<button mat-raised-button [disabled]="passwordForm.pristine || !passwordForm.valid" (click)="changePassword()" color="primary" type="submit">
 					Speichern
 				</button>
 			</mat-card-actions>

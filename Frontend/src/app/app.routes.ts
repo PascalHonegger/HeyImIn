@@ -9,6 +9,7 @@ import { AnonymousLayoutComponent } from './anonymous/anonymous-layout/anonymous
 import { RegisterComponent } from './anonymous/register/register.component';
 import { ResetPasswordComponent } from './anonymous/reset-password/reset-password.component';
 import { ProfileComponent } from './authenticated/profile/profile.component';
+import { EditEventComponent } from './authenticated/edit-event/edit-event.component';
 
 export const ROUTES: Routes = [
 	{
@@ -21,7 +22,7 @@ export const ROUTES: Routes = [
 			{ path: 'Profile', component: ProfileComponent },
 			{ path: 'Events', component: HomeComponent },
 			{ path: 'CreateEvent', component: HomeComponent },
-			{ path: 'EditEvent/:id', component: HomeComponent },
+			{ path: 'EditEvent/:id', component: EditEventComponent },
 			{ path: 'ViewEvent/:id', component: HomeComponent },
 			{ path: 'AcceptInvitation/:token', component: HomeComponent }
 		]
