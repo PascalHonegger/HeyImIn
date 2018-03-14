@@ -32,6 +32,10 @@ import { LoginComponent } from './anonymous/login/login.component';
 import { RegisterComponent } from './anonymous/register/register.component';
 import { ResetPasswordComponent } from './anonymous/reset-password/reset-password.component';
 import { ProfileComponent } from './authenticated/profile/profile.component';
+import { EditEventComponent } from './authenticated/edit-event/edit-event.component';
+
+// Components used by the different sites
+import { EditGeneralEventInfoComponent } from './authenticated/edit-general-event-details/edit-general-event-info.component';
 
 // Dialog contents
 import { ErrorDialogComponent } from './shared/error-dialog/error-dialog.component';
@@ -100,7 +104,9 @@ import '../styles/styles.scss';
 		// Authenticated
 		AuthenticatedLayoutComponent,
 		HomeComponent,
-		ProfileComponent
+		ProfileComponent,
+		EditEventComponent,
+		EditGeneralEventInfoComponent
 	],
 	// Dialog contents have to be specified here
 	entryComponents: [

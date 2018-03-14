@@ -1,0 +1,24 @@
+<ng-container *ngIf="eventDetails; else elseTemplate">
+	<h2 class="mat-display-1">{{eventDetails.information.title}}</h2>
+	<div class="edit-event-container" fxLayout="column" fxLayoutAlign="start center" fxLayoutGap="25px">
+		<mat-card>
+			<mat-card-header>
+				<mat-card-title>Details zum Event</mat-card-title>
+			</mat-card-header>
+			<mat-card-content>
+				<edit-general-event-info #eventInfoEdit [eventInfo]="eventDetails.information"></edit-general-event-info>
+			</mat-card-content>
+			<mat-card-actions>
+				<button mat-raised-button (click)="deleteEvent()" color="warn" type="button">
+					Löschen
+				</button>
+				<button mat-raised-button [disabled]="!eventInfoEdit.valid" (click)="saveEvent(eventInfoEdit.updatedEventInfo)" color="primary" type="submit">
+					Speichern
+				</button>
+			</mat-card-actions>
+		</mat-card>
+	</div>
+</ng-container>
+<ng-template #elseTemplate>
+	Daten des Events konnten nicht geladen werden.
+</ng-template>

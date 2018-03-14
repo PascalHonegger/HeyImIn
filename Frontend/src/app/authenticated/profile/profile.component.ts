@@ -53,7 +53,7 @@ export class ProfileComponent {
 		);
 	}
 
-	public changePAssword() {
+	public changePassword() {
 		if (!this.passwordForm.valid) {
 			return;
 		}
