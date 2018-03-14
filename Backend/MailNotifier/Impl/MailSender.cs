@@ -38,6 +38,7 @@ namespace HeyImIn.MailNotifier.Impl
 
 			Response sendGridResponse = await _sendGridClient.SendEmailAsync(message);
 
+			// See https://stackoverflow.com/a/44634349
 			if (!new HttpResponseMessage(sendGridResponse.StatusCode).IsSuccessStatusCode)
 			{
 				string responseBody = await sendGridResponse.Body.ReadAsStringAsync();
