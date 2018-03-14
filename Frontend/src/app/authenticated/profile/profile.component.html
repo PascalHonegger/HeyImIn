@@ -8,16 +8,16 @@
 				<div fxLayout="column" fxLayoutAlign="start center" fxLayoutGap="20px">
 					<mat-form-field>
 						<input matInput placeholder="Vollständiger Name" formControlName="nameCtrl" required autocomplete="email">
-						<mat-error *ngIf="	userDataForm.hasError('required', 'nameCtrl') ||
-											userDataForm.hasError('maxlength', 'nameCtrl')">
+						<mat-error *ngIf="	userDataForm.get('nameCtrl').hasError('required') ||
+											userDataForm.get('nameCtrl').hasError('maxlength')">
 							Bitte geben Sie einen Namen mit maximal 40 Zeichen ein
 						</mat-error>
 					</mat-form-field>
 					<mat-form-field>
 						<input matInput placeholder="E-Mail-Adresse" formControlName="mailCtrl" required autocomplete="email">
-						<mat-error *ngIf="	userDataForm.hasError('required', 'mailCtrl') ||
-											userDataForm.hasError('email', 'mailCtrl') ||
-											userDataForm.hasError('maxlength', 'mailCtrl')">
+						<mat-error *ngIf="	userDataForm.get('mailCtrl').hasError('required') ||
+											userDataForm.get('mailCtrl').hasError('email') ||
+											userDataForm.get('mailCtrl').hasError('maxlength')">
 							Bitte geben Sie eine gültige E-Mail-Adresse mit maximal 40 Zeichen ein
 						</mat-error>
 					</mat-form-field>
@@ -39,13 +39,13 @@
 				<div fxLayout="column" fxLayoutAlign="start center" fxLayoutGap="20px">
 					<mat-form-field>
 						<input matInput placeholder="Jetziges Passwort" formControlName="currentPasswordCtrl" required type="password" autocomplete="current-password">
-						<mat-error *ngIf="passwordForm.hasError('required', 'currentPasswordCtrl')">
+						<mat-error *ngIf="passwordForm.get('currentPasswordCtrl').hasError('required')">
 							Bitte geben Sie Ihr jetziges Passwort ein
 						</mat-error>
 					</mat-form-field>
 					<mat-form-field>
 						<input matInput placeholder="Neues Passwort" formControlName="newPasswordCtrl" required type="password" autocomplete="new-password">
-						<mat-error *ngIf="passwordForm.hasError('required', 'newPasswordCtrl')">
+						<mat-error *ngIf="passwordForm.get('newPasswordCtrl').hasError('required')">
 							Bitte geben Sie Ihr neues Passwort ein
 						</mat-error>
 					</mat-form-field>

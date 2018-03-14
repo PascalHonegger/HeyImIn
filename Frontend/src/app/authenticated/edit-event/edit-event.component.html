@@ -12,7 +12,7 @@
 				<button mat-raised-button (click)="deleteEvent()" color="warn" type="button">
 					Löschen
 				</button>
-				<button mat-raised-button [disabled]="!eventInfoEdit.valid" (click)="saveEvent(eventInfoEdit.updatedEventInfo)" color="primary" type="button">
+				<button mat-raised-button [disabled]="!eventInfoEdit.formValid" (click)="saveEvent(eventInfoEdit.updatedEventInfo)" color="primary" type="button">
 					Speichern
 				</button>
 			</mat-card-actions>
