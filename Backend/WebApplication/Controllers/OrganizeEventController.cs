@@ -169,7 +169,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				await context.SaveChangesAsync();
 
-				_auditLog.InfoFormat("{0}(): Created event {1} ({2})", nameof(UpdateEventInfo), newEvent.Id, newEvent.Title);
+				_auditLog.InfoFormat("{0}(): Created event {1} ({2})", nameof(CreateEvent), newEvent.Id, newEvent.Title);
 
 				return Ok(newEvent.Id);
 			}
@@ -201,9 +201,16 @@ namespace HeyImIn.WebApplication.Controllers
 					return NotFound();
 				}
 
-				List<User> allParticipants = @event.EventParticipations.Select(e => e.Participant).ToList();
-
 				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
+
+				if (@event.Organizer != currentUser)
+				{
+					_log.InfoFormat("{0}(): Tried to edit event {1}, which he's not organizing", nameof(GetEditDetails), @event.Id);
+
+					return BadRequest(RequestStringMessages.OrganizorRequired);
+				}
+
+				List<User> allParticipants = @event.EventParticipations.Select(e => e.Participant).ToList();
 
 				List<AppointmentDetails> upcomingAppointments = @event.Appointments
 					.Where(a => a.StartTime >= DateTime.UtcNow)

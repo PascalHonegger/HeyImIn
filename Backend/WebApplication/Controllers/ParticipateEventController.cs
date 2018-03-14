@@ -84,9 +84,16 @@ namespace HeyImIn.WebApplication.Controllers
 					return NotFound();
 				}
 
-				List<User> allParticipants = @event.EventParticipations.Select(e => e.Participant).ToList();
-
 				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
+
+				ViewEventInformation viewEventInformation = ViewEventInformation.FromEvent(@event, currentUser);
+
+				if (!viewEventInformation.CurrentUserDoesParticipate && @event.IsPrivate)
+				{
+					return BadRequest(RequestStringMessages.InvitationRequired);
+				}
+
+				List<User> allParticipants = @event.EventParticipations.Select(e => e.Participant).ToList();
 
 				List<AppointmentDetails> upcomingAppointments = @event.Appointments
 					.Where(a => a.StartTime >= DateTime.UtcNow)
@@ -97,7 +104,6 @@ namespace HeyImIn.WebApplication.Controllers
 
 				EventParticipation currentEventParticipation = @event.EventParticipations.FirstOrDefault(e => e.Participant == currentUser);
 
-				ViewEventInformation viewEventInformation = ViewEventInformation.FromEvent(@event, currentUser);
 
 				NotificationConfigurationResponse notificationConfigurationResponse = null;
 
@@ -133,6 +139,11 @@ namespace HeyImIn.WebApplication.Controllers
 				if (@event == null)
 				{
 					return BadRequest(RequestStringMessages.EventNotFound);
+				}
+
+				if (@event.IsPrivate)
+				{
+					return BadRequest(RequestStringMessages.InvitationRequired);
 				}
 
 				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
