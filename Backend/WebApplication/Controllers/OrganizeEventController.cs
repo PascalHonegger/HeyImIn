@@ -137,13 +137,52 @@ namespace HeyImIn.WebApplication.Controllers
 			}
 		}
 
+		/// <summary>
+		///     Creates a new event
+		/// </summary>
+		/// <returns>
+		///     <see cref="Event.Id" />
+		/// </returns>
+		[HttpPost]
+		[ResponseType(typeof(int))]
+		public async Task<IHttpActionResult> CreateEvent([FromBody] EventInfoDto eventInfoDto)
+		{
+			// Validate parameters
+			if (!ModelState.IsValid || (eventInfoDto == null))
+			{
+				return BadRequest();
+			}
 
+			using (IDatabaseContext context = _getDatabaseContext())
+			{
+				Event newEvent = context.Events.Create();
+
+				newEvent.Title = eventInfoDto.Title;
+				newEvent.Description = eventInfoDto.Description;
+				newEvent.MeetingPlace = eventInfoDto.MeetingPlace;
+				newEvent.IsPrivate = eventInfoDto.IsPrivate;
+				newEvent.ReminderTimeWindowInHours = eventInfoDto.ReminderTimeWindowInHours;
+				newEvent.SummaryTimeWindowInHours = eventInfoDto.SummaryTimeWindowInHours;
+
+				context.Events.Add(newEvent);
+
+				await context.SaveChangesAsync();
+
+				_auditLog.InfoFormat("{0}(): Created event {1} ({2})", nameof(UpdateEventInfo), newEvent.Id, newEvent.Title);
+
+				return Ok(newEvent.Id);
+			}
+		}
 
 		/// <summary>
-		/// Loads the details about an event which is required to edit it
+		///     Loads the details about an event which is required to edit it
 		/// </summary>
-		/// <param name="eventId"><see cref="Event.Id"/></param>
-		/// <returns><see cref="EditEventDetails"/></returns>
+		/// <param name="eventId">
+		///     <see cref="Event.Id" />
+		/// </param>
+		/// <returns>
+		///     <see cref="EditEventDetails" />
+		/// </returns>
 		[HttpGet]
 		[ResponseType(typeof(EditEventDetails))]
 		public async Task<IHttpActionResult> GetEditDetails(int eventId)

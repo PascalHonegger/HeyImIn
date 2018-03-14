@@ -41,10 +41,12 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
 						return;
 					}
 
-					// Unauthorized request (except on login) cause a redirect to the login
-					if (event.status === 401 && !request.url.endsWith('StartSession')) {
-						this.auth.clearLocalSession();
-						this.router.navigate(['Login']);
+					if (event.status === 401) {
+						// Unauthorized request (except on login) cause a redirect to the login
+						if (!request.url.endsWith('StartSession')) {
+							this.auth.clearLocalSession();
+							this.router.navigate(['Login']);
+						}
 						return;
 					}
 
