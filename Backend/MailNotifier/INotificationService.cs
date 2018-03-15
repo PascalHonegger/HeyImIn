@@ -71,7 +71,7 @@ namespace HeyImIn.MailNotifier
 		/// </summary>
 		/// <param name="eventTitle">Event which got deleted</param>
 		/// <param name="participations">Participants to inform</param>
-		Task NotifyEventDeletedAsync(string eventTitle, IList<EventParticipation> participations);
+		Task NotifyEventDeletedAsync(string eventTitle, IList<User> participations);
 
 		/// <summary>
 		///     Sends a notification to all users who are participating in an event

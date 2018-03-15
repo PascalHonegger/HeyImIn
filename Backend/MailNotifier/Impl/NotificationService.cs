@@ -217,20 +217,20 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{@event.Id}{a
 			_log.InfoFormat("{0}(): Sent {1} notifications about cancelation of appointment", nameof(NotifyAppointmentExplicitlyCanceledAsync), acceptedParticipations.Count);
 		}
 
-		public async Task NotifyEventDeletedAsync(string eventTitle, IList<EventParticipation> participations)
+		public async Task NotifyEventDeletedAsync(string eventTitle, IList<User> participations)
 		{
 			string deletedSubject = $"Der Event '{eventTitle}' wurde gelöscht";
 
 			string messageBody = $"Der Event '{eventTitle}', an welchem Sie teilgenommen haben, wurde zusammen mit allen Terminen gelöscht.";
 
-			foreach (EventParticipation participation in participations)
+			foreach (User participant in participations)
 			{
-				string message = $@"Hallo {participation.Participant.FullName}
+				string message = $@"Hallo {participant.FullName}
 
 {messageBody}";
 
 
-				await _mailSender.SendMailAsync(participation.Participant.Email, deletedSubject, message);
+				await _mailSender.SendMailAsync(participant.Email, deletedSubject, message);
 			}
 
 			_log.InfoFormat("{0}(): Sent {1} notifications about the deletion of an event with the title '{2}'", nameof(NotifyEventDeletedAsync), participations.Count, eventTitle);

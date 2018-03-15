@@ -1,0 +1,30 @@
+<mat-accordion>
+	<mat-expansion-panel *ngFor="let event of events; let i = index" [expanded]="i === 0">
+		<mat-expansion-panel-header>
+			<mat-panel-title>
+				{{event.viewEventInformation.title}}
+			</mat-panel-title>
+			<mat-panel-description fxFlex="nogrow" fxLayoutAlign="stretch center" *ngIf="event.latestAppointmentInformation">
+				{{event.latestAppointmentInformation.startTime | date:'medium'}}
+				<event-participation [readonly]="false" [currentResponse]="event.latestAppointmentInformation.currentResponse"
+				[participantId]="currentUserId" [appointmentId]="event.latestAppointmentInformation.appointmentId"
+				(selectedNewResponse)="eventChanged.emit()"></event-participation>
+			</mat-panel-description>
+		</mat-expansion-panel-header>
+		<div>
+			<!-- TODO <event-info-display [info]="event.viewEventInformation"></event-info-display> -->
+		</div>
+		<mat-action-row>
+			<ng-container *ngIf="event.viewEventInformation.currentUserDoesParticipate; else notParticipatingTemplate">
+				<button mat-raised-button (click)="leaveEvent(event.eventId)" color="warn" type="button">
+					Verlassen
+				</button>
+			</ng-container>
+			<ng-template #notParticipatingTemplate>
+				<button mat-raised-button (click)="joinEvent(event.eventId)" color="primary" type="button">
+					Teilnehmen
+				</button>
+			</ng-template>
+		</mat-action-row>
+	</mat-expansion-panel>
+</mat-accordion>

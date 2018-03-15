@@ -12,6 +12,7 @@ import { ProfileComponent } from './authenticated/profile/profile.component';
 import { EditEventComponent } from './authenticated/edit-event/edit-event.component';
 import { CreateEventComponent } from './authenticated/create-event/create-event.component';
 import { ViewEventComponent } from './authenticated/view-event/view-event.component';
+import { EventsOverviewComponent } from './authenticated/events-overview/events-overview.component';
 
 export const ROUTES: Routes = [
 	{
@@ -22,7 +23,7 @@ export const ROUTES: Routes = [
 			// TODO Use real components
 			{ path: '', redirectTo: 'Events', pathMatch: 'full' },
 			{ path: 'Profile', component: ProfileComponent },
-			{ path: 'Events', component: HomeComponent },
+			{ path: 'Events', component: EventsOverviewComponent },
 			{ path: 'CreateEvent', component: CreateEventComponent },
 			{ path: 'EditEvent/:id', component: EditEventComponent },
 			{ path: 'ViewEvent/:id', component: ViewEventComponent },

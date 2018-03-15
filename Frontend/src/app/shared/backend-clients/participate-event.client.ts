@@ -15,7 +15,7 @@ export class ParticipateEventClient extends ServerClientBase {
 	}
 
 	public getOverview() {
-		return this.httpClient.delete<EventOverview>(this.baseUrl + '/GetOverview');
+		return this.httpClient.get<EventOverview>(this.baseUrl + '/GetOverview');
 	}
 
 	public getDetails(eventId: number) {

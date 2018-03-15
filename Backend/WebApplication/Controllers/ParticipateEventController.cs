@@ -43,15 +43,16 @@ namespace HeyImIn.WebApplication.Controllers
 
 				// TODO Load relations for better performance
 				List<Event> participatingEvents = currentUser.EventParticipations.Select(e => e.Event).ToList();
-				List<Event> publicEvents = await context.Events.Where(e => !e.IsPrivate || (e.Organizer == currentUser)).Except(participatingEvents).ToListAsync();
+				List<Event> publicEvents = await context.Events.Where(e => !e.IsPrivate || (e.OrganizerId == currentUser.Id)).ToListAsync();
 
 				List<EventOverviewInformation> yourEventInformations = participatingEvents
 					.Select(e => EventOverviewInformation.FromEvent(e, currentUser))
-					.OrderBy(e => e.LatestAppointmentInformation?.StartTime)
+					.OrderBy(e => e.LatestAppointmentInformation?.StartTime ?? DateTime.MaxValue)
 					.ToList();
 				List<EventOverviewInformation> publicEventInformations = publicEvents
+					.Except(participatingEvents)
 					.Select(e => EventOverviewInformation.FromEvent(e, currentUser))
-					.OrderBy(e => e.LatestAppointmentInformation?.StartTime)
+					.OrderBy(e => e.LatestAppointmentInformation?.StartTime ?? DateTime.MaxValue)
 					.ToList();
 
 				return Ok(new EventOverview(yourEventInformations, publicEventInformations));
@@ -134,7 +135,9 @@ namespace HeyImIn.WebApplication.Controllers
 
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
-				Event @event = await context.Events.FindAsync(joinEventDto.EventId);
+				Event @event = await context.Events
+					.Include(e => e.EventParticipations)
+					.FirstOrDefaultAsync(e => e.Id == joinEventDto.EventId);
 
 				if (@event == null)
 				{
@@ -142,6 +145,11 @@ namespace HeyImIn.WebApplication.Controllers
 				}
 
 				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
+
+				if (@event.EventParticipations.Any(e => e.Participant == currentUser))
+				{
+					return BadRequest(RequestStringMessages.UserAlreadyPartOfEvent);
+				}
 
 				if (@event.IsPrivate && (@event.Organizer != currentUser))
 				{
@@ -219,6 +227,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				// Remove appointment participations within the event
 				List<AppointmentParticipation> appointmentParticipations = userToRemove.AppointmentParticipations.Where(a => a.Appointment.Event == @event).ToList();
+				List<Appointment> appointments = appointmentParticipations.Select(a => a.Appointment).ToList();
 				context.AppointmentParticipations.RemoveRange(appointmentParticipations);
 
 				await context.SaveChangesAsync();
@@ -235,7 +244,7 @@ namespace HeyImIn.WebApplication.Controllers
 					_auditLog.InfoFormat("{0}(): Left the event {1}", nameof(RemoveFromEvent), @event.Id);
 				}
 
-				foreach (Appointment appointment in appointmentParticipations.Select(a => a.Appointment))
+				foreach (Appointment appointment in appointments)
 				{
 					await _notificationService.SendLastMinuteChangeIfRequiredAsync(appointment);
 				}
