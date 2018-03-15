@@ -1,10 +1,5 @@
-import { FlexLayoutModule } from '@angular/flex-layout';
-import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgModule, LOCALE_ID } from '@angular/core';
 import { RouterModule, PreloadAllModules } from '@angular/router';
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 // Import swiss german
 import { registerLocaleData } from '@angular/common';
@@ -21,77 +16,10 @@ import { ROUTES } from './app.routes';
 // App is our top level component
 import { AppComponent } from './app.component';
 
-// Main layout
-import { MainLayoutComponent } from './shared/main-layout/main-layout.component';
-import { AuthenticatedLayoutComponent } from './authenticated/authenticated-layout/authenticated-layout.component';
-import { AnonymousLayoutComponent } from './anonymous/anonymous-layout/anonymous-layout.component';
-
-// Different sites
-import { AcceptInviteComponent } from './authenticated/accept-invite/accept-invite.component';
-import { LoginComponent } from './anonymous/login/login.component';
-import { RegisterComponent } from './anonymous/register/register.component';
-import { ResetPasswordComponent } from './anonymous/reset-password/reset-password.component';
-import { ProfileComponent } from './authenticated/profile/profile.component';
-import { EventsOverviewComponent } from './authenticated/events-overview/events-overview.component';
-import { CreateEventComponent } from './authenticated/create-event/create-event.component';
-import { EditEventComponent } from './authenticated/edit-event/edit-event.component';
-import { ViewEventComponent } from './authenticated/view-event/view-event.component';
-
-// Components used by the different sites
-import { EditGeneralEventInfoComponent } from './authenticated/edit-general-event-details/edit-general-event-info.component';
-import { AppointmentParticipantTableComponent } from './authenticated/appointment-participant-table/appointment-participant-table.component';
-import { EditNotificationsComponent } from './authenticated/edit-notifications/edit-notifications.component';
-import { AppointmentParticipationComponent } from './authenticated/appointment-participation/appointment-participation.component';
-import { EventsOverviewListComponent } from './authenticated/events-overview-list/events-overview-list.component';
-import { EventInfoDisplayComponent } from './authenticated/event-info-display/event-info-display.component';
-import { ManageEventParticipantsTableComponent } from './authenticated/manage-event-participants-table/manage-event-participants-table.component';
-
-// Dialog contents
-import { ErrorDialogComponent } from './shared/error-dialog/error-dialog.component';
-import { LoadingDialogComponent } from './shared/loading-dialog/loading-dialog.component';
-import { AreYouSureDialogComponent } from './shared/are-you-sure-dialog/are-you-sure-dialog.component';
-import { AddAppointmentsDialogComponent } from './authenticated/add-appointments-dialog/add-appointments-dialog.component';
-import { AddParticipantDialogComponent } from './authenticated/add-participant-dialog/add-participant-dialog.component';
-
-// 404 not found page
-import { NoContentComponent } from './shared/no-content/no-content.component';
-
-// Backend clients
-import { OrganizeEventClient } from './shared/backend-clients/organize-event.client';
-import { ParticipateEventClient } from './shared/backend-clients/participate-event.client';
-import { OrganizeAppointmentClient } from './shared/backend-clients/organize-appointment.client';
-import { InviteToEventClient } from './shared/backend-clients/invite-to-event.client';
-import { UserClient } from './shared/backend-clients/user.client';
-import { SessionClient } from './shared/backend-clients/session.client';
-import { ResetPasswordClient } from './shared/backend-clients/reset-password.client';
-
-// Services
-import { AuthService } from './shared/services/auth.service';
-
-// Interceptors
-import { AppendSessionTokenInterceptor } from './shared/interceptors/append-session-token.interceptor';
-import { ErrorHandlerInterceptor } from './shared/interceptors/error-handler.interceptor';
-import { ShowLoadingDialogInterceptor } from './shared/interceptors/show-loading-dialog.interceptor';
-
-// Guards
-import { CanActivateViaAuthGuard } from './shared/guards/can-activate-via-auth.guard';
-
-// Material 2
-import {
-	MatButtonModule,
-	MatToolbarModule,
-	MatDialogModule,
-	MatInputModule,
-	MatSnackBarModule,
-	MatCardModule,
-	MatIconModule,
-	MatTableModule,
-	MatProgressSpinnerModule,
-	MatStepperModule,
-	MatSlideToggleModule,
-	MatExpansionModule,
-	MatSortModule
-} from '@angular/material';
+// Our modules
+import { SharedModule } from './shared/shared.module';
+import { AuthenticatedModule } from './authenticated/authenticated.module';
+import { AnonymousModule } from './anonymous/anonymous.module';
 
 // Import global styles & theme
 import '../styles/styles.scss';
@@ -101,113 +29,25 @@ import '../styles/styles.scss';
  */
 @NgModule({
 	bootstrap: [ AppComponent ],
-	declarations: [
-		// Shared
-		AppComponent,
-		MainLayoutComponent,
-		ErrorDialogComponent,
-		LoadingDialogComponent,
-		AreYouSureDialogComponent,
-		NoContentComponent,
-		// Anonymous
-		AnonymousLayoutComponent,
-		LoginComponent,
-		RegisterComponent,
-		ResetPasswordComponent,
-		// Authenticated
-		AuthenticatedLayoutComponent,
-		AcceptInviteComponent,
-		EventsOverviewComponent,
-		ProfileComponent,
-		CreateEventComponent,
-		EditEventComponent,
-		ViewEventComponent,
-		EditGeneralEventInfoComponent,
-		AppointmentParticipantTableComponent,
-		AddAppointmentsDialogComponent,
-		AddParticipantDialogComponent,
-		EditNotificationsComponent,
-		AppointmentParticipationComponent,
-		EventsOverviewListComponent,
-		EventInfoDisplayComponent,
-		ManageEventParticipantsTableComponent
-	],
-	// Dialog contents have to be specified here
-	entryComponents: [
-		ErrorDialogComponent,
-		LoadingDialogComponent,
-		AreYouSureDialogComponent,
-		AddAppointmentsDialogComponent,
-		AddParticipantDialogComponent
-	],
-	/**
-	 * Import Angular's modules.
-	 */
+	declarations: [ AppComponent ],
 	imports: [
-		// Angular
-		BrowserModule,
-		BrowserAnimationsModule,
-		FormsModule,
-		ReactiveFormsModule,
-		HttpClientModule,
+		SharedModule.forRoot(),
+		AuthenticatedModule,
+		AnonymousModule,
 		RouterModule.forRoot(ROUTES, {
 			useHash: true,
 			preloadingStrategy: PreloadAllModules
-		}),
-		// Angular Material
-		MatInputModule,
-		MatButtonModule,
-		MatToolbarModule,
-		MatDialogModule,
-		MatSnackBarModule,
-		MatCardModule,
-		MatIconModule,
-		MatProgressSpinnerModule,
-		MatStepperModule,
-		MatSlideToggleModule,
-		MatTableModule,
-		MatExpansionModule,
-		MatSortModule,
-		// Flex layout
-		FlexLayoutModule
+		})
 	],
 	/**
 	 * Expose our Services and Providers into Angular's dependency injection.
 	 */
 	providers: [
 		environment.ENV_PROVIDERS,
-		// Guards
-		CanActivateViaAuthGuard,
-		// Services
-		AuthService,
-		// Backend clients
-		InviteToEventClient,
-		OrganizeAppointmentClient,
-		OrganizeEventClient,
-		ParticipateEventClient,
-		SessionClient,
-		ResetPasswordClient,
-		UserClient,
 		// Ensure 3rd party components use swiss german (E.g. date format)
 		{
 			provide: LOCALE_ID,
 			useValue: 'de-CH'
-		},
-		// Hook up HTTP interceptors
-		{
-			provide: HTTP_INTERCEPTORS,
-			useClass: AppendSessionTokenInterceptor,
-			multi: true
-		},
-		{
-			provide: HTTP_INTERCEPTORS,
-			useClass: ShowLoadingDialogInterceptor,
-			multi: true
-		},
-		{
-			provide: HTTP_INTERCEPTORS,
-			useClass: ErrorHandlerInterceptor,
-			multi: true
 		}
 	]
 })
