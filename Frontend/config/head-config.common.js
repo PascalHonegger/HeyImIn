@@ -23,7 +23,8 @@ module.exports = {
     /**
      * <link> tag for Material Design Icons
      */
-    { rel: 'stylesheet', href: 'https://fonts.googleapis.com/icon?family=Material+Icons' }
+    { rel: 'stylesheet', href: 'https://fonts.googleapis.com/icon?family=Material+Icons' },
+    { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Roboto:300,400,500' }
   ],
   meta: [
     { name: 'theme-color', content: '#0066a1' }
