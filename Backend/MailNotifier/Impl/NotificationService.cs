@@ -118,6 +118,8 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{appointment.
 
 
 				await _mailSender.SendMailAsync(participation.Participant.Email, reminderSubject, message);
+
+				participation.SentReminder = true;
 			}
 
 			_log.InfoFormat("{0}(): Sent {1} reminders for appointment {2}", nameof(SendAndUpdateRemindersAsync), participationsAwaitingReminder.Count, appointment.Id);
@@ -134,6 +136,7 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{appointment.
 			string messageBody = $@"Die Teilnehmer treffen sich am {startTime:g} am Treffpunkt '{appointment.Event.MeetingPlace}'
 
 Die finale Teilnehmerliste:
+
 {participants}";
 
 			List<AppointmentParticipation> participationsAwaitingSummary = FilterParticipations(appointment.AppointmentParticipations, p => !p.SentSummary, e => e.SendSummaryEmail);
@@ -148,8 +151,9 @@ Die finale Teilnehmerliste:
 
 Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{appointment.Event.Id}{authTokenSuffix} ansehen.";
 
-
 				await _mailSender.SendMailAsync(participation.Participant.Email, summarySubject, message);
+
+				participation.SentSummary = true;
 			}
 
 			_log.InfoFormat("{0}(): Sent {1} summaries for appointment {2}", nameof(SendAndUpdateSummariesAsync), participationsAwaitingSummary.Count, appointment.Id);
@@ -169,6 +173,7 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{appointment.
 			string participants = ParticipationsList(appointment.AppointmentParticipations);
 
 			string messageBody = $@"Die Teilnehmer des Events '{appointment.Event.Title}' haben sich geändert. Die aktualisierte Teilnehmerliste:
+
 {participants}";
 
 			List<AppointmentParticipation> participationsAwaitingSummary = FilterParticipations(appointment.AppointmentParticipations, p => p.SentSummary, e => e.SendLastMinuteChangesEmail);
@@ -262,7 +267,7 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{@event.Id}{a
 		/// <summary>
 		///     Returns all participations which pass the provided filters and were accepted
 		/// </summary>
-		private List<AppointmentParticipation> FilterParticipations(IEnumerable<AppointmentParticipation> participations,
+		private static List<AppointmentParticipation> FilterParticipations(IEnumerable<AppointmentParticipation> participations,
 																	Func<AppointmentParticipation, bool> participationFilter,
 																	Func<EventParticipation, bool> eventFilter)
 		{
@@ -289,7 +294,7 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{@event.Id}{a
 		{
 			return string.Join(Environment.NewLine, allParticipations
 				.Where(a => a.AppointmentParticipationAnswer == AppointmentParticipationAnswer.Accepted)
-				.Select(a => a.Participant.FullName));
+				.Select(a => $"- {a.Participant.FullName}"));
 		}
 
 		private readonly IMailSender _mailSender;
