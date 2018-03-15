@@ -63,7 +63,8 @@ namespace HeyImIn.WebApplication.Controllers
 				}
 
 				// Participations for the event
-				context.EventParticipations.RemoveRange(@event.EventParticipations);
+				List<EventParticipation> participations = @event.EventParticipations.ToList();
+				context.EventParticipations.RemoveRange(participations);
 
 				// Appointments of the event
 				List<Appointment> appointments = @event.Appointments.ToList();
@@ -80,7 +81,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				_auditLog.InfoFormat("{0}(): Deleted event {1}", nameof(DeleteEvent), @event.Id);
 
-				await _notificationService.NotifyEventDeletedAsync(@event);
+				await _notificationService.NotifyEventDeletedAsync(@event.Title, participations);
 
 				return Ok();
 			}

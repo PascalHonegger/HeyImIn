@@ -39,6 +39,7 @@ namespace HeyImIn.WebApplication.Controllers
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
 				Appointment appointment = await context.Appointments
+					.Include(a => a.Event)
 					.Include(a => a.Event.Organizer)
 					.Include(a => a.AppointmentParticipations)
 					.FirstOrDefaultAsync(e => e.Id == appointmentId);
@@ -50,7 +51,9 @@ namespace HeyImIn.WebApplication.Controllers
 
 				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
 
-				if (appointment.Event.Organizer != currentUser)
+				Event @event = appointment.Event;
+
+				if (@event.Organizer != currentUser)
 				{
 					_log.InfoFormat("{0}(): Tried to delete appointment {1}, which he's not organizing", nameof(DeleteAppointment), appointment.Id);
 
@@ -66,7 +69,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				_auditLog.InfoFormat("{0}(): Deleted event {1}", nameof(DeleteAppointment), appointment.Id);
 
-				await _notificationService.NotifyAppointmentExplicitlyCanceledAsync(appointment);
+				await _notificationService.NotifyAppointmentExplicitlyCanceledAsync(appointment.StartTime, participations, @event);
 
 				return Ok();
 			}
@@ -120,7 +123,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				await context.SaveChangesAsync();
 
-				_auditLog.InfoFormat("{0}(): Added {1} appointments to event {2}", nameof(AddAppointments), addAppointsmentsDto.StartTimes.Count, @event.Id);
+				_auditLog.InfoFormat("{0}(): Added {1} appointments to event {2}", nameof(AddAppointments), addAppointsmentsDto.StartTimes.Length, @event.Id);
 
 				return Ok();
 			}

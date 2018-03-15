@@ -1,8 +1,8 @@
 <form [formGroup]="form">
-	<div fxLayout="column" fxLayoutAlign="start center" fxLayoutGap="20px">
+	<div fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="20px">
 		<h2 class="mat-display-1">Anmelden</h2>
 		<mat-form-field>
-			<input matInput placeholder="E-Mail-Adresse" formControlName="mailCtrl" required autocomplete="email">
+			<input matInput placeholder="E-Mail-Adresse" formControlName="mailCtrl" required autocomplete="email" type="email">
 			<mat-error *ngIf="	form.get('mailCtrl').hasError('required') ||
 								form.get('mailCtrl').hasError('email') ||
 								form.get('mailCtrl').hasError('maxlength')">

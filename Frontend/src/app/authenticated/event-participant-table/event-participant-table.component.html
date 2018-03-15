@@ -1,0 +1,26 @@
+<mat-table [dataSource]="dataSource" matSort>
+	<!-- Name Column -->
+	<ng-container matColumnDef="participantName">
+		<mat-header-cell *matHeaderCellDef mat-sort-header>Teilnehmer</mat-header-cell>
+		<mat-cell *matCellDef="let element">
+			{{element.participantName}}
+		</mat-cell>
+	</ng-container>
+
+	<!-- Response Column -->
+	<ng-container matColumnDef="response">
+		<mat-header-cell *matHeaderCellDef mat-sort-header>Antwort</mat-header-cell>
+		<mat-cell *matCellDef="let element">
+			<ng-container *ngIf="allowChange; else readOnlyTemplate">
+				{{element.response}}
+			</ng-container>
+			<ng-template #readOnlyTemplate>
+				READ {{element.response}}
+			</ng-template>
+			
+		</mat-cell>
+	</ng-container>
+
+	<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+	<mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+</mat-table>

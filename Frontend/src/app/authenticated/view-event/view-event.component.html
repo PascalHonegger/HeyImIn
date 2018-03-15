@@ -32,8 +32,8 @@
 				<div *ngIf="eventDetails.upcomingAppointments.length === 0">
 					Keine bevorstehenden Termine
 				</div>
-				<div *ngFor="let item of eventDetails.upcomingAppointments">
-					{{item | json}}
+				<div *ngFor="let appointment of eventDetails.upcomingAppointments">
+					<event-participant-table [participants]="appointment.participations" [allowChange]="false"></event-participant-table>
 				</div>
 			</mat-card-content>
 		</mat-card>
@@ -42,16 +42,10 @@
 				<mat-card-title>Notifikationen</mat-card-title>
 			</mat-card-header>
 			<mat-card-content>
-				<div *ngIf="eventDetails.upcomingAppointments.length === 0">
-					Keine bevorstehenden Termine
-				</div>
-				<div *ngFor="let item of eventDetails.upcomingAppointments">
-					{{item | json}}
-				</div>
+				<edit-notifications #editNotifications [notifications]="eventDetails.notificationConfigurationResponse" [eventInfo]="eventDetails.information"></edit-notifications>
 			</mat-card-content>
 			<mat-card-actions>
-				<!-- <edit-notifications></edit-notifications> -->
-				<button mat-raised-button (click)="setNotifications()" color="primary" type="button">
+				<button mat-raised-button (click)="setNotifications(editNotifications.updatedNotifications)" color="primary" type="button">
 					Speichern
 				</button>
 			</mat-card-actions>

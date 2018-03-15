@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace HeyImIn.WebApplication.FrontendModels.ParameterTypes
 {
@@ -9,6 +8,6 @@ namespace HeyImIn.WebApplication.FrontendModels.ParameterTypes
 
 		[Required]
 		[MinLength(1)]
-		public List<string> EmailAddresses { get; set; }
+		public string[] EmailAddresses { get; set; }
 	}
 }

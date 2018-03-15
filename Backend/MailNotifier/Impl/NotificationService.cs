@@ -187,18 +187,18 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{appointment.
 				await _mailSender.SendMailAsync(participation.Participant.Email, lastMinuteChangeSubject, message);
 			}
 
-			_log.InfoFormat("{0}(): Sent {1} summaries for appointment {2}", nameof(SendAndUpdateSummariesAsync), participationsAwaitingSummary.Count, appointment.Id);
+			_log.InfoFormat("{0}(): Sent {1} summaries for appointment {2}", nameof(SendLastMinuteChangeIfRequiredAsync), participationsAwaitingSummary.Count, appointment.Id);
 		}
 
-		public async Task NotifyAppointmentExplicitlyCanceledAsync(Appointment appointment)
+		public async Task NotifyAppointmentExplicitlyCanceledAsync(DateTime appointmentTime, IEnumerable<AppointmentParticipation> participations, Event @event)
 		{
-			DateTime startTime = TargetTimeZone(appointment.StartTime);
+			DateTime startTime = TargetTimeZone(appointmentTime);
 
-			string summarySubject = $"Termin am {startTime:g} zum Event '{appointment.Event.Title}' abgesagt";
+			string summarySubject = $"Termin am {startTime:g} zum Event '{@event.Title}' abgesagt";
 
 			string messageBody = $"Sie haben dem Termin ({startTime:g}) zugesagt, welcher vom Organisator abgesagt wurde.";
 
-			List<AppointmentParticipation> acceptedParticipations = appointment.AppointmentParticipations.Where(p => p.AppointmentParticipationAnswer == AppointmentParticipationAnswer.Accepted).ToList();
+			List<AppointmentParticipation> acceptedParticipations = participations.Where(p => p.AppointmentParticipationAnswer == AppointmentParticipationAnswer.Accepted).ToList();
 
 			foreach (AppointmentParticipation participation in acceptedParticipations)
 			{
@@ -208,22 +208,22 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{appointment.
 
 {messageBody}
 
-Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{appointment.Event.Id}{authTokenSuffix} ansehen.";
+Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{@event.Id}{authTokenSuffix} ansehen.";
 
 
 				await _mailSender.SendMailAsync(participation.Participant.Email, summarySubject, message);
 			}
 
-			_log.InfoFormat("{0}(): Sent {1} notifications about cancelation of appointment {2}", nameof(SendAndUpdateSummariesAsync), acceptedParticipations.Count, appointment.Id);
+			_log.InfoFormat("{0}(): Sent {1} notifications about cancelation of appointment", nameof(NotifyAppointmentExplicitlyCanceledAsync), acceptedParticipations.Count);
 		}
 
-		public async Task NotifyEventDeletedAsync(Event @event)
+		public async Task NotifyEventDeletedAsync(string eventTitle, IList<EventParticipation> participations)
 		{
-			string deletedSubject = $"Der Event '{@event.Title}' wurde gelöscht";
+			string deletedSubject = $"Der Event '{eventTitle}' wurde gelöscht";
 
-			string messageBody = $"Der Event '{@event.Title}', an welchem Sie teilgenommen haben, wurde zusammen mit allen Terminen gelöscht.";
+			string messageBody = $"Der Event '{eventTitle}', an welchem Sie teilgenommen haben, wurde zusammen mit allen Terminen gelöscht.";
 
-			foreach (EventParticipation participation in @event.EventParticipations)
+			foreach (EventParticipation participation in participations)
 			{
 				string message = $@"Hallo {participation.Participant.FullName}
 
@@ -233,7 +233,7 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{appointment.
 				await _mailSender.SendMailAsync(participation.Participant.Email, deletedSubject, message);
 			}
 
-			_log.InfoFormat("{0}(): Sent {1} notifications about the deletion of the event {2}", nameof(NotifyEventDeletedAsync), @event.EventParticipations.Count, @event.Id);
+			_log.InfoFormat("{0}(): Sent {1} notifications about the deletion of an event with the title '{2}'", nameof(NotifyEventDeletedAsync), participations.Count, eventTitle);
 		}
 
 		public async Task NotifyEventUpdatedAsync(Event @event)

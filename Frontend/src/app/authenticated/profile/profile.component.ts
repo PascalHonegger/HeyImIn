@@ -60,7 +60,10 @@ export class ProfileComponent {
 
 		this.server.setNewPassword(this.passwordForm.get('currentPasswordCtrl').value, this.passwordForm.get('newPasswordCtrl').value).subscribe(
 			() => {
-				this.passwordForm.reset();
+				this.passwordForm.reset({
+					currentPasswordCtrl: '',
+					newPasswordCtrl: ''
+				});
 				this.snackBar.open('Passwort geändert', 'Ok');
 			}
 		);
