@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 
-import { HomeComponent } from './authenticated/home/home.component';
+import { AcceptInviteComponent } from './authenticated/accept-invite/accept-invite.component';
 import { NoContentComponent } from './shared/no-content/no-content.component';
 import { CanActivateViaAuthGuard } from './shared/guards/can-activate-via-auth.guard';
 import { LoginComponent } from './anonymous/login/login.component';
@@ -20,14 +20,13 @@ export const ROUTES: Routes = [
 		component: AuthenticatedLayoutComponent,
 		canActivateChild: [ CanActivateViaAuthGuard ],
 		children: [
-			// TODO Use real components
 			{ path: '', redirectTo: 'Events', pathMatch: 'full' },
 			{ path: 'Profile', component: ProfileComponent },
 			{ path: 'Events', component: EventsOverviewComponent },
 			{ path: 'CreateEvent', component: CreateEventComponent },
 			{ path: 'EditEvent/:id', component: EditEventComponent },
 			{ path: 'ViewEvent/:id', component: ViewEventComponent },
-			{ path: 'AcceptInvitation/:token', component: HomeComponent }
+			{ path: 'AcceptInvitation/:token', component: AcceptInviteComponent }
 		]
 	},
 	{

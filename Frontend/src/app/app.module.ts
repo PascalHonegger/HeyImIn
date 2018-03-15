@@ -27,7 +27,7 @@ import { AuthenticatedLayoutComponent } from './authenticated/authenticated-layo
 import { AnonymousLayoutComponent } from './anonymous/anonymous-layout/anonymous-layout.component';
 
 // Different sites
-import { HomeComponent } from './authenticated/home/home.component';
+import { AcceptInviteComponent } from './authenticated/accept-invite/accept-invite.component';
 import { LoginComponent } from './anonymous/login/login.component';
 import { RegisterComponent } from './anonymous/register/register.component';
 import { ResetPasswordComponent } from './anonymous/reset-password/reset-password.component';
@@ -43,6 +43,7 @@ import { EventParticipantTableComponent } from './authenticated/event-participan
 import { EditNotificationsComponent } from './authenticated/edit-notifications/edit-notifications.component';
 import { EventParticipationComponent } from './authenticated/event-participation/event-participation.component';
 import { EventsOverviewListComponent } from './authenticated/events-overview-list/events-overview-list.component';
+import { EventInfoDisplayComponent } from './authenticated/event-info-display/event-info-display.component';
 
 // Dialog contents
 import { ErrorDialogComponent } from './shared/error-dialog/error-dialog.component';
@@ -113,7 +114,7 @@ import '../styles/styles.scss';
 		ResetPasswordComponent,
 		// Authenticated
 		AuthenticatedLayoutComponent,
-		HomeComponent,
+		AcceptInviteComponent,
 		EventsOverviewComponent,
 		ProfileComponent,
 		CreateEventComponent,
@@ -124,7 +125,8 @@ import '../styles/styles.scss';
 		AddAppointmentsDialogComponent,
 		EditNotificationsComponent,
 		EventParticipationComponent,
-		EventsOverviewListComponent
+		EventsOverviewListComponent,
+		EventInfoDisplayComponent
 	],
 	// Dialog contents have to be specified here
 	entryComponents: [

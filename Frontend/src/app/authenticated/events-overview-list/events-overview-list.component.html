@@ -12,7 +12,7 @@
 			</mat-panel-description>
 		</mat-expansion-panel-header>
 		<div>
-			<!-- TODO <event-info-display [info]="event.viewEventInformation"></event-info-display> -->
+			<event-info-display [info]="event.viewEventInformation"></event-info-display>
 		</div>
 		<mat-action-row fxLayoutGap="20px">
 			<ng-container *ngIf="event.viewEventInformation.currentUserDoesParticipate; else notParticipatingTemplate">
