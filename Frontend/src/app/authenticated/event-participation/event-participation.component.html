@@ -1,0 +1,9 @@
+<button mat-icon-button [color]="accepted ? 'primary' : ''" (click)="accept($event)">
+	<mat-icon>check_circle</mat-icon>
+</button>
+<button mat-icon-button [color]="declined ? 'warn' : ''" (click)="decline($event)">
+	<mat-icon>remove_circle</mat-icon>
+</button>
+<button mat-icon-button [color]="noAnswer ? 'accent' : ''" (click)="removeAnswer($event)">
+	<mat-icon>help</mat-icon>
+</button>

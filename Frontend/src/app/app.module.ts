@@ -40,6 +40,7 @@ import { ViewEventComponent } from './authenticated/view-event/view-event.compon
 import { EditGeneralEventInfoComponent } from './authenticated/edit-general-event-details/edit-general-event-info.component';
 import { EventParticipantTableComponent } from './authenticated/event-participant-table/event-participant-table.component';
 import { EditNotificationsComponent } from './authenticated/edit-notifications/edit-notifications.component';
+import { EventParticipationComponent } from './authenticated/event-participation/event-participation.component';
 
 // Dialog contents
 import { ErrorDialogComponent } from './shared/error-dialog/error-dialog.component';
@@ -84,7 +85,8 @@ import {
 	MatProgressSpinnerModule,
 	MatStepperModule,
 	MatSlideToggleModule,
-	MatExpansionModule
+	MatExpansionModule,
+	MatSortModule
 } from '@angular/material';
 
 // Import global styles & theme
@@ -117,7 +119,8 @@ import '../styles/styles.scss';
 		EditGeneralEventInfoComponent,
 		EventParticipantTableComponent,
 		AddAppointmentsDialogComponent,
-		EditNotificationsComponent
+		EditNotificationsComponent,
+		EventParticipationComponent
 	],
 	// Dialog contents have to be specified here
 	entryComponents: [
@@ -154,6 +157,7 @@ import '../styles/styles.scss';
 		MatSlideToggleModule,
 		MatTableModule,
 		MatExpansionModule,
+		MatSortModule,
 		// Flex layout
 		FlexLayoutModule
 	],

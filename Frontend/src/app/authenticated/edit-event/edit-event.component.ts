@@ -110,7 +110,7 @@ export class EditEventComponent implements OnDestroy {
 			}
 	}
 
-	private loadEventDetails() {
+	public loadEventDetails() {
 		this.organizeEventServer.getEditDetails(this.eventId).subscribe(
 			detail => {
 				this.eventDetails = detail;

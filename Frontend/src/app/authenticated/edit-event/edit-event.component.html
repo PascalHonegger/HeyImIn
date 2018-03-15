@@ -33,7 +33,8 @@
 							</mat-panel-title>
 						</mat-expansion-panel-header>
 						<div>
-							<event-participant-table [participants]="appointment.participations" [allowChange]="true"></event-participant-table>
+							<event-participant-table [participants]="appointment.participations" [allowChange]="true" [appointment]="appointment.appointmentInformation"
+							(updatedResponse)="loadEventDetails()"></event-participant-table>
 						</div>
 						<mat-action-row>
 							<button mat-raised-button (click)="cancelAppointment(appointment.appointmentInformation.appointmentId)" color="warn">Absagen</button>

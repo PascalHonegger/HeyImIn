@@ -29,12 +29,29 @@
 				<mat-card-title>Termine</mat-card-title>
 			</mat-card-header>
 			<mat-card-content>
-				<div *ngIf="eventDetails.upcomingAppointments.length === 0">
+				<div *ngIf="eventDetails.upcomingAppointments.length === 0; else eventListTemplate">
 					Keine bevorstehenden Termine
 				</div>
-				<div *ngFor="let appointment of eventDetails.upcomingAppointments">
-					<event-participant-table [participants]="appointment.participations" [allowChange]="false"></event-participant-table>
-				</div>
+				<ng-template #eventListTemplate>
+					<mat-accordion>
+						<mat-expansion-panel *ngFor="let appointment of eventDetails.upcomingAppointments; let i = index" [expanded]="i === 0">
+							<mat-expansion-panel-header>
+								<mat-panel-title>
+									{{appointment.appointmentInformation.startTime | date:'medium'}}
+								</mat-panel-title>
+								<mat-panel-description fxFlex="nogrow" fxLayoutAlign="stretch center">
+									<event-participation [readonly]="false" [currentResponse]="appointment.appointmentInformation.currentResponse"
+									[participantId]="currentUserId" [appointmentId]="appointment.appointmentInformation.appointmentId"
+									(selectedNewResponse)="loadEventDetails()"></event-participation>
+								</mat-panel-description>
+							</mat-expansion-panel-header>
+							<div>
+								<event-participant-table [participants]="appointment.participations" [allowChange]="false" [appointment]="appointment.appointmentInformation"></event-participant-table>
+							</div>
+						</mat-expansion-panel>
+					</mat-accordion>
+				</ng-template>
+				
 			</mat-card-content>
 		</mat-card>
 		<mat-card *ngIf="eventDetails.information.currentUserDoesParticipate">
