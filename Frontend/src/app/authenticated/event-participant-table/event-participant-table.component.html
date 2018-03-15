@@ -11,13 +11,9 @@
 	<ng-container matColumnDef="response">
 		<mat-header-cell *matHeaderCellDef mat-sort-header>Antwort</mat-header-cell>
 		<mat-cell *matCellDef="let element">
-			<ng-container *ngIf="allowChange; else readOnlyTemplate">
-				{{element.response}}
-			</ng-container>
-			<ng-template #readOnlyTemplate>
-				READ {{element.response}}
-			</ng-template>
-			
+			<event-participation [readonly]="!allowChange" [currentResponse]="element.response"
+			[appointmentId]="appointment.appointmentId" [participantId]="element.participantId"
+			(selectedNewResponse)="updatedResponse.emit()"></event-participation>
 		</mat-cell>
 	</ng-container>
 

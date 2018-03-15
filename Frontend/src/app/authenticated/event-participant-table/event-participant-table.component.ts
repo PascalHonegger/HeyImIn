@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, Input, EventEmitter, Output } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatSnackBar, MatDialog, MatTableDataSource, MatSort } from '@angular/material';
 import { Router, ActivatedRoute } from '@angular/router';
@@ -12,8 +12,9 @@ import { identifierModuleUrl } from '@angular/compiler';
 import { ParticipateEventClient } from '../../shared/backend-clients/participate-event.client';
 import { OrganizeAppointmentClient } from '../../shared/backend-clients/organize-appointment.client';
 import { OrganizeEventClient } from '../../shared/backend-clients/organize-event.client';
-import { EditEventDetails, AppointmentParticipationInformation } from '../../shared/server-model/event-edit-details.model';
+import { EditEventDetails, AppointmentParticipationInformation, AppointmentInformation } from '../../shared/server-model/event-edit-details.model';
 import { GeneralEventInfo } from '../../shared/server-model/general-event-info.model';
+import { AppointmentParticipationAnswer } from '../../shared/server-model/appointment-participation-answer.model';
 
 @Component({
 	selector: 'event-participant-table',
@@ -27,14 +28,22 @@ export class EventParticipantTableComponent implements AfterViewInit {
 	public displayedColumns = ['participantName', 'response'];
 	public dataSource: MatTableDataSource<AppointmentParticipationInformation>;
 
+	// Forwards change event from event-participation
+	@Output()
+	public updatedResponse: EventEmitter<void> = new EventEmitter();
+
 	@Input()
 	public allowChange: boolean;
+
+	@Input()
+	public appointment: AppointmentInformation;
 
 	private _participants: AppointmentParticipationInformation[];
 	@Input()
 	public set participants(v: AppointmentParticipationInformation[]) {
 		this._participants = v;
 		this.dataSource = new MatTableDataSource(v);
+		this.dataSource.sort = this.sort;
 	}
 	public get participants(): AppointmentParticipationInformation[] {
 		return this._participants;
@@ -45,6 +54,8 @@ export class EventParticipantTableComponent implements AfterViewInit {
 	 * be able to query its view for the initialized sort.
 	 */
 	public ngAfterViewInit() {
-		this.dataSource.sort = this.sort;
+		if (this.dataSource) {
+			this.dataSource.sort = this.sort;
+		}
 	}
 }
