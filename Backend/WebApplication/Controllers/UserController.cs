@@ -124,16 +124,17 @@ namespace HeyImIn.WebApplication.Controllers
 				context.PasswordResets.RemoveRange(currentUser.PasswordResets);
 
 				// Events the user is part of
+				List<Event> organizedEvents = currentUser.OrganizedEvents.ToList();
+				List<(Event Event, List<User> Participations)> eventWithParticipations = organizedEvents.Select(e => (Event: e, Participations: e.EventParticipations.Select(ep => ep.Participant).ToList())).ToList();
 				context.EventParticipations.RemoveRange(currentUser.EventParticipations);
 
 				// Appointments the user is part of
 				List<AppointmentParticipation> userAppointmentParticipations = currentUser.AppointmentParticipations.ToList();
+				List<Appointment> userAppointments = userAppointmentParticipations.Select(a => a.Appointment).ToList();
 				context.AppointmentParticipations.RemoveRange(userAppointmentParticipations);
 
 				// Events the user organized
-				List<Event> organizedEvents = currentUser.OrganizedEvents.ToList();
-				List<(Event Event, List<EventParticipation> Participations)> eventWithParticipations = organizedEvents.Select(e => (Event: e, Participations: e.EventParticipations.ToList())).ToList();
-				List<EventParticipation> organizedParticipations = eventWithParticipations.SelectMany(o => o.Participations).ToList();
+				List<EventParticipation> organizedParticipations = organizedEvents.SelectMany(o => o.EventParticipations).ToList();
 				List<EventInvitation> organizedInvitations = organizedEvents.SelectMany(o => o.EventInvitations).ToList();
 				List<Appointment> organizedAppointments = organizedEvents.SelectMany(o => o.Appointments).ToList();
 				List<AppointmentParticipation> organizedAppointmentParticipations = organizedAppointments.SelectMany(o => o.AppointmentParticipations).ToList();
@@ -155,7 +156,7 @@ namespace HeyImIn.WebApplication.Controllers
 					await _notificationService.NotifyEventDeletedAsync(@event.Title, participations);
 				}
 
-				foreach (Appointment appointment in userAppointmentParticipations.Select(a => a.Appointment))
+				foreach (Appointment appointment in userAppointments)
 				{
 					await _notificationService.SendLastMinuteChangeIfRequiredAsync(appointment);
 				}

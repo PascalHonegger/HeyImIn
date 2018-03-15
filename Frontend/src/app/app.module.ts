@@ -32,6 +32,7 @@ import { LoginComponent } from './anonymous/login/login.component';
 import { RegisterComponent } from './anonymous/register/register.component';
 import { ResetPasswordComponent } from './anonymous/reset-password/reset-password.component';
 import { ProfileComponent } from './authenticated/profile/profile.component';
+import { EventsOverviewComponent } from './authenticated/events-overview/events-overview.component';
 import { CreateEventComponent } from './authenticated/create-event/create-event.component';
 import { EditEventComponent } from './authenticated/edit-event/edit-event.component';
 import { ViewEventComponent } from './authenticated/view-event/view-event.component';
@@ -41,6 +42,7 @@ import { EditGeneralEventInfoComponent } from './authenticated/edit-general-even
 import { EventParticipantTableComponent } from './authenticated/event-participant-table/event-participant-table.component';
 import { EditNotificationsComponent } from './authenticated/edit-notifications/edit-notifications.component';
 import { EventParticipationComponent } from './authenticated/event-participation/event-participation.component';
+import { EventsOverviewListComponent } from './authenticated/events-overview-list/events-overview-list.component';
 
 // Dialog contents
 import { ErrorDialogComponent } from './shared/error-dialog/error-dialog.component';
@@ -112,6 +114,7 @@ import '../styles/styles.scss';
 		// Authenticated
 		AuthenticatedLayoutComponent,
 		HomeComponent,
+		EventsOverviewComponent,
 		ProfileComponent,
 		CreateEventComponent,
 		EditEventComponent,
@@ -120,7 +123,8 @@ import '../styles/styles.scss';
 		EventParticipantTableComponent,
 		AddAppointmentsDialogComponent,
 		EditNotificationsComponent,
-		EventParticipationComponent
+		EventParticipationComponent,
+		EventsOverviewListComponent
 	],
 	// Dialog contents have to be specified here
 	entryComponents: [

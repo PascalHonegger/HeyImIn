@@ -1,0 +1,24 @@
+<ng-container *ngIf="eventOverview; else noEventDataTemplate">
+	<h2 class="mat-display-1">Eventübersicht</h2>
+	<div fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="25px">
+		<mat-card>
+			<mat-card-header>
+				<mat-card-title>Meine Events</mat-card-title>
+			</mat-card-header>
+			<mat-card-content>
+				<events-overview-list [events]="eventOverview.yourEvents" (eventChanged)="loadEventOverview()"></events-overview-list>
+			</mat-card-content>
+		</mat-card>
+		<mat-card>
+			<mat-card-header>
+				<mat-card-title>Öffentliche Events</mat-card-title>
+			</mat-card-header>
+			<mat-card-content>
+				<events-overview-list [events]="eventOverview.publicEvents" (eventChanged)="loadEventOverview()"></events-overview-list>
+			</mat-card-content>
+		</mat-card>
+	</div>
+</ng-container>
+<ng-template #noEventDataTemplate>
+	Übersicht der Events konnte nicht geladen werden.
+</ng-template>

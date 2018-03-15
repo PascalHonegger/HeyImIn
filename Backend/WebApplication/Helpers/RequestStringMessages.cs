@@ -9,6 +9,7 @@
 		public const string UserNotFound = "Der angegebene Benutzer wurde nicht gefunden";
 		public const string AppointmentNotFound = "Der angegebene Termin wurde nicht gefunden";
 
+		public const string UserAlreadyPartOfEvent = "Der angegebene Benutzer nimmt bereits dem Event teil";
 		public const string UserNotPartOfEvent = "Der angegebene Benutzer nimmt nicht an dem Event teil";
 
 		public const string InvitationRequired = "Der angegebene Event ist privat und benötigt eine Einladung";

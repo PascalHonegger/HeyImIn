@@ -14,13 +14,14 @@ import { OrganizeAppointmentClient } from '../../shared/backend-clients/organize
 import { GeneralEventInfo } from '../../shared/server-model/general-event-info.model';
 import { EventDetails } from '../../shared/server-model/event-details.model';
 import { NotificationConfiguration } from '../../shared/server-model/notification-configuration.model';
+import { DetailOverviewBase } from '../detail-overview-base';
 
 @Component({
 	selector: 'view-event',
 	styleUrls: ['./view-event.component.scss'],
 	templateUrl: './view-event.component.html'
 })
-export class ViewEventComponent implements OnDestroy {
+export class ViewEventComponent extends DetailOverviewBase implements OnDestroy {
 	public eventDetails: EventDetails;
 
 	private subscription: Subscription;
@@ -35,16 +36,12 @@ export class ViewEventComponent implements OnDestroy {
 		this.loadEventDetails();
 	}
 
-	public get currentUserId(): number {
-		return this.authService.session.userId;
-	}
-
-	constructor(private eventServer: ParticipateEventClient,
-				private organizeAppointmentServer: OrganizeAppointmentClient,
-				private snackBar: MatSnackBar,
-				private dialog: MatDialog,
-				private authService: AuthService,
+	constructor(private snackBar: MatSnackBar,
+				eventServer: ParticipateEventClient,
+				dialog: MatDialog,
+				authService: AuthService,
 				route: ActivatedRoute) {
+					super(eventServer, dialog, authService);
 					this.subscription = route.params.subscribe(params => this.eventId = +params['id']);
 				}
 
@@ -53,27 +50,13 @@ export class ViewEventComponent implements OnDestroy {
 	}
 
 	public async leaveEvent() {
-		const result = await this.dialog
-			.open(AreYouSureDialogComponent, {
-				data: 'Möchten Sie diesen Event und alle damit verbundenen Termine verlassen?',
-				closeOnNavigation: true
-			}).afterClosed().toPromise();
-
-		if (result) {
-			this.eventServer.removeFromEvent(this.eventId, this.currentUserId).subscribe(() => {
-				this.snackBar.open('Event verlassen', 'Ok');
-
-				// Reload details
-				this.loadEventDetails();
-			});
-		}
+		await this.leaveEventAsync(this.eventId);
+		this.loadEventDetails();
 	}
 
-	public joinEvent() {
-		this.eventServer.joinEvent(this.eventId).subscribe(() => {
-			// Reload details
-			this.loadEventDetails();
-		});
+	public async joinEvent() {
+		await this.joinEventAsync(this.eventId);
+		this.loadEventDetails();
 	}
 
 	public setNotifications(notifications: NotificationConfiguration) {

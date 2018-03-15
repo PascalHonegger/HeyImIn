@@ -9,7 +9,7 @@
 				<mat-card-title>Details zum Event</mat-card-title>
 			</mat-card-header>
 			<mat-card-content>
-				{{eventDetails.information | json}}
+				<!-- TODO <event-info-display [info]="eventDetails.information"></event-info-display> -->
 			</mat-card-content>
 			<mat-card-actions>
 				<ng-container *ngIf="eventDetails.information.currentUserDoesParticipate; else notParticipatingTemplate">
