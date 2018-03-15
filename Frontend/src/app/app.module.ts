@@ -39,17 +39,19 @@ import { ViewEventComponent } from './authenticated/view-event/view-event.compon
 
 // Components used by the different sites
 import { EditGeneralEventInfoComponent } from './authenticated/edit-general-event-details/edit-general-event-info.component';
-import { EventParticipantTableComponent } from './authenticated/event-participant-table/event-participant-table.component';
+import { AppointmentParticipantTableComponent } from './authenticated/appointment-participant-table/appointment-participant-table.component';
 import { EditNotificationsComponent } from './authenticated/edit-notifications/edit-notifications.component';
-import { EventParticipationComponent } from './authenticated/event-participation/event-participation.component';
+import { AppointmentParticipationComponent } from './authenticated/appointment-participation/appointment-participation.component';
 import { EventsOverviewListComponent } from './authenticated/events-overview-list/events-overview-list.component';
 import { EventInfoDisplayComponent } from './authenticated/event-info-display/event-info-display.component';
+import { ManageEventParticipantsTableComponent } from './authenticated/manage-event-participants-table/manage-event-participants-table.component';
 
 // Dialog contents
 import { ErrorDialogComponent } from './shared/error-dialog/error-dialog.component';
 import { LoadingDialogComponent } from './shared/loading-dialog/loading-dialog.component';
 import { AreYouSureDialogComponent } from './shared/are-you-sure-dialog/are-you-sure-dialog.component';
 import { AddAppointmentsDialogComponent } from './authenticated/add-appointments-dialog/add-appointments-dialog.component';
+import { AddParticipantDialogComponent } from './authenticated/add-participant-dialog/add-participant-dialog.component';
 
 // 404 not found page
 import { NoContentComponent } from './shared/no-content/no-content.component';
@@ -94,6 +96,7 @@ import {
 
 // Import global styles & theme
 import '../styles/styles.scss';
+
 /**
  * `AppModule` is the main entry point into Angular2's bootstraping process
  */
@@ -121,19 +124,22 @@ import '../styles/styles.scss';
 		EditEventComponent,
 		ViewEventComponent,
 		EditGeneralEventInfoComponent,
-		EventParticipantTableComponent,
+		AppointmentParticipantTableComponent,
 		AddAppointmentsDialogComponent,
+		AddParticipantDialogComponent,
 		EditNotificationsComponent,
-		EventParticipationComponent,
+		AppointmentParticipationComponent,
 		EventsOverviewListComponent,
-		EventInfoDisplayComponent
+		EventInfoDisplayComponent,
+		ManageEventParticipantsTableComponent
 	],
 	// Dialog contents have to be specified here
 	entryComponents: [
 		ErrorDialogComponent,
 		LoadingDialogComponent,
 		AreYouSureDialogComponent,
-		AddAppointmentsDialogComponent
+		AddAppointmentsDialogComponent,
+		AddParticipantDialogComponent
 	],
 	/**
 	 * Import Angular's modules.

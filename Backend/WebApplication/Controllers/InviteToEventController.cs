@@ -26,7 +26,7 @@ namespace HeyImIn.WebApplication.Controllers
 		}
 
 		/// <summary>
-		///     Adds new appointsments to the event
+		///     Adds new appointments to the event
 		/// </summary>
 		[HttpPost]
 		[ResponseType(typeof(void))]
@@ -88,7 +88,6 @@ namespace HeyImIn.WebApplication.Controllers
 
 						userInvites.Add((existingUser, invite));
 					}
-
 				}
 
 				await context.SaveChangesAsync();
@@ -99,9 +98,12 @@ namespace HeyImIn.WebApplication.Controllers
 			}
 		}
 
-
+		/// <summary>
+		///     Accepts an invite to an event, as long as the invite is considered valid
+		/// </summary>
+		/// <returns><see cref="Event.Id" /> of the accepted invite</returns>
 		[HttpPost]
-		[ResponseType(typeof(void))]
+		[ResponseType(typeof(int))]
 		public async Task<IHttpActionResult> AcceptInvitation([FromBody] AcceptInvitationDto acceptInvitationDto)
 		{
 			// Validate parameters
@@ -148,7 +150,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				await context.SaveChangesAsync();
 
-				return Ok();
+				return Ok(invitation.EventId);
 			}
 		}
 

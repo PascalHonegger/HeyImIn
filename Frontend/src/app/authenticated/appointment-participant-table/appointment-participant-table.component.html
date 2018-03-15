@@ -11,9 +11,9 @@
 	<ng-container matColumnDef="response">
 		<mat-header-cell *matHeaderCellDef mat-sort-header>Antwort</mat-header-cell>
 		<mat-cell *matCellDef="let element">
-			<event-participation [readonly]="!allowChange" [currentResponse]="element.response"
+			<appointment-participation [readonly]="!allowChange" [currentResponse]="element.response"
 			[appointmentId]="appointment.appointmentId" [participantId]="element.participantId"
-			(selectedNewResponse)="updatedResponse.emit()"></event-participation>
+			(selectedNewResponse)="updatedResponse.emit()"></appointment-participation>
 		</mat-cell>
 	</ng-container>
 

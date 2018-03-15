@@ -17,18 +17,18 @@ import { GeneralEventInfo } from '../../shared/server-model/general-event-info.m
 import { AppointmentParticipationAnswer } from '../../shared/server-model/appointment-participation-answer.model';
 
 @Component({
-	selector: 'event-participant-table',
-	styleUrls: ['./event-participant-table.component.scss'],
-	templateUrl: './event-participant-table.component.html'
+	selector: 'appointment-participant-table',
+	styleUrls: ['./appointment-participant-table.component.scss'],
+	templateUrl: './appointment-participant-table.component.html'
 })
-export class EventParticipantTableComponent implements AfterViewInit {
+export class AppointmentParticipantTableComponent implements AfterViewInit {
 	@ViewChild(MatSort)
 	public sort: MatSort;
 
 	public displayedColumns = ['participantName', 'response'];
 	public dataSource: MatTableDataSource<AppointmentParticipationInformation>;
 
-	// Forwards change event from event-participation
+	// Forwards change event from appointment-participation
 	@Output()
 	public updatedResponse: EventEmitter<void> = new EventEmitter();
 
