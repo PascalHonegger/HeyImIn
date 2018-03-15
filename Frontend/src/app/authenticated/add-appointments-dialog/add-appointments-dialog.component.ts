@@ -19,7 +19,7 @@ export class AddAppointmentsDialogComponent {
 	public datesCtrl = new FormControl('', [Validators.required, Validators.pattern(AddAppointmentsDialogComponent.multiLineRegexPattern)]);
 
 	constructor(private dialogRef: MatDialogRef<AddAppointmentsDialogComponent, Date[]>) {
-		this.exampleDate = moment().add(1, 'days').endOf('hour').format(AddAppointmentsDialogComponent.dateFormat);
+		this.exampleDate = moment().add(1, 'days').add(1, 'hour').startOf('hour').format(AddAppointmentsDialogComponent.dateFormat);
 	}
 
 	public parseAndReturnDates() {
