@@ -6,9 +6,9 @@
 			</mat-panel-title>
 			<mat-panel-description fxFlex="nogrow" fxLayoutAlign="stretch center" *ngIf="event.latestAppointmentInformation">
 				{{event.latestAppointmentInformation.startTime | date:'medium'}}
-				<event-participation [readonly]="false" [currentResponse]="event.latestAppointmentInformation.currentResponse"
+				<appointment-participation [readonly]="false" [currentResponse]="event.latestAppointmentInformation.currentResponse"
 				[participantId]="currentUserId" [appointmentId]="event.latestAppointmentInformation.appointmentId"
-				(selectedNewResponse)="eventChanged.emit()"></event-participation>
+				(selectedNewResponse)="eventChanged.emit()"></appointment-participation>
 			</mat-panel-description>
 		</mat-expansion-panel-header>
 		<div>

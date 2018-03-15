@@ -18,11 +18,11 @@ import { NotificationConfiguration } from '../../shared/server-model/notificatio
 import { AppointmentParticipationAnswer } from '../../shared/server-model/appointment-participation-answer.model';
 
 @Component({
-	selector: 'event-participation',
-	styleUrls: ['./event-participation.component.scss'],
-	templateUrl: './event-participation.component.html'
+	selector: 'appointment-participation',
+	styleUrls: ['./appointment-participation.component.scss'],
+	templateUrl: './appointment-participation.component.html'
 })
-export class EventParticipationComponent {
+export class AppointmentParticipationComponent {
 	@Input()
 	public currentResponse?: AppointmentParticipationAnswer;
 	@Input()

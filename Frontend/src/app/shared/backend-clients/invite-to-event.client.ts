@@ -15,6 +15,6 @@ export class InviteToEventClient extends ServerClientBase {
 	}
 
 	public acceptInvitation(inviteToken: string) {
-		return this.httpClient.post<void>(this.baseUrl + '/AcceptInvitation', { inviteToken });
+		return this.httpClient.post<number>(this.baseUrl + '/AcceptInvitation', { inviteToken });
 	}
 }

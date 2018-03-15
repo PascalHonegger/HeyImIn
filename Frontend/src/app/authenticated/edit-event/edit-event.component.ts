@@ -15,6 +15,8 @@ import { OrganizeEventClient } from '../../shared/backend-clients/organize-event
 import { EditEventDetails } from '../../shared/server-model/event-edit-details.model';
 import { GeneralEventInfo } from '../../shared/server-model/general-event-info.model';
 import { AddAppointmentsDialogComponent } from '../add-appointments-dialog/add-appointments-dialog.component';
+import { AddParticipantDialogComponent } from '../add-participant-dialog/add-participant-dialog.component';
+import { InviteToEventClient } from '../../shared/backend-clients/invite-to-event.client';
 
 @Component({
 	selector: 'edit-event',
@@ -36,7 +38,8 @@ export class EditEventComponent implements OnDestroy {
 		this.loadEventDetails();
 	}
 
-	constructor(private eventServer: ParticipateEventClient,
+	constructor(private participateEventServer: ParticipateEventClient,
+				private inviteToEventServer: InviteToEventClient,
 				private organizeEventServer: OrganizeEventClient,
 				private organizeAppointmentServer: OrganizeAppointmentClient,
 				private snackBar: MatSnackBar,
@@ -87,6 +90,23 @@ export class EditEventComponent implements OnDestroy {
 				() => {
 					// Reload data to include newly added appointments
 					this.loadEventDetails();
+				}
+			);
+		}
+	}
+
+	public async inviteParticipants() {
+		const emailsToInvite = await this.dialog
+			.open(AddParticipantDialogComponent, {
+				closeOnNavigation: true,
+				width: '400px',
+				minHeight: '400px'
+			}).afterClosed().toPromise();
+
+		if (emailsToInvite) {
+			this.inviteToEventServer.inviteParticipants(this.eventId, emailsToInvite).subscribe(
+				() => {
+					this.snackBar.open('Einladungen versendet', 'Ok');
 				}
 			);
 		}
