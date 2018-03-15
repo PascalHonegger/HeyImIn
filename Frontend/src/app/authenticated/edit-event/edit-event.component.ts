@@ -14,6 +14,7 @@ import { OrganizeAppointmentClient } from '../../shared/backend-clients/organize
 import { OrganizeEventClient } from '../../shared/backend-clients/organize-event.client';
 import { EditEventDetails } from '../../shared/server-model/event-edit-details.model';
 import { GeneralEventInfo } from '../../shared/server-model/general-event-info.model';
+import { AddAppointmentsDialogComponent } from '../add-appointments-dialog/add-appointments-dialog.component';
 
 @Component({
 	selector: 'edit-event',
@@ -32,11 +33,7 @@ export class EditEventComponent implements OnDestroy {
 
 	public set eventId(v: number) {
 		this._eventId = v;
-		this.organizeEventServer.getEditDetails(v).subscribe(
-			detail => {
-				this.eventDetails = detail;
-			},
-			err => this.eventDetails = null);
+		this.loadEventDetails();
 	}
 
 	constructor(private eventServer: ParticipateEventClient,
@@ -75,5 +72,49 @@ export class EditEventComponent implements OnDestroy {
 				this.router.navigate(['/']);
 			});
 		}
+	}
+
+	public async addAppointments() {
+		const newAppointments = await this.dialog
+			.open(AddAppointmentsDialogComponent, {
+				closeOnNavigation: true,
+				width: '400px',
+				minHeight: '400px'
+			}).afterClosed().toPromise();
+
+		if (newAppointments) {
+			this.organizeAppointmentServer.addAppointments(this.eventId, newAppointments).subscribe(
+				() => {
+					// Reload data to include newly added appointments
+					this.loadEventDetails();
+				}
+			);
+		}
+	}
+
+	public async cancelAppointment(appointmentId: number) {
+		const result = await this.dialog
+			.open(AreYouSureDialogComponent, {
+				data: 'Möchten Sie diesen Termin wirklich absagen?',
+				closeOnNavigation: true
+			}).afterClosed().toPromise();
+
+			if (result) {
+				this.organizeAppointmentServer.deleteAppointment(appointmentId).subscribe(
+					() => {
+						// Remove appointment from local list
+						this.eventDetails.upcomingAppointments = 
+							this.eventDetails.upcomingAppointments.filter(u => u.appointmentInformation.appointmentId !== appointmentId);
+					}
+				);
+			}
+	}
+
+	private loadEventDetails() {
+		this.organizeEventServer.getEditDetails(this.eventId).subscribe(
+			detail => {
+				this.eventDetails = detail;
+			},
+			err => this.eventDetails = null);
 	}
 }

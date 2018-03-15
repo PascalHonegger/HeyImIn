@@ -13,6 +13,7 @@ import { ParticipateEventClient } from '../../shared/backend-clients/participate
 import { OrganizeAppointmentClient } from '../../shared/backend-clients/organize-appointment.client';
 import { GeneralEventInfo } from '../../shared/server-model/general-event-info.model';
 import { EventDetails } from '../../shared/server-model/event-details.model';
+import { NotificationConfiguration } from '../../shared/server-model/notification-configuration.model';
 
 @Component({
 	selector: 'view-event',
@@ -73,6 +74,12 @@ export class ViewEventComponent implements OnDestroy {
 			// Reload details
 			this.loadEventDetails();
 		});
+	}
+
+	public setNotifications(notifications: NotificationConfiguration) {
+		this.eventServer.configureNotifications(this.eventId, notifications).subscribe(
+			() => this.snackBar.open('Notifikationen konfiguriert', 'Ok')
+		);
 	}
 
 	private loadEventDetails() {

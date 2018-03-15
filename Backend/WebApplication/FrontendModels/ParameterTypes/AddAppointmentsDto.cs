@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace HeyImIn.WebApplication.FrontendModels.ParameterTypes
@@ -10,6 +9,6 @@ namespace HeyImIn.WebApplication.FrontendModels.ParameterTypes
 
 		[Required]
 		[MinLength(1)]
-		public List<DateTime> StartTimes { get; set; }
+		public DateTime[] StartTimes { get; set; }
 	}
 }

@@ -13,7 +13,7 @@
 			</mat-error>
 		</mat-form-field>
 		<mat-form-field>
-			<textarea matInput placeholder="Beschreibung" formControlName="descriptionCtrl" required></textarea>
+			<textarea matInput matTextareaAutosize placeholder="Beschreibung" formControlName="descriptionCtrl" required></textarea>
 			<mat-error *ngIf="form.get('descriptionCtrl').hasError('required') || form.get('descriptionCtrl').hasError('maxlength')">
 				Bitte geben Sie eine Beschreibung mit maximal 120 Zeichen ein
 			</mat-error>

@@ -38,11 +38,14 @@ import { ViewEventComponent } from './authenticated/view-event/view-event.compon
 
 // Components used by the different sites
 import { EditGeneralEventInfoComponent } from './authenticated/edit-general-event-details/edit-general-event-info.component';
+import { EventParticipantTableComponent } from './authenticated/event-participant-table/event-participant-table.component';
+import { EditNotificationsComponent } from './authenticated/edit-notifications/edit-notifications.component';
 
 // Dialog contents
 import { ErrorDialogComponent } from './shared/error-dialog/error-dialog.component';
 import { LoadingDialogComponent } from './shared/loading-dialog/loading-dialog.component';
 import { AreYouSureDialogComponent } from './shared/are-you-sure-dialog/are-you-sure-dialog.component';
+import { AddAppointmentsDialogComponent } from './authenticated/add-appointments-dialog/add-appointments-dialog.component';
 
 // 404 not found page
 import { NoContentComponent } from './shared/no-content/no-content.component';
@@ -80,12 +83,12 @@ import {
 	MatTableModule,
 	MatProgressSpinnerModule,
 	MatStepperModule,
-	MatSlideToggleModule
+	MatSlideToggleModule,
+	MatExpansionModule
 } from '@angular/material';
 
 // Import global styles & theme
 import '../styles/styles.scss';
-
 /**
  * `AppModule` is the main entry point into Angular2's bootstraping process
  */
@@ -111,13 +114,17 @@ import '../styles/styles.scss';
 		CreateEventComponent,
 		EditEventComponent,
 		ViewEventComponent,
-		EditGeneralEventInfoComponent
+		EditGeneralEventInfoComponent,
+		EventParticipantTableComponent,
+		AddAppointmentsDialogComponent,
+		EditNotificationsComponent
 	],
 	// Dialog contents have to be specified here
 	entryComponents: [
 		ErrorDialogComponent,
 		LoadingDialogComponent,
-		AreYouSureDialogComponent
+		AreYouSureDialogComponent,
+		AddAppointmentsDialogComponent
 	],
 	/**
 	 * Import Angular's modules.
@@ -146,6 +153,7 @@ import '../styles/styles.scss';
 		MatStepperModule,
 		MatSlideToggleModule,
 		MatTableModule,
+		MatExpansionModule,
 		// Flex layout
 		FlexLayoutModule
 	],

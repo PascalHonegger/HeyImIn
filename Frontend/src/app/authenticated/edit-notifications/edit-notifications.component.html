@@ -1,38 +1,7 @@
 <form [formGroup]="form">
 	<div fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="20px">
-		<mat-form-field>
-			<input matInput placeholder="Titel" formControlName="titleCtrl" required>
-			<mat-error *ngIf="form.get('titleCtrl').hasError('required') || form.get('titleCtrl').hasError('maxlength')">
-				Bitte geben Sie einen Titel mit maximal 40 Zeichen ein
-			</mat-error>
-		</mat-form-field>
-		<mat-form-field>
-			<input matInput placeholder="Treffpunkt" formControlName="meetingPlaceCtrl" required>
-			<mat-error *ngIf="form.get('meetingPlaceCtrl').hasError('required') || form.get('meetingPlaceCtrl').hasError('maxlength')">
-				Bitte geben Sie einen Treffpunkt mit maximal 40 Zeichen ein
-			</mat-error>
-		</mat-form-field>
-		<mat-form-field>
-			<textarea matInput placeholder="Beschreibung" formControlName="descriptionCtrl" required></textarea>
-			<mat-error *ngIf="form.get('descriptionCtrl').hasError('required') || form.get('descriptionCtrl').hasError('maxlength')">
-				Bitte geben Sie eine Beschreibung mit maximal 120 Zeichen ein
-			</mat-error>
-			<mat-hint align="end">{{form.get('descriptionCtrl').value.length}} / 120</mat-hint>
-		</mat-form-field>
-		<mat-form-field>
-			<input matInput placeholder="Zeitspanne der Reminder" formControlName="reminderCtrl" required type="number">
-			<mat-error *ngIf="form.get('reminderCtrl').hasError('required') || form.get('reminderCtrl').hasError('min')">
-				Bitte geben Sie eine positive Zahl ein
-			</mat-error>
-			<span matSuffix>&nbsp;Stunden</span>
-		</mat-form-field>
-		<mat-form-field>
-			<input matInput placeholder="Zeitspanne der Zusammenfassung" formControlName="summaryCtrl" required type="number">
-			<mat-error *ngIf="form.get('summaryCtrl').hasError('required') || form.get('summaryCtrl').hasError('min')">
-				Bitte geben Sie eine positive Zahl ein
-			</mat-error>
-			<span matSuffix>&nbsp;Stunden</span>
-		</mat-form-field>
-		<mat-slide-toggle formControlName="isPrivateCtrl">Privater Event</mat-slide-toggle>
+		<mat-slide-toggle formControlName="reminderCtrl">Reminder ({{eventInfo.reminderTimeWindowInHours}} vor Eventbeginn)</mat-slide-toggle>
+		<mat-slide-toggle formControlName="summaryCtrl">Zusammenfassung ({{eventInfo.summaryTimeWindowInHours}} vor Eventbeginn)</mat-slide-toggle>
+		<mat-slide-toggle formControlName="lastMinuteCtrl">Kurzfristige Änderungen ({{eventInfo.summaryTimeWindowInHours}} vor Eventbeginn)</mat-slide-toggle>
 	</div>
 </form>

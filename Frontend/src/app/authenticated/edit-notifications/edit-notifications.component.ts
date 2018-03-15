@@ -17,12 +17,15 @@ import { GeneralEventInfo } from '../../shared/server-model/general-event-info.m
 import { NotificationConfiguration } from '../../shared/server-model/notification-configuration.model';
 
 @Component({
-	selector: 'edit-general-event-info',
-	styleUrls: ['./edit-general-event-info.component.scss'],
-	templateUrl: './edit-general-event-info.component.html'
+	selector: 'edit-notifications',
+	styleUrls: ['./edit-notifications.component.scss'],
+	templateUrl: './edit-notifications.component.html'
 })
 export class EditNotificationsComponent {
 	public form: FormGroup;
+
+	@Input()
+	public eventInfo: GeneralEventInfo;
 
 	private _notifications: NotificationConfiguration;
 	public get notifications(): NotificationConfiguration {
@@ -44,7 +47,7 @@ export class EditNotificationsComponent {
 		return this.form.valid;
 	}
 
-	public get updatedEventInfo(): NotificationConfiguration {
+	public get updatedNotifications(): NotificationConfiguration {
 		return {
 			sendReminderEmail: this.form.get('reminderCtrl').value,
 			sendSummaryEmail: this.form.get('summaryCtrl').value,

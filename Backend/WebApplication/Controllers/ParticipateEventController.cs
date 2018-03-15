@@ -43,7 +43,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				// TODO Load relations for better performance
 				List<Event> participatingEvents = currentUser.EventParticipations.Select(e => e.Event).ToList();
-				List<Event> publicEvents = await context.Events.Where(e => !e.IsPrivate).Except(participatingEvents).ToListAsync();
+				List<Event> publicEvents = await context.Events.Where(e => !e.IsPrivate || (e.Organizer == currentUser)).Except(participatingEvents).ToListAsync();
 
 				List<EventOverviewInformation> yourEventInformations = participatingEvents
 					.Select(e => EventOverviewInformation.FromEvent(e, currentUser))

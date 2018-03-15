@@ -60,15 +60,18 @@ namespace HeyImIn.MailNotifier
 		///     Is NOT called when a whole event gets deleted, as every user gets informed about that by
 		///     <see cref="NotifyEventDeletedAsync" />
 		/// </summary>
-		/// <param name="appointment">Only users who accepted this appointment will be notified</param>
-		Task NotifyAppointmentExplicitlyCanceledAsync(Appointment appointment);
+		/// <param name="appointmentTime">Time which was canceled</param>
+		/// <param name="participations">Only users who accepted this appointment will be notified</param>
+		/// <param name="event">Event the appointment was part of</param>
+		Task NotifyAppointmentExplicitlyCanceledAsync(DateTime appointmentTime, IEnumerable<AppointmentParticipation> participations, Event @event);
 
 		/// <summary>
 		///     Sends a notification to all users who are participating in an event
 		///     This happens either because the organizer deleted himself or a single event explicitly
 		/// </summary>
-		/// <param name="event">Event which got deleted</param>
-		Task NotifyEventDeletedAsync(Event @event);
+		/// <param name="eventTitle">Event which got deleted</param>
+		/// <param name="participations">Participants to inform</param>
+		Task NotifyEventDeletedAsync(string eventTitle, IList<EventParticipation> participations);
 
 		/// <summary>
 		///     Sends a notification to all users who are participating in an event
