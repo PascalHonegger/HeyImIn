@@ -1,6 +1,6 @@
 import { Component, Input, EventEmitter, Output } from '@angular/core';
 import { ParticipateEventClient } from '../../shared/backend-clients/participate-event.client';
-import { EventOverview, EventOverviewInformation } from '../../shared/server-model/event-overview.model';
+import { EventOverviewInformation } from '../../shared/server-model/event-overview.model';
 import { AuthService } from '../../shared/services/auth.service';
 import { DetailOverviewBase } from '../detail-overview-base';
 import { MatDialog } from '@angular/material';

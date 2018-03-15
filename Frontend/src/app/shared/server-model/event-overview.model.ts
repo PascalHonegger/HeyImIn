@@ -1,4 +1,3 @@
-import { GeneralEventInfo } from './general-event-info.model';
 import { AppointmentInformation } from './event-edit-details.model';
 import { ViewEventInformation } from './view-event-information.model';
 

@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
-import { FrontendSession } from '../server-model/frontend-session.model';
 import { ServerClientBase } from './server-client-base';
-import { AppointmentParticipationAnswer } from '../server-model/appointment-participation-answer.model';
 import { EventOverview } from '../server-model/event-overview.model';
 import { EventDetails } from '../server-model/event-details.model';
 import { NotificationConfiguration } from '../server-model/notification-configuration.model';
