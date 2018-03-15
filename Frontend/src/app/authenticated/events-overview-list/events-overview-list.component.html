@@ -14,7 +14,7 @@
 		<div>
 			<!-- TODO <event-info-display [info]="event.viewEventInformation"></event-info-display> -->
 		</div>
-		<mat-action-row>
+		<mat-action-row fxLayoutGap="20px">
 			<ng-container *ngIf="event.viewEventInformation.currentUserDoesParticipate; else notParticipatingTemplate">
 				<button mat-raised-button (click)="leaveEvent(event.eventId)" color="warn" type="button">
 					Verlassen
@@ -25,6 +25,12 @@
 					Teilnehmen
 				</button>
 			</ng-template>
+			<button mat-raised-button color="primary" [routerLink]="['/ViewEvent', event.eventId]">
+				Details
+			</button>
+			<button mat-raised-button color="primary" [routerLink]="['/EditEvent', event.eventId]" *ngIf="event.viewEventInformation.organizerId === currentUserId">
+				Editieren
+			</button>
 		</mat-action-row>
 	</mat-expansion-panel>
 </mat-accordion>

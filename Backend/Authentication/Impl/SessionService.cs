@@ -52,7 +52,7 @@ namespace HeyImIn.Authentication.Impl
 
 				await context.SaveChangesAsync();
 
-				_log.DebugFormat("{0}(userId={1}, active={2}): Added new session", nameof(InvalidateSessionAsync), userId, active);
+				_log.DebugFormat("{0}(userId={1}, active={2}): Added new session", nameof(CreateSessionAsync), userId, active);
 
 				return session.Token;
 			}
