@@ -46,7 +46,8 @@
 								</mat-panel-description>
 							</mat-expansion-panel-header>
 							<div>
-								<appointment-participant-table [participants]="appointment.participations" [allowChange]="false" [appointment]="appointment.appointmentInformation"></appointment-participant-table>
+								<appointment-participant-table [participants]="appointment.participations" [allowChange]="eventDetails.information.organizerId === currentUserId"
+									[appointment]="appointment.appointmentInformation" (updatedResponse)="loadEventDetails()"></appointment-participant-table>
 							</div>
 						</mat-expansion-panel>
 					</mat-accordion>
