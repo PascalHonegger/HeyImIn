@@ -1,6 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
-import { catchError, map, finalize } from 'rxjs/operators';
 import { FrontendSession } from '../server-model/frontend-session.model';
 import { SessionClient } from '../backend-clients/session.client';
 

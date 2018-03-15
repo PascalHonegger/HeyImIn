@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatSnackBar, MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
-import { HttpErrorResponse } from '@angular/common/http';
 import { Constants } from '../../shared/constants';
 import { UserClient } from '../../shared/backend-clients/user.client';
 import { AuthService } from '../../shared/services/auth.service';
