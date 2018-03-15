@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Link } from '../navigation-toolbar/link.model';
+import { Link } from '../main-layout/link.model';
 
 @Component({
 	selector: 'no-content',

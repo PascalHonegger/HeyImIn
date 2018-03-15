@@ -1,7 +1,7 @@
 <form [formGroup]="form">
 	<div fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="20px">
-		<mat-slide-toggle formControlName="reminderCtrl">Reminder ({{eventInfo.reminderTimeWindowInHours}} vor Eventbeginn)</mat-slide-toggle>
-		<mat-slide-toggle formControlName="summaryCtrl">Zusammenfassung ({{eventInfo.summaryTimeWindowInHours}} vor Eventbeginn)</mat-slide-toggle>
-		<mat-slide-toggle formControlName="lastMinuteCtrl">Kurzfristige Änderungen ({{eventInfo.summaryTimeWindowInHours}} vor Eventbeginn)</mat-slide-toggle>
+		<mat-slide-toggle formControlName="reminderCtrl">Reminder ({{eventInfo.reminderTimeWindowInHours}}h vor Eventbeginn)</mat-slide-toggle>
+		<mat-slide-toggle formControlName="summaryCtrl">Zusammenfassung ({{eventInfo.summaryTimeWindowInHours}}h vor Eventbeginn)</mat-slide-toggle>
+		<mat-slide-toggle formControlName="lastMinuteCtrl">Kurzfristige Änderungen ({{eventInfo.summaryTimeWindowInHours}}h vor Eventbeginn)</mat-slide-toggle>
 	</div>
 </form>
