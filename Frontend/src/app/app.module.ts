@@ -22,7 +22,7 @@ import { ROUTES } from './app.routes';
 import { AppComponent } from './app.component';
 
 // Main layout
-import { NavigationToolbarComponent } from './shared/navigation-toolbar/navigation-toolbar.component';
+import { MainLayoutComponent } from './shared/main-layout/main-layout.component';
 import { AuthenticatedLayoutComponent } from './authenticated/authenticated-layout/authenticated-layout.component';
 import { AnonymousLayoutComponent } from './anonymous/anonymous-layout/anonymous-layout.component';
 
@@ -81,7 +81,6 @@ import {
 	MatButtonModule,
 	MatToolbarModule,
 	MatDialogModule,
-	MatTooltipModule,
 	MatInputModule,
 	MatSnackBarModule,
 	MatCardModule,
@@ -105,7 +104,7 @@ import '../styles/styles.scss';
 	declarations: [
 		// Shared
 		AppComponent,
-		NavigationToolbarComponent,
+		MainLayoutComponent,
 		ErrorDialogComponent,
 		LoadingDialogComponent,
 		AreYouSureDialogComponent,
@@ -160,7 +159,6 @@ import '../styles/styles.scss';
 		MatButtonModule,
 		MatToolbarModule,
 		MatDialogModule,
-		MatTooltipModule,
 		MatSnackBarModule,
 		MatCardModule,
 		MatIconModule,
@@ -190,7 +188,7 @@ import '../styles/styles.scss';
 		SessionClient,
 		ResetPasswordClient,
 		UserClient,
-		// Ensure 3rd party components use english
+		// Ensure 3rd party components use swiss german (E.g. date format)
 		{
 			provide: LOCALE_ID,
 			useValue: 'de-CH'

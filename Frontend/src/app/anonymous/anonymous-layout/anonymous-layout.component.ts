@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { Link } from '../../shared/navigation-toolbar/link.model';
+import { Link } from '../../shared/main-layout/link.model';
 
 @Component({
 	selector: 'anonymous-layout',

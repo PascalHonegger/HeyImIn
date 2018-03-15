@@ -1,5 +1,6 @@
 @import '~styles/palettes';
 
+// Navigation bar itself => Inspired by HappyMeter
 $logo-margin: 5px;
 $menu-margin: 6px;
 
@@ -26,6 +27,10 @@ $menu-margin: 6px;
 	margin: $logo-margin $logo-margin $logo-margin 0;
 }
 
+.menu-link {
+	min-width: 0;
+}
+
 .menu-link + .menu-link {
 	margin-left: $menu-margin;
 }
@@ -45,4 +50,16 @@ $menu-margin: 6px;
 a {
 	text-decoration: none;
 	color: inherit;
+}
+
+// Main content wrapper
+$content-margin: 16px;
+$content-xs-margin: 6px;
+
+.content-wrapper {
+	margin: $content-margin;
+}
+
+.content-wrapper-xs {
+	margin: $content-margin $content-xs-margin;
 }
