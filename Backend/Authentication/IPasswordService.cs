@@ -1,7 +1,7 @@
 ﻿namespace HeyImIn.Authentication
 {
 	/// <summary>
-	///     Encapsulates
+	///     Encapsulates the password hashing algorithm
 	/// </summary>
 	public interface IPasswordService
 	{

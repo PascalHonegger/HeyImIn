@@ -5,6 +5,9 @@ using HeyImIn.MailNotifier.Models;
 
 namespace HeyImIn.WebApplication.Services
 {
+	/// <summary>
+	///     Service to centralize deletion of entities and their relations
+	/// </summary>
 	public interface IDeleteService
 	{
 		/// <summary>
