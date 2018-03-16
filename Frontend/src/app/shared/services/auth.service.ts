@@ -72,6 +72,8 @@ export class AuthService {
 	public async logOut(): Promise<void> {
 		try {
 			await this.server.stopActiveSession().toPromise();
+			// Prevent redirect to profile after logout
+			this.urlAfterLogin = '/';
 		} catch (err) {
 			// The server session will automatically turn invalid after a while
 			console.info('Removing session from server failed', err);
