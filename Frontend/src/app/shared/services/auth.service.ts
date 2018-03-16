@@ -66,6 +66,7 @@ export class AuthService {
 			// If the error was due to the token being invalid (401),
 			// an interceptor will clear the local session automatically
 			console.info('Loading saved session failed', err);
+			return false;
 		}
 	}
 
