@@ -148,6 +148,8 @@ namespace HeyImIn.WebApplication.Controllers
 
 				invitation.Event.EventParticipations.Add(participation);
 
+				invitation.Used = true;
+
 				await context.SaveChangesAsync();
 
 				return Ok(invitation.EventId);
