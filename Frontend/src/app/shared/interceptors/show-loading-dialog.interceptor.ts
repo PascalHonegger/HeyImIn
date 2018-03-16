@@ -21,7 +21,7 @@ export class ShowLoadingDialogInterceptor implements HttpInterceptor {
 	constructor(private dialog: MatDialog) {}
 
 	public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-		const openedDialog = this.dialog.open(LoadingDialogComponent, { closeOnNavigation: true, disableClose: true });
+		const openedDialog = this.dialog.open(LoadingDialogComponent, { disableClose: true });
 
 		return next.handle(request).pipe(
 			finalize(() => openedDialog.close())
