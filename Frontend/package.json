@@ -1,6 +1,6 @@
 {
 	"name": "hey-im-in",
-	"version": "0.0.1",
+	"version": "1.0.0",
 	"private": true,
 	"description": "Eine Webanwendung zur Eventorganisation",
 	"keywords": [
