@@ -41,7 +41,6 @@ namespace HeyImIn.WebApplication.Controllers
 			{
 				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
 
-				// TODO Load relations for better performance
 				List<Event> participatingEvents = currentUser.EventParticipations.Select(e => e.Event).ToList();
 				List<Event> publicEvents = await context.Events.Where(e => !e.IsPrivate || (e.OrganizerId == currentUser.Id)).ToListAsync();
 

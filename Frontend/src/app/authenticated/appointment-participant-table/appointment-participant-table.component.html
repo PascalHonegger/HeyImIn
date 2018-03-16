@@ -1,22 +1,29 @@
-<mat-table [dataSource]="dataSource" matSort>
-	<!-- Name Column -->
-	<ng-container matColumnDef="participantName">
-		<mat-header-cell *matHeaderCellDef mat-sort-header>Teilnehmer</mat-header-cell>
-		<mat-cell *matCellDef="let element">
-			{{element.participantName}}
-		</mat-cell>
-	</ng-container>
-
-	<!-- Response Column -->
-	<ng-container matColumnDef="response">
-		<mat-header-cell *matHeaderCellDef mat-sort-header>Antwort</mat-header-cell>
-		<mat-cell *matCellDef="let element">
-			<appointment-participation [readonly]="!allowChange" [currentResponse]="element.response"
-			[appointmentId]="appointment.appointmentId" [participantId]="element.participantId"
-			(selectedNewResponse)="updatedResponse.emit()"></appointment-participation>
-		</mat-cell>
-	</ng-container>
-
-	<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-	<mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
-</mat-table>
+<div fxLayout.lt-sm="column" fxLayout.gt-sm="row">
+	<div fxFlex="nogrow" fxLayout="column" fxLayoutGap="5px" class="sum-container" ngClass.gt-xs="large-sum-container">
+		<div>{{appointment.acceptedParticipants}} {{appointment.acceptedParticipants === 1 ? 'Zusage' : 'Zusagen'}}</div>
+		<div>{{appointment.declinedParticipants}} {{appointment.declinedParticipants === 1 ? 'Absage' : 'Absagen'}}</div>
+		<div>{{appointment.notAnsweredParticipants}} ohne Antwort</div>
+	</div>
+	<mat-table class="mat-elevation-z2" fxFlex [dataSource]="dataSource" matSort>
+		<!-- Name Column -->
+		<ng-container matColumnDef="participantName">
+			<mat-header-cell *matHeaderCellDef mat-sort-header>Teilnehmer</mat-header-cell>
+			<mat-cell *matCellDef="let element">
+				{{element.participantName}}
+			</mat-cell>
+		</ng-container>
+	
+		<!-- Response Column -->
+		<ng-container matColumnDef="response">
+			<mat-header-cell *matHeaderCellDef mat-sort-header>Antwort</mat-header-cell>
+			<mat-cell *matCellDef="let element">
+				<appointment-participation [readonly]="!allowChange" [currentResponse]="element.response"
+				[appointmentId]="appointment.appointmentId" [participantId]="element.participantId"
+				(selectedNewResponse)="updatedResponse.emit()"></appointment-participation>
+			</mat-cell>
+		</ng-container>
+	
+		<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+		<mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+	</mat-table>
+</div>

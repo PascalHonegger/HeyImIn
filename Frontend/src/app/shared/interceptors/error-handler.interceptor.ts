@@ -28,7 +28,7 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
 		return next.handle(request).pipe((
 			tap(() => undefined, (event) => {
 				if (event instanceof HttpErrorResponse) {
-					console.info('Received not OK response with status ' + event.status, event);
+					console.debug('Received not OK response with status ' + event.status, event);
 					if (event.status === 400) {
 						// Display a toast with the error message
 						// E.g. Email is already taken
