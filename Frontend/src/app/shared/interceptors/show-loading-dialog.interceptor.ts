@@ -26,7 +26,6 @@ export class ShowLoadingDialogInterceptor implements HttpInterceptor {
 		return this._runningRequests;
 	}
 	private set runningRequests(value: number) {
-		console.warn(value);
 		this._runningRequests = value;
 		this.hasDialogOpen.next(value);
 	}

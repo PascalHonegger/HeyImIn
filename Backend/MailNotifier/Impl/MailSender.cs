@@ -32,8 +32,7 @@ namespace HeyImIn.MailNotifier.Impl
 
 			message.SetSubject(subject);
 
-			// TODO HTML content?
-			// TODO Header / Footer?
+			// If desired we could create a HTML based layout
 			message.PlainTextContent = bodyText;
 
 			Response sendGridResponse = await _sendGridClient.SendEmailAsync(message);
