@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Reflection;
@@ -9,8 +8,10 @@ using System.Web.Http.Description;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
 using HeyImIn.MailNotifier;
+using HeyImIn.MailNotifier.Models;
 using HeyImIn.WebApplication.FrontendModels.ParameterTypes;
 using HeyImIn.WebApplication.Helpers;
+using HeyImIn.WebApplication.Services;
 using HeyImIn.WebApplication.WebApiComponents;
 using log4net;
 
@@ -19,9 +20,10 @@ namespace HeyImIn.WebApplication.Controllers
 	[AuthenticateUser]
 	public class OrganizeAppointmentController : ApiController
 	{
-		public OrganizeAppointmentController(INotificationService notificationService, GetDatabaseContext getDatabaseContext)
+		public OrganizeAppointmentController(INotificationService notificationService, IDeleteService deleteService, GetDatabaseContext getDatabaseContext)
 		{
 			_notificationService = notificationService;
+			_deleteService = deleteService;
 			_getDatabaseContext = getDatabaseContext;
 		}
 
@@ -60,16 +62,13 @@ namespace HeyImIn.WebApplication.Controllers
 					return BadRequest(RequestStringMessages.OrganizorRequired);
 				}
 
-				// Appointment itself
-				List<AppointmentParticipation> participations = appointment.AppointmentParticipations.ToList();
-				context.AppointmentParticipations.RemoveRange(participations);
-				context.Appointments.Remove(appointment);
+				AppointmentNotificationInformation notificationInformation = _deleteService.DeleteAppointmentLocally(context, appointment);
 
 				await context.SaveChangesAsync();
 
-				_auditLog.InfoFormat("{0}(): Deleted event {1}", nameof(DeleteAppointment), appointment.Id);
+				_auditLog.InfoFormat("{0}(): Canceled appointment {1}", nameof(DeleteAppointment), appointment.Id);
 
-				await _notificationService.NotifyAppointmentExplicitlyCanceledAsync(appointment.StartTime, participations, @event);
+				await _notificationService.NotifyAppointmentExplicitlyCanceledAsync(notificationInformation, @event);
 
 				return Ok();
 			}
@@ -247,6 +246,7 @@ namespace HeyImIn.WebApplication.Controllers
 		}
 
 		private readonly INotificationService _notificationService;
+		private readonly IDeleteService _deleteService;
 		private readonly GetDatabaseContext _getDatabaseContext;
 
 		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);

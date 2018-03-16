@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using HeyImIn.Database.Models;
+using HeyImIn.MailNotifier.Models;
 
 namespace HeyImIn.MailNotifier
 {
@@ -60,18 +61,16 @@ namespace HeyImIn.MailNotifier
 		///     Is NOT called when a whole event gets deleted, as every user gets informed about that by
 		///     <see cref="NotifyEventDeletedAsync" />
 		/// </summary>
-		/// <param name="appointmentTime">Time which was canceled</param>
-		/// <param name="participations">Only users who accepted this appointment will be notified</param>
+		/// <param name="appointment">The now deleted appointment</param>
 		/// <param name="event">Event the appointment was part of</param>
-		Task NotifyAppointmentExplicitlyCanceledAsync(DateTime appointmentTime, IEnumerable<AppointmentParticipation> participations, Event @event);
+		Task NotifyAppointmentExplicitlyCanceledAsync(AppointmentNotificationInformation appointment, Event @event);
 
 		/// <summary>
 		///     Sends a notification to all users who are participating in an event
 		///     This happens either because the organizer deleted himself or a single event explicitly
 		/// </summary>
-		/// <param name="eventTitle">Event which got deleted</param>
-		/// <param name="participations">Participants to inform</param>
-		Task NotifyEventDeletedAsync(string eventTitle, IList<User> participations);
+		/// <param name="event">Event which got deleted</param>
+		Task NotifyEventDeletedAsync(EventNotificationInformation @event);
 
 		/// <summary>
 		///     Sends a notification to all users who are participating in an event

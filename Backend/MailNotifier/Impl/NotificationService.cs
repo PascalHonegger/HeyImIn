@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using HeyImIn.Authentication;
 using HeyImIn.Database.Models;
+using HeyImIn.MailNotifier.Models;
 using log4net;
 
 namespace HeyImIn.MailNotifier.Impl
@@ -29,6 +30,8 @@ namespace HeyImIn.MailNotifier.Impl
 			}
 		}
 
+		#region No data deleted
+
 		public async Task SendPasswordResetTokenAsync(Guid token, User recipient)
 		{
 			const string PasswordResetSubject = "Passwort zurücksetzen";
@@ -51,7 +54,7 @@ Sie können diesen Code unter {_baseWebUrl}ResetPassword eingeben und Ihr Passwo
 
 			foreach ((User user, EventInvitation invite) in userInvitations)
 			{
-				string authTokenSuffix = await CreateAuthTokenSuffixAsync(user);
+				string authTokenSuffix = await CreateAuthTokenSuffixAsync(user.Id);
 
 				string personalizedMessage = $@"Hallo {user.FullName}
 
@@ -82,7 +85,7 @@ Sie können diese Einladung unter {_baseWebUrl}AcceptInvitation/{invite.Token} a
 		{
 			const string OrganizerUpdatedUserSubject = "Ein Organisator hat Änderungen für Sie vorgenommen";
 
-			string authTokenSuffix = await CreateAuthTokenSuffixAsync(affectedUser);
+			string authTokenSuffix = await CreateAuthTokenSuffixAsync(affectedUser.Id);
 
 			string message = $@"Hallo {affectedUser.FullName}
 
@@ -108,7 +111,7 @@ Sie können den betroffenen Event unter {_baseWebUrl}ViewEvent/{@event.Id}{authT
 
 			foreach (AppointmentParticipation participation in participationsAwaitingReminder)
 			{
-				string authTokenSuffix = await CreateAuthTokenSuffixAsync(participation.Participant);
+				string authTokenSuffix = await CreateAuthTokenSuffixAsync(participation.Participant.Id);
 
 				string message = $@"Hallo {participation.Participant.FullName}
 
@@ -143,7 +146,7 @@ Die finale Teilnehmerliste:
 
 			foreach (AppointmentParticipation participation in participationsAwaitingSummary)
 			{
-				string authTokenSuffix = await CreateAuthTokenSuffixAsync(participation.Participant);
+				string authTokenSuffix = await CreateAuthTokenSuffixAsync(participation.Participant.Id);
 
 				string message = $@"Hallo {participation.Participant.FullName}
 
@@ -157,6 +160,29 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{appointment.
 			}
 
 			_log.InfoFormat("{0}(): Sent {1} summaries for appointment {2}", nameof(SendAndUpdateSummariesAsync), participationsAwaitingSummary.Count, appointment.Id);
+		}
+
+		public async Task NotifyEventUpdatedAsync(Event @event)
+		{
+			string updatedSubject = $"Der Event '{@event.Title}' wurde editiert";
+
+			string messageBody = $"Die Informationen zum Event '{@event.Title}', an welchem Sie teilnehmen, wurden aktualisiert.";
+
+			foreach (EventParticipation participation in @event.EventParticipations)
+			{
+				string authTokenSuffix = await CreateAuthTokenSuffixAsync(participation.Participant.Id);
+
+				string message = $@"Hallo {participation.Participant.FullName}
+
+{messageBody}
+
+Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{@event.Id}{authTokenSuffix} ansehen.";
+
+
+				await _mailSender.SendMailAsync(participation.Participant.Email, updatedSubject, message);
+			}
+
+			_log.InfoFormat("{0}(): Sent {1} notifications about a change of the event {2}", nameof(NotifyEventUpdatedAsync), @event.EventParticipations.Count, @event.Id);
 		}
 
 		public async Task SendLastMinuteChangeIfRequiredAsync(Appointment appointment)
@@ -176,11 +202,11 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{appointment.
 
 {participants}";
 
-			List<AppointmentParticipation> participationsAwaitingSummary = FilterParticipations(appointment.AppointmentParticipations, p => p.SentSummary, e => e.SendLastMinuteChangesEmail);
+			List<AppointmentParticipation> participationsAlreadyGotSummary = FilterParticipations(appointment.AppointmentParticipations, p => p.SentSummary, e => e.SendLastMinuteChangesEmail);
 
-			foreach (AppointmentParticipation participation in participationsAwaitingSummary)
+			foreach (AppointmentParticipation participation in participationsAlreadyGotSummary)
 			{
-				string authTokenSuffix = await CreateAuthTokenSuffixAsync(participation.Participant);
+				string authTokenSuffix = await CreateAuthTokenSuffixAsync(participation.Participant.Id);
 
 				string message = $@"Hallo {participation.Participant.FullName}
 
@@ -192,22 +218,26 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{appointment.
 				await _mailSender.SendMailAsync(participation.Participant.Email, lastMinuteChangeSubject, message);
 			}
 
-			_log.InfoFormat("{0}(): Sent {1} summaries for appointment {2}", nameof(SendLastMinuteChangeIfRequiredAsync), participationsAwaitingSummary.Count, appointment.Id);
+			_log.InfoFormat("{0}(): Sent {1} updated summaries for appointment {2}", nameof(SendLastMinuteChangeIfRequiredAsync), participationsAlreadyGotSummary.Count, appointment.Id);
 		}
 
-		public async Task NotifyAppointmentExplicitlyCanceledAsync(DateTime appointmentTime, IEnumerable<AppointmentParticipation> participations, Event @event)
+		#endregion
+
+		#region Data possibly deleted
+
+		public async Task NotifyAppointmentExplicitlyCanceledAsync(AppointmentNotificationInformation appointment, Event @event)
 		{
-			DateTime startTime = TargetTimeZone(appointmentTime);
+			DateTime startTime = TargetTimeZone(appointment.StartTime);
 
 			string summarySubject = $"Termin am {startTime:g} zum Event '{@event.Title}' abgesagt";
 
 			string messageBody = $"Sie haben dem Termin ({startTime:g}) zugesagt, welcher vom Organisator abgesagt wurde.";
 
-			List<AppointmentParticipation> acceptedParticipations = participations.Where(p => p.AppointmentParticipationAnswer == AppointmentParticipationAnswer.Accepted).ToList();
+			List<AppointmentParticipationNotificationInformation> acceptedParticipations = appointment.Participations.Where(p => p.Answer == AppointmentParticipationAnswer.Accepted).ToList();
 
-			foreach (AppointmentParticipation participation in acceptedParticipations)
+			foreach (AppointmentParticipationNotificationInformation participation in acceptedParticipations)
 			{
-				string authTokenSuffix = await CreateAuthTokenSuffixAsync(participation.Participant);
+				string authTokenSuffix = await CreateAuthTokenSuffixAsync(participation.Participant.Id);
 
 				string message = $@"Hallo {participation.Participant.FullName}
 
@@ -219,16 +249,16 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{@event.Id}{a
 				await _mailSender.SendMailAsync(participation.Participant.Email, summarySubject, message);
 			}
 
-			_log.InfoFormat("{0}(): Sent {1} notifications about cancelation of appointment", nameof(NotifyAppointmentExplicitlyCanceledAsync), acceptedParticipations.Count);
+			_log.InfoFormat("{0}(): Sent {1} notifications about cancelation of appointment {2}", nameof(NotifyAppointmentExplicitlyCanceledAsync), acceptedParticipations.Count, appointment.Id);
 		}
 
-		public async Task NotifyEventDeletedAsync(string eventTitle, IList<User> participations)
+		public async Task NotifyEventDeletedAsync(EventNotificationInformation @event)
 		{
-			string deletedSubject = $"Der Event '{eventTitle}' wurde gelöscht";
+			string deletedSubject = $"Der Event '{@event.Title}' wurde gelöscht";
 
-			string messageBody = $"Der Event '{eventTitle}', an welchem Sie teilgenommen haben, wurde zusammen mit allen Terminen gelöscht.";
+			string messageBody = $"Der Event '{@event.Title}', an welchem Sie teilgenommen haben, wurde zusammen mit allen Terminen gelöscht.";
 
-			foreach (User participant in participations)
+			foreach (UserNotificationInformation participant in @event.Participations)
 			{
 				string message = $@"Hallo {participant.FullName}
 
@@ -238,31 +268,10 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{@event.Id}{a
 				await _mailSender.SendMailAsync(participant.Email, deletedSubject, message);
 			}
 
-			_log.InfoFormat("{0}(): Sent {1} notifications about the deletion of an event with the title '{2}'", nameof(NotifyEventDeletedAsync), participations.Count, eventTitle);
+			_log.InfoFormat("{0}(): Sent {1} notifications about the deletion of event {2} with the title '{3}'", nameof(NotifyEventDeletedAsync), @event.Participations.Count, @event.Id, @event.Title);
 		}
 
-		public async Task NotifyEventUpdatedAsync(Event @event)
-		{
-			string updatedSubject = $"Der Event '{@event.Title}' wurde editiert";
-
-			string messageBody = $"Die Informationen zum Event '{@event.Title}', an welchem Sie teilnehmen, wurden aktualisiert.";
-
-			foreach (EventParticipation participation in @event.EventParticipations)
-			{
-				string authTokenSuffix = await CreateAuthTokenSuffixAsync(participation.Participant);
-
-				string message = $@"Hallo {participation.Participant.FullName}
-
-{messageBody}
-
-Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{@event.Id}{authTokenSuffix} ansehen.";
-
-
-				await _mailSender.SendMailAsync(participation.Participant.Email, updatedSubject, message);
-			}
-
-			_log.InfoFormat("{0}(): Sent {1} notifications about a change of the event {2}", nameof(NotifyEventUpdatedAsync), @event.EventParticipations.Count, @event.Id);
-		}
+		#endregion
 
 		/// <summary>
 		///     Returns all participations which pass the provided filters and were accepted
@@ -278,9 +287,9 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{@event.Id}{a
 				.ToList();
 		}
 
-		private async Task<string> CreateAuthTokenSuffixAsync(User user)
+		private async Task<string> CreateAuthTokenSuffixAsync(int userId)
 		{
-			Guid createdSessionToken = await _sessionService.CreateSessionAsync(user.Id, false);
+			Guid createdSessionToken = await _sessionService.CreateSessionAsync(userId, false);
 
 			return $"?authToken={createdSessionToken}";
 		}

@@ -10,9 +10,11 @@ using HeyImIn.Authentication;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
 using HeyImIn.MailNotifier;
+using HeyImIn.MailNotifier.Models;
 using HeyImIn.WebApplication.FrontendModels.ParameterTypes;
 using HeyImIn.WebApplication.FrontendModels.ResponseTypes;
 using HeyImIn.WebApplication.Helpers;
+using HeyImIn.WebApplication.Services;
 using HeyImIn.WebApplication.WebApiComponents;
 using log4net;
 
@@ -20,11 +22,12 @@ namespace HeyImIn.WebApplication.Controllers
 {
 	public class UserController : ApiController
 	{
-		public UserController(IPasswordService passwordService, ISessionService sessionService, INotificationService notificationService, GetDatabaseContext getDatabaseContext)
+		public UserController(IPasswordService passwordService, ISessionService sessionService, INotificationService notificationService, IDeleteService deleteService, GetDatabaseContext getDatabaseContext)
 		{
 			_passwordService = passwordService;
 			_sessionService = sessionService;
 			_notificationService = notificationService;
+			_deleteService = deleteService;
 			_getDatabaseContext = getDatabaseContext;
 		}
 
@@ -119,41 +122,17 @@ namespace HeyImIn.WebApplication.Controllers
 			{
 				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
 
-				// Token based relations
-				context.Sessions.RemoveRange(currentUser.Sessions);
-				context.PasswordResets.RemoveRange(currentUser.PasswordResets);
+				List<Appointment> userAppointments = currentUser.AppointmentParticipations.Select(a => a.Appointment).ToList();
 
-				// Events the user is part of
-				List<Event> organizedEvents = currentUser.OrganizedEvents.ToList();
-				List<(Event Event, List<User> Participations)> eventWithParticipations = organizedEvents.Select(e => (Event: e, Participations: e.EventParticipations.Select(ep => ep.Participant).ToList())).ToList();
-				context.EventParticipations.RemoveRange(currentUser.EventParticipations);
-
-				// Appointments the user is part of
-				List<AppointmentParticipation> userAppointmentParticipations = currentUser.AppointmentParticipations.ToList();
-				List<Appointment> userAppointments = userAppointmentParticipations.Select(a => a.Appointment).ToList();
-				context.AppointmentParticipations.RemoveRange(userAppointmentParticipations);
-
-				// Events the user organized
-				List<EventParticipation> organizedParticipations = organizedEvents.SelectMany(o => o.EventParticipations).ToList();
-				List<EventInvitation> organizedInvitations = organizedEvents.SelectMany(o => o.EventInvitations).ToList();
-				List<Appointment> organizedAppointments = organizedEvents.SelectMany(o => o.Appointments).ToList();
-				List<AppointmentParticipation> organizedAppointmentParticipations = organizedAppointments.SelectMany(o => o.AppointmentParticipations).ToList();
-				context.EventParticipations.RemoveRange(organizedParticipations);
-				context.EventInvitations.RemoveRange(organizedInvitations);
-				context.Appointments.RemoveRange(organizedAppointments);
-				context.AppointmentParticipations.RemoveRange(organizedAppointmentParticipations);
-				context.Events.RemoveRange(organizedEvents);
-
-				// User himself
-				context.Users.Remove(currentUser);
+				List<EventNotificationInformation> notificationInformations = _deleteService.DeleteUserLocally(context, currentUser);
 
 				await context.SaveChangesAsync();
 
 				_auditLog.InfoFormat("{0}(): Deleted user {1} ({2}) and all of his events", nameof(DeleteAccount), currentUser.Id, currentUser.FullName);
 
-				foreach (var (@event, participations) in eventWithParticipations)
+				foreach (EventNotificationInformation notificationInformation in notificationInformations)
 				{
-					await _notificationService.NotifyEventDeletedAsync(@event.Title, participations);
+					await _notificationService.NotifyEventDeletedAsync(notificationInformation);
 				}
 
 				foreach (Appointment appointment in userAppointments)
@@ -209,6 +188,7 @@ namespace HeyImIn.WebApplication.Controllers
 		private readonly IPasswordService _passwordService;
 		private readonly ISessionService _sessionService;
 		private readonly INotificationService _notificationService;
+		private readonly IDeleteService _deleteService;
 		private readonly GetDatabaseContext _getDatabaseContext;
 
 		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);

@@ -2,6 +2,9 @@
 
 namespace HeyImIn.WebApplication.Services
 {
+	/// <summary>
+	///     A service for repeating scheduled events
+	/// </summary>
 	public interface ICronService
 	{
 		/// <summary>

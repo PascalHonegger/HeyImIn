@@ -132,6 +132,8 @@
     <Compile Include="FrontendModels\NotificationConfigurationDto.cs" />
     <Compile Include="FrontendModels\ParameterTypes\NotificationConfigurationDto.cs" />
     <Compile Include="FrontendModels\GeneralEventInformation.cs" />
+    <Compile Include="Services\Impl\DeleteService.cs" />
+    <Compile Include="Services\IDeleteService.cs" />
     <Compile Include="Services\ICronService.cs" />
     <Compile Include="Controllers\InviteToEventController.cs" />
     <Compile Include="Controllers\OrganizeAppointmentController.cs" />
