@@ -3,7 +3,7 @@
 	<div fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="25px">
 		<mat-card>
 			<mat-card-header>
-				<mat-card-title>Meine Events</mat-card-title>
+				<mat-card-title>Teilnehmende Events</mat-card-title>
 			</mat-card-header>
 			<mat-card-content>
 				<events-overview-list [events]="eventOverview.yourEvents" (eventChanged)="loadEventOverview()"></events-overview-list>
@@ -11,7 +11,7 @@
 		</mat-card>
 		<mat-card>
 			<mat-card-header>
-				<mat-card-title>Öffentliche Events</mat-card-title>
+				<mat-card-title>Verfügbare Events</mat-card-title>
 			</mat-card-header>
 			<mat-card-content>
 				<events-overview-list [events]="eventOverview.publicEvents" (eventChanged)="loadEventOverview()"></events-overview-list>
