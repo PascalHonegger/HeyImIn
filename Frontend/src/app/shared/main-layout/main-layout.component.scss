@@ -28,7 +28,7 @@ $menu-margin: 6px;
 }
 
 .menu-link {
-	min-width: 0;
+	min-width: 56px; // 0 Doesn't work in IE11 & Edge
 }
 
 .menu-link + .menu-link {
