@@ -7,9 +7,10 @@ import {
 } from '@angular/common/http';
 
 import { Observable } from 'rxjs/Observable';
-import { finalize } from 'rxjs/operators';
+import { finalize, map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { LoadingDialogComponent } from '../loading-dialog/loading-dialog.component';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 /**
  * Displays a global loading dialog while a server request is running
@@ -18,13 +19,41 @@ import { LoadingDialogComponent } from '../loading-dialog/loading-dialog.compone
 export class ShowLoadingDialogInterceptor implements HttpInterceptor {
 	private currentlyOpenedDialog: MatDialogRef<LoadingDialogComponent>;
 
-	constructor(private dialog: MatDialog) {}
+	private hasDialogOpen: BehaviorSubject<number> = new BehaviorSubject(0);
+
+	private _runningRequests: number = 0;
+	private get runningRequests(): number {
+		return this._runningRequests;
+	}
+	private set runningRequests(value: number) {
+		console.warn(value);
+		this._runningRequests = value;
+		this.hasDialogOpen.next(value);
+	}
+
+	constructor(private dialog: MatDialog) {
+		this.hasDialogOpen
+			.pipe(
+				map(value => value > 0),
+				debounceTime(100),
+				distinctUntilChanged()
+			)
+			.subscribe(
+				(open) => {
+					if (open) {
+						this.currentlyOpenedDialog = this.dialog.open(LoadingDialogComponent, { disableClose: true });
+					} else {
+						this.currentlyOpenedDialog.close();
+					}
+				}
+		);
+	}
 
 	public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-		const openedDialog = this.dialog.open(LoadingDialogComponent, { disableClose: true });
+		this.runningRequests++;
 
 		return next.handle(request).pipe(
-			finalize(() => openedDialog.close())
+			finalize(() => this.runningRequests--)
 		);
 	}
 }
