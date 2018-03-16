@@ -1,6 +1,7 @@
 import { Component, AfterViewInit, ViewChild, Input, EventEmitter, Output } from '@angular/core';
 import { MatTableDataSource, MatSort } from '@angular/material';
 import { AppointmentParticipationInformation, AppointmentInformation } from '../../shared/server-model/event-edit-details.model';
+import { AuthService } from '../../shared/services/auth.service';
 
 @Component({
 	selector: 'appointment-participant-table',
@@ -19,10 +20,10 @@ export class AppointmentParticipantTableComponent implements AfterViewInit {
 	public updatedResponse: EventEmitter<void> = new EventEmitter();
 
 	@Input()
-	public allowChange: boolean;
+	public appointment: AppointmentInformation;
 
 	@Input()
-	public appointment: AppointmentInformation;
+	public isOrganizingEvent: boolean;
 
 	private _participants: AppointmentParticipationInformation[];
 	@Input()
@@ -34,6 +35,12 @@ export class AppointmentParticipantTableComponent implements AfterViewInit {
 	public get participants(): AppointmentParticipationInformation[] {
 		return this._participants;
 	}
+
+	public get currentUserId(): number {
+		return this.authService.session.userId;
+	}
+
+	constructor(private authService: AuthService) { }
 
 	/**
 	 * Set the sort after the view init since this component will

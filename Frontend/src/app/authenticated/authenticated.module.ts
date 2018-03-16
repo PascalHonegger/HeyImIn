@@ -31,7 +31,6 @@ const dialogs = [
 ];
 
 const components = [
-	// Authenticated
 	AuthenticatedLayoutComponent,
 	AcceptInviteComponent,
 	EventsOverviewComponent,

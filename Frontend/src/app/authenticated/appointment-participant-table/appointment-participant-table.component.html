@@ -17,7 +17,7 @@
 		<ng-container matColumnDef="response">
 			<mat-header-cell *matHeaderCellDef mat-sort-header>Antwort</mat-header-cell>
 			<mat-cell *matCellDef="let element">
-				<appointment-participation [readonly]="!allowChange" [currentResponse]="element.response"
+				<appointment-participation [readonly]="!isOrganizingEvent && element.participantId !== currentUserId" [currentResponse]="element.response"
 				[appointmentId]="appointment.appointmentId" [participantId]="element.participantId"
 				(selectedNewResponse)="updatedResponse.emit()"></appointment-participation>
 			</mat-cell>

@@ -33,7 +33,7 @@
 							</mat-panel-title>
 						</mat-expansion-panel-header>
 						<div>
-							<appointment-participant-table [participants]="appointment.participations" [allowChange]="true" [appointment]="appointment.appointmentInformation"
+							<appointment-participant-table [participants]="appointment.participations" [isOrganizingEvent]="true" [appointment]="appointment.appointmentInformation"
 							(updatedResponse)="loadEventDetails()"></appointment-participant-table>
 						</div>
 						<mat-action-row>

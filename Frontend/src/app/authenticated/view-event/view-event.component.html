@@ -1,7 +1,7 @@
 <ng-container *ngIf="eventDetails; else noEventDataTemplate">
 	<div fxLayout="row" fxLayoutAlign="start center">
 		<h2 fxFlex class="mat-display-1">{{eventDetails.information.title}}</h2>
-		<button mat-raised-button color="primary" *ngIf="currentUserId === eventDetails.information.organizerId" [routerLink]="['/EditEvent', eventId]">Editieren</button>
+		<button mat-raised-button color="primary" *ngIf="isOrganizingEvent" [routerLink]="['/EditEvent', eventId]">Editieren</button>
 	</div>
 	<div fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="25px">
 		<mat-card>
@@ -46,7 +46,7 @@
 								</mat-panel-description>
 							</mat-expansion-panel-header>
 							<div>
-								<appointment-participant-table [participants]="appointment.participations" [allowChange]="eventDetails.information.organizerId === currentUserId"
+								<appointment-participant-table [participants]="appointment.participations" [isOrganizingEvent]="isOrganizingEvent"
 									[appointment]="appointment.appointmentInformation" (updatedResponse)="loadEventDetails()"></appointment-participant-table>
 							</div>
 						</mat-expansion-panel>
