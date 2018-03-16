@@ -32,12 +32,9 @@ namespace HeyImIn.WebApplication.Services.Impl
 		public List<EventNotificationInformation> DeleteUserLocally(IDatabaseContext context, User user)
 		{
 			// Backup data relevant for sending notifications
-			List<Event> organizedEvents = user.OrganizedEvents.ToList();
-
-			// Events the user organized
 			var deletedEventNotificationInfos = new List<EventNotificationInformation>();
 
-			foreach (Event organizedEvent in organizedEvents)
+			foreach (Event organizedEvent in user.OrganizedEvents.ToList())
 			{
 				EventNotificationInformation deletedInfo = DeleteEventLocally(context, organizedEvent);
 				deletedEventNotificationInfos.Add(deletedInfo);
@@ -69,10 +66,12 @@ namespace HeyImIn.WebApplication.Services.Impl
 			List<EventParticipation> participations = @event.EventParticipations.ToList();
 			context.EventParticipations.RemoveRange(participations);
 
-			// Appointments of the event
-			List<Appointment> appointments = @event.Appointments.ToList();
-			context.Appointments.RemoveRange(appointments);
-			context.AppointmentParticipations.RemoveRange(appointments.SelectMany(a => a.AppointmentParticipations));
+			// Appointments of the even
+			foreach (Appointment eventAppointment in @event.Appointments.ToList())
+			{
+				// Ignore notification information as we don't send appointment canceled if the whole event gets deleted
+				DeleteAppointmentLocally(context, eventAppointment);
+			}
 
 			// Invitations to the event
 			context.EventInvitations.RemoveRange(@event.EventInvitations);

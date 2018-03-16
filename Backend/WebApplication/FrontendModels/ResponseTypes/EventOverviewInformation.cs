@@ -17,7 +17,7 @@ namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
 		{
 			ViewEventInformation viewEventInformation = ViewEventInformation.FromEvent(@event, currentUser);
 
-			Appointment firstUpcomingAppointment = @event.Appointments.FirstOrDefault(a => a.StartTime >= DateTime.UtcNow);
+			Appointment firstUpcomingAppointment = @event.Appointments.OrderBy(a => a.StartTime).FirstOrDefault(a => a.StartTime >= DateTime.UtcNow);
 
 			if (firstUpcomingAppointment == null)
 			{

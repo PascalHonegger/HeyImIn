@@ -85,7 +85,9 @@ namespace HeyImIn.Authentication.Impl
 
 		private static bool IsValidSession(Session session)
 		{
-			return (session.ValidUntil != null) && (session.ValidUntil >= DateTime.UtcNow);
+			return session.ValidUntil == null 
+				? DateTime.UtcNow - session.Created <= TimeSpan.FromDays(2)
+				: session.ValidUntil >= DateTime.UtcNow;
 		}
 
 
