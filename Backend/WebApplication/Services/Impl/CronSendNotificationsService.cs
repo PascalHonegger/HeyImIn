@@ -11,11 +11,11 @@ using log4net;
 
 namespace HeyImIn.WebApplication.Services.Impl
 {
+	/// <summary>
+	///     Sends time based notifications like reminders and summaries
+	/// </summary>
 	public class CronSendNotificationsService : ICronService
 	{
-		private readonly INotificationService _notificationService;
-		private readonly GetDatabaseContext _getDatabaseContext;
-
 		public CronSendNotificationsService(INotificationService notificationService, GetDatabaseContext getDatabaseContext)
 		{
 			_notificationService = notificationService;
@@ -52,6 +52,9 @@ namespace HeyImIn.WebApplication.Services.Impl
 
 			_log.DebugFormat("{0}(): Finished running notification Cron", nameof(RunAsync));
 		}
+
+		private readonly INotificationService _notificationService;
+		private readonly GetDatabaseContext _getDatabaseContext;
 
 		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 	}

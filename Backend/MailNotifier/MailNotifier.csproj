@@ -43,6 +43,10 @@
     <Compile Include="..\SharedFiles\AssemblyInfo-Shared.cs">
       <Link>Properties\AssemblyInfo-Shared.cs</Link>
     </Compile>
+    <Compile Include="Models\AppointmentNotificationInformation.cs" />
+    <Compile Include="Models\AppointmentParticipationNotificationInformation.cs" />
+    <Compile Include="Models\EventNotificationInformation.cs" />
+    <Compile Include="Models\UserNotificationInformation.cs" />
     <Compile Include="IMailSender.cs" />
     <Compile Include="Impl\MailSender.cs" />
     <Compile Include="INotificationService.cs" />

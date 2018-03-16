@@ -9,10 +9,12 @@ using System.Web.Http.Description;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
 using HeyImIn.MailNotifier;
+using HeyImIn.MailNotifier.Models;
 using HeyImIn.WebApplication.FrontendModels;
 using HeyImIn.WebApplication.FrontendModels.ParameterTypes;
 using HeyImIn.WebApplication.FrontendModels.ResponseTypes;
 using HeyImIn.WebApplication.Helpers;
+using HeyImIn.WebApplication.Services;
 using HeyImIn.WebApplication.WebApiComponents;
 using log4net;
 
@@ -21,9 +23,10 @@ namespace HeyImIn.WebApplication.Controllers
 	[AuthenticateUser]
 	public class OrganizeEventController : ApiController
 	{
-		public OrganizeEventController(INotificationService notificationService, GetDatabaseContext getDatabaseContext)
+		public OrganizeEventController(INotificationService notificationService, IDeleteService deleteService, GetDatabaseContext getDatabaseContext)
 		{
 			_notificationService = notificationService;
+			_deleteService = deleteService;
 			_getDatabaseContext = getDatabaseContext;
 		}
 
@@ -62,27 +65,13 @@ namespace HeyImIn.WebApplication.Controllers
 					return BadRequest(RequestStringMessages.OrganizorRequired);
 				}
 
-				// Participations for the event
-				List<EventParticipation> participations = @event.EventParticipations.ToList();
-				List<User> participants = @event.EventParticipations.Select(p => p.Participant).ToList();
-				context.EventParticipations.RemoveRange(participations);
-
-				// Appointments of the event
-				List<Appointment> appointments = @event.Appointments.ToList();
-				context.Appointments.RemoveRange(appointments);
-				context.AppointmentParticipations.RemoveRange(appointments.SelectMany(a => a.AppointmentParticipations));
-
-				// Invitations to the event
-				context.EventInvitations.RemoveRange(@event.EventInvitations);
-
-				// Event itself
-				context.Events.Remove(@event);
+				EventNotificationInformation notificationInformation = _deleteService.DeleteEventLocally(context, @event);
 
 				await context.SaveChangesAsync();
 
 				_auditLog.InfoFormat("{0}(): Deleted event {1}", nameof(DeleteEvent), @event.Id);
 
-				await _notificationService.NotifyEventDeletedAsync(@event.Title, participants);
+				await _notificationService.NotifyEventDeletedAsync(notificationInformation);
 
 				return Ok();
 			}
@@ -230,6 +219,7 @@ namespace HeyImIn.WebApplication.Controllers
 		}
 
 		private readonly INotificationService _notificationService;
+		private readonly IDeleteService _deleteService;
 		private readonly GetDatabaseContext _getDatabaseContext;
 
 		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
