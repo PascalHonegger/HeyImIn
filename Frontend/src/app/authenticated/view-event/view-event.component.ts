@@ -14,6 +14,7 @@ import { DetailOverviewBase } from '../detail-overview-base';
 	templateUrl: './view-event.component.html'
 })
 export class ViewEventComponent extends DetailOverviewBase implements OnDestroy {
+	public isOrganizingEvent: boolean;
 	public eventDetails: EventDetails;
 
 	private subscription: Subscription;
@@ -62,6 +63,7 @@ export class ViewEventComponent extends DetailOverviewBase implements OnDestroy 
 		this.eventServer.getDetails(this.eventId).subscribe(
 			detail => {
 				this.eventDetails = detail;
+				this.isOrganizingEvent = this.currentUserId === detail.information.organizerId;
 			},
 			err => this.eventDetails = null);
 	}
