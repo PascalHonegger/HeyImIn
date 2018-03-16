@@ -12,9 +12,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCulture("")]
 [assembly: ComVisible(false)]
 
-[assembly: AssemblyVersion("0.0.1")]
-[assembly: AssemblyFileVersion("0.0.1")]
-[assembly: AssemblyInformationalVersion("0.0.1")]
+[assembly: AssemblyVersion("1.0.0")]
+[assembly: AssemblyFileVersion("1.0.0")]
+[assembly: AssemblyInformationalVersion("1.0.0")]
 
 #if DEBUG
 [assembly: AssemblyConfiguration("Debug Build")]
