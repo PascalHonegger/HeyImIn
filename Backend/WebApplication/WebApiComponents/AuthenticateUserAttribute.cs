@@ -10,6 +10,10 @@ using HeyImIn.WebApplication.Helpers;
 
 namespace HeyImIn.WebApplication.WebApiComponents
 {
+	/// <summary>
+	///     Authenticates the user and calls <see cref="HttpActionExtensions.SetUserId" /> &
+	///     <see cref="HttpActionExtensions.SetSessionToken" />
+	/// </summary>
 	public class AuthenticateUserAttribute : AuthorizeAttribute
 	{
 		private const string SessionTokenHttpHeaderKey = "SessionToken";

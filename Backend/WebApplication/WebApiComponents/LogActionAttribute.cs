@@ -8,10 +8,11 @@ using log4net;
 
 namespace HeyImIn.WebApplication.WebApiComponents
 {
+	/// <summary>
+	///     Sets context properties for the request and logs the completion
+	/// </summary>
 	public class LogActionAttribute : ActionFilterAttribute
 	{
-		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
 		public override void OnActionExecuting(HttpActionContext actionContext)
 		{
 			// Save a stopwatch to measure the time it took to execute the request
@@ -50,5 +51,6 @@ namespace HeyImIn.WebApplication.WebApiComponents
 		}
 
 		private const string StopwatchName = "RequestDurationStopwatch";
+		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 	}
 }

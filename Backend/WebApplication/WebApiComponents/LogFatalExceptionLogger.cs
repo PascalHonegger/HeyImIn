@@ -9,12 +9,10 @@ using log4net;
 namespace HeyImIn.WebApplication.WebApiComponents
 {
 	/// <summary>
-	/// A global exception logger to write all exceptions to the log
+	///     A global exception logger to write all exceptions to the log
 	/// </summary>
 	public class LogFatalExceptionLogger : IExceptionLogger
 	{
-		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-
 		public Task LogAsync(ExceptionLoggerContext context, CancellationToken cancellationToken)
 		{
 			try
@@ -29,5 +27,7 @@ namespace HeyImIn.WebApplication.WebApiComponents
 
 			return Task.CompletedTask;
 		}
+
+		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 	}
 }

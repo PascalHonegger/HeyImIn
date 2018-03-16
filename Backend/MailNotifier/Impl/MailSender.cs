@@ -15,17 +15,17 @@ namespace HeyImIn.MailNotifier.Impl
 			_sendGridClient = sendGridClient;
 		}
 
-		public Task SendMailAsync(string recipient, string subject, string bodyText)
+		public Task SendMailAsync(string recipientEmail, string subject, string bodyText)
 		{
-			return SendMailAsync(new[] { recipient }, subject, bodyText);
+			return SendMailAsync(new[] { recipientEmail }, subject, bodyText);
 		}
 
-		public async Task SendMailAsync(IReadOnlyCollection<string> recipients, string subject, string bodyText)
+		public async Task SendMailAsync(IReadOnlyCollection<string> recipientEmails, string subject, string bodyText)
 		{
 			var message = new SendGridMessage();
 			message.SetFrom("no-reply@hey-im-in.ch", "Hey I'm in");
 
-			foreach (string recipient in recipients)
+			foreach (string recipient in recipientEmails)
 			{
 				message.AddTo(recipient);
 			}
@@ -41,7 +41,7 @@ namespace HeyImIn.MailNotifier.Impl
 			if (!new HttpResponseMessage(sendGridResponse.StatusCode).IsSuccessStatusCode)
 			{
 				string responseBody = await sendGridResponse.Body.ReadAsStringAsync();
-				_log.ErrorFormat("{0}(subject={1}): Failed to send mail to recipients ({2}), statusCode={3}, errorBody={4}", nameof(SendMailAsync), subject, string.Join(";", recipients), sendGridResponse.StatusCode, responseBody);
+				_log.ErrorFormat("{0}(subject={1}): Failed to send mail to recipients ({2}), statusCode={3}, errorBody={4}", nameof(SendMailAsync), subject, string.Join(";", recipientEmails), sendGridResponse.StatusCode, responseBody);
 			}
 		}
 

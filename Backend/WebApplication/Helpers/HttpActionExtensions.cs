@@ -51,6 +51,12 @@ namespace HeyImIn.WebApplication.Helpers
 			requestMessage.Properties[UserIdPropertiesKey] = userId;
 		}
 
+		/// <summary>
+		///     Loads the current user from the database using the provided <paramref name="context" />
+		/// </summary>
+		/// <param name="requestMessage">Request to get UserId from</param>
+		/// <param name="context">Context to load from</param>
+		/// <returns>Loaded user</returns>
 		public static async Task<User> GetCurrentUserAsync(this HttpRequestMessage requestMessage, IDatabaseContext context)
 		{
 			int currentUserId = requestMessage.GetUserId();
