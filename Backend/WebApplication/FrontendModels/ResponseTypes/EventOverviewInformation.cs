@@ -13,9 +13,9 @@ namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
 			LatestAppointmentInformation = latestAppointmentInformation;
 		}
 
-		public static EventOverviewInformation FromEvent(Event @event, User currentUser)
+		public static EventOverviewInformation FromEvent(Event @event, int currentUserId)
 		{
-			ViewEventInformation viewEventInformation = ViewEventInformation.FromEvent(@event, currentUser);
+			ViewEventInformation viewEventInformation = ViewEventInformation.FromEvent(@event, currentUserId);
 
 			Appointment firstUpcomingAppointment = @event.Appointments.OrderBy(a => a.StartTime).FirstOrDefault(a => a.StartTime >= DateTime.UtcNow);
 
@@ -24,7 +24,7 @@ namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
 				return new EventOverviewInformation(@event.Id, viewEventInformation, null);
 			}
 
-			AppointmentInformation appointmentInformation = AppointmentInformation.FromAppointment(firstUpcomingAppointment, currentUser, @event.EventParticipations.Count);
+			AppointmentInformation appointmentInformation = AppointmentInformation.FromAppointment(firstUpcomingAppointment, currentUserId, @event.EventParticipations.Count);
 
 			return new EventOverviewInformation(@event.Id, viewEventInformation, appointmentInformation);
 		}

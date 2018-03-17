@@ -183,7 +183,6 @@ namespace HeyImIn.WebApplication.Controllers
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
 				Event @event = await context.Events
-					.Include(e => e.Organizer)
 					.Include(e => e.EventParticipations)
 					.Include(e => e.Appointments)
 					.FirstOrDefaultAsync(e => e.Id == eventId);
@@ -193,9 +192,9 @@ namespace HeyImIn.WebApplication.Controllers
 					return NotFound();
 				}
 
-				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
+				int currentUserId = ActionContext.Request.GetUserId();
 
-				if (@event.Organizer != currentUser)
+				if (@event.OrganizerId != currentUserId)
 				{
 					_log.InfoFormat("{0}(): Tried to edit event {1}, which he's not organizing", nameof(GetEditDetails), @event.Id);
 
@@ -207,12 +206,12 @@ namespace HeyImIn.WebApplication.Controllers
 				List<AppointmentDetails> upcomingAppointments = @event.Appointments
 					.Where(a => a.StartTime >= DateTime.UtcNow)
 					.OrderBy(a => a.StartTime)
-					.Select(a => AppointmentDetails.FromAppointment(a, currentUser, allParticipants))
+					.Select(a => AppointmentDetails.FromAppointment(a, currentUserId, allParticipants))
 					.ToList();
 
 				List<EventParticipantInformation> currentEventParticipation = @event.EventParticipations.Select(EventParticipantInformation.FromParticipation).ToList();
 
-				ViewEventInformation viewEventInformation = ViewEventInformation.FromEvent(@event, currentUser);
+				ViewEventInformation viewEventInformation = ViewEventInformation.FromEvent(@event, currentUserId);
 
 				return Ok(new EditEventDetails(viewEventInformation, upcomingAppointments, currentEventParticipation));
 			}
