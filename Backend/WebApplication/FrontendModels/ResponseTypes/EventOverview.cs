@@ -10,8 +10,14 @@ namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
 			PublicEvents = publicEvents;
 		}
 
+		/// <summary>
+		///     Events you participate or organize
+		/// </summary>
 		public List<EventOverviewInformation> YourEvents { get; }
 
+		/// <summary>
+		///     Events you could participate without an invitation
+		/// </summary>
 		public List<EventOverviewInformation> PublicEvents { get; }
 	}
 }

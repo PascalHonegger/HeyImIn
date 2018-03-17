@@ -19,9 +19,9 @@ namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
 			ReminderTimeWindowInHours = reminderTimeWindowInHours;
 		}
 
-		public static ViewEventInformation FromEvent(Event @event, User currentUser)
+		public static ViewEventInformation FromEvent(Event @event, int currentUserId)
 		{
-			bool currentUserDoesParticipate = @event.EventParticipations.Select(p => p.Participant).Contains(currentUser);
+			bool currentUserDoesParticipate = @event.EventParticipations.Select(p => p.ParticipantId).Contains(currentUserId);
 
 			return new ViewEventInformation(@event.OrganizerId, @event.Organizer.FullName, @event.MeetingPlace, @event.Description, @event.EventParticipations.Count, @event.IsPrivate, currentUserDoesParticipate, @event.Title, @event.SummaryTimeWindowInHours, @event.ReminderTimeWindowInHours);
 		}

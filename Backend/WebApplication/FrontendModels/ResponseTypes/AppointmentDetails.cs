@@ -12,7 +12,7 @@ namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
 			Participations = participations;
 		}
 
-		public static AppointmentDetails FromAppointment(Appointment appointment, User currentUser, List<User> allParticipants)
+		public static AppointmentDetails FromAppointment(Appointment appointment, int currentUserId, List<User> allParticipants)
 		{
 			IEnumerable<AppointmentParticipationInformation> withAnswers = appointment.AppointmentParticipations.Select(p => new AppointmentParticipationInformation(p.Participant.FullName, p.Participant.Id, p.AppointmentParticipationAnswer));
 
@@ -20,7 +20,7 @@ namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
 			IEnumerable<AppointmentParticipationInformation> noAnswers = otherParticipants.Select(p => new AppointmentParticipationInformation(p.FullName, p.Id, null));
 
 			List<AppointmentParticipationInformation> participations = withAnswers.Concat(noAnswers).ToList();
-			AppointmentInformation appointmentInformation = AppointmentInformation.FromAppointment(appointment, currentUser, allParticipants.Count);
+			AppointmentInformation appointmentInformation = AppointmentInformation.FromAppointment(appointment, currentUserId, allParticipants.Count);
 
 			return new AppointmentDetails(appointmentInformation, participations);
 		}

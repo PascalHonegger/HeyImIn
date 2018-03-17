@@ -39,18 +39,26 @@ namespace HeyImIn.WebApplication.Controllers
 		{
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
-				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
+				int currentUserId = ActionContext.Request.GetUserId();
 
-				List<Event> participatingEvents = currentUser.EventParticipations.Select(e => e.Event).ToList();
-				List<Event> publicEvents = await context.Events.Where(e => !e.IsPrivate || (e.OrganizerId == currentUser.Id)).ToListAsync();
+				List<Event> yourEvents = await context.Events
+					.Where(e => (e.OrganizerId == currentUserId) || e.EventParticipations.Select(ep => ep.ParticipantId).Contains(currentUserId))
+					.Include(e => e.Appointments)
+					.Include(e => e.EventParticipations)
+					.ToListAsync();
+				List<Event> publicEvents = await context.Events
+					.Where(e => !e.IsPrivate)
+					.Include(e => e.Appointments)
+					.Include(e => e.EventParticipations)
+					.ToListAsync();
 
-				List<EventOverviewInformation> yourEventInformations = participatingEvents
-					.Select(e => EventOverviewInformation.FromEvent(e, currentUser))
+				List<EventOverviewInformation> yourEventInformations = yourEvents
+					.Select(e => EventOverviewInformation.FromEvent(e, currentUserId))
 					.OrderBy(e => e.LatestAppointmentInformation?.StartTime ?? DateTime.MaxValue)
 					.ToList();
 				List<EventOverviewInformation> publicEventInformations = publicEvents
-					.Except(participatingEvents)
-					.Select(e => EventOverviewInformation.FromEvent(e, currentUser))
+					.Except(yourEvents)
+					.Select(e => EventOverviewInformation.FromEvent(e, currentUserId))
 					.OrderBy(e => e.LatestAppointmentInformation?.StartTime ?? DateTime.MaxValue)
 					.ToList();
 
@@ -84,11 +92,11 @@ namespace HeyImIn.WebApplication.Controllers
 					return NotFound();
 				}
 
-				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
+				int currentUserId = ActionContext.Request.GetUserId();
 
-				ViewEventInformation viewEventInformation = ViewEventInformation.FromEvent(@event, currentUser);
+				ViewEventInformation viewEventInformation = ViewEventInformation.FromEvent(@event, currentUserId);
 
-				if (!viewEventInformation.CurrentUserDoesParticipate && @event.IsPrivate && (@event.Organizer != currentUser))
+				if (!viewEventInformation.CurrentUserDoesParticipate && @event.IsPrivate && (@event.OrganizerId != currentUserId))
 				{
 					return BadRequest(RequestStringMessages.InvitationRequired);
 				}
@@ -99,10 +107,10 @@ namespace HeyImIn.WebApplication.Controllers
 					.Where(a => a.StartTime >= DateTime.UtcNow)
 					.OrderBy(a => a.StartTime)
 					.Take(ShownAppointmentsPerEvent)
-					.Select(a => AppointmentDetails.FromAppointment(a, currentUser, allParticipants))
+					.Select(a => AppointmentDetails.FromAppointment(a, currentUserId, allParticipants))
 					.ToList();
 
-				EventParticipation currentEventParticipation = @event.EventParticipations.FirstOrDefault(e => e.Participant == currentUser);
+				EventParticipation currentEventParticipation = @event.EventParticipations.FirstOrDefault(e => e.ParticipantId == currentUserId);
 
 
 				NotificationConfigurationResponse notificationConfigurationResponse = null;

@@ -16,13 +16,13 @@ namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
 			NotAnsweredParticipants = notAnsweredParticipants;
 		}
 
-		public static AppointmentInformation FromAppointment(Appointment appointment, User currentUser, int totalCount)
+		public static AppointmentInformation FromAppointment(Appointment appointment, int currentUserId, int totalCount)
 		{
 			int acceptedCount = appointment.AppointmentParticipations.Count(a => a.AppointmentParticipationAnswer == AppointmentParticipationAnswer.Accepted);
 			int declinedCount = appointment.AppointmentParticipations.Count(a => a.AppointmentParticipationAnswer == AppointmentParticipationAnswer.Declined);
 			int noAnswerCount = totalCount - (acceptedCount + declinedCount);
 
-			AppointmentParticipationAnswer? currentUserAnswer = appointment.AppointmentParticipations.FirstOrDefault(a => a.Participant == currentUser)?.AppointmentParticipationAnswer;
+			AppointmentParticipationAnswer? currentUserAnswer = appointment.AppointmentParticipations.FirstOrDefault(a => a.ParticipantId == currentUserId)?.AppointmentParticipationAnswer;
 
 			var appointmentInformation = new AppointmentInformation(appointment.Id, appointment.StartTime, currentUserAnswer, acceptedCount, declinedCount, noAnswerCount);
 			return appointmentInformation;
