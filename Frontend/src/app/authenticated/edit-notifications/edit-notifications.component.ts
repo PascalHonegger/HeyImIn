@@ -31,7 +31,7 @@ export class EditNotificationsComponent {
 	}
 
 	public get formValid(): boolean {
-		return this.form.valid;
+		return this.form.valid && this.form.dirty;
 	}
 
 	public get updatedNotifications(): NotificationConfiguration {

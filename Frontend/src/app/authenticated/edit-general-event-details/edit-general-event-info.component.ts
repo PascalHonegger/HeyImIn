@@ -36,7 +36,7 @@ export class EditGeneralEventInfoComponent {
 	}
 
 	public get formValid(): boolean {
-		return this.form.valid;
+		return this.form.valid && this.form.dirty;
 	}
 
 	public get updatedEventInfo(): GeneralEventInfo {

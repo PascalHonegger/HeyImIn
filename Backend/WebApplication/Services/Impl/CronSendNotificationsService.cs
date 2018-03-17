@@ -29,11 +29,11 @@ namespace HeyImIn.WebApplication.Services.Impl
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
 				List<Appointment> appointmentsWithPossibleReminders = await context.Appointments
-					.Where(a => (a.StartTime >= DateTime.UtcNow) && (DbFunctions.DiffHours(a.StartTime, DateTime.UtcNow) <= a.Event.ReminderTimeWindowInHours))
+					.Where(a => (a.StartTime >= DateTime.UtcNow) && (DbFunctions.AddHours(a.StartTime, -a.Event.ReminderTimeWindowInHours) <= DateTime.UtcNow))
 					.ToListAsync();
 
 				List<Appointment> appointmentsWithPossibleSummaries = await context.Appointments
-					.Where(a => (a.StartTime >= DateTime.UtcNow) && (DbFunctions.DiffHours(a.StartTime, DateTime.UtcNow) <= a.Event.SummaryTimeWindowInHours))
+					.Where(a => (a.StartTime >= DateTime.UtcNow) && (DbFunctions.AddHours(a.StartTime, -a.Event.SummaryTimeWindowInHours) <= DateTime.UtcNow))
 					.ToListAsync();
 
 				foreach (Appointment appointmentsWithPossibleReminder in appointmentsWithPossibleReminders)
