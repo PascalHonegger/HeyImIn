@@ -16,7 +16,8 @@ export class EventsOverviewComponent {
 
 	public loadEventOverview() {
 		this.server.getOverview().subscribe(
-			(overview) => this.eventOverview = overview
+			(overview) => this.eventOverview = overview,
+			(err) => this.eventOverview = null
 		);
 	}
 }

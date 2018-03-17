@@ -59,7 +59,6 @@ export class ViewEventComponent extends DetailOverviewBase implements OnDestroy 
 	}
 
 	private loadEventDetails() {
-		this.eventDetails = null;
 		this.eventServer.getDetails(this.eventId).subscribe(
 			detail => {
 				this.eventDetails = detail;

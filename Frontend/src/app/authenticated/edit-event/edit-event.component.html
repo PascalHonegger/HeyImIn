@@ -1,9 +1,9 @@
 <ng-container *ngIf="eventDetails; else noEventDataTemplate">
 	<div fxLayout="row" fxLayoutAlign="start center">
-		<h2 fxFlex class="mat-display-1">{{eventDetails.information.title}}</h2>
+		<main-title fxFlex>{{eventDetails.information.title}}</main-title>
 		<button mat-raised-button [routerLink]="['/ViewEvent', eventId]">Standardansicht</button>
 	</div>
-	<div fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="25px">
+	<div fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="20px">
 		<mat-card>
 			<mat-card-header>
 				<mat-card-title>Details zum Event</mat-card-title>
@@ -29,7 +29,7 @@
 					<mat-expansion-panel *ngFor="let appointment of eventDetails.upcomingAppointments; let i = index" [expanded]="i === 0">
 						<mat-expansion-panel-header>
 							<mat-panel-title>
-								{{appointment.appointmentInformation.startTime | date:'medium'}}
+								{{appointment.appointmentInformation.startTime | date:'short'}}
 							</mat-panel-title>
 						</mat-expansion-panel-header>
 						<div>

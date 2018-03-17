@@ -41,7 +41,7 @@ export class ShowLoadingDialogInterceptor implements HttpInterceptor {
 				(open) => {
 					if (open) {
 						this.currentlyOpenedDialog = this.dialog.open(LoadingDialogComponent, { disableClose: true });
-					} else {
+					} else if (this.currentlyOpenedDialog) {
 						this.currentlyOpenedDialog.close();
 					}
 				}

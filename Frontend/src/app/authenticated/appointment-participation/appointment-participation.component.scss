@@ -5,3 +5,23 @@
 .editable {
 	color: black;
 }
+
+@mixin icon-button-dimensions($size) {
+	height: $size;
+	width: $size;
+	line-height: $size;
+}
+
+$button-base-size: 40px;
+
+.large > .mat-icon-button {
+	@include icon-button-dimensions($button-base-size)
+}
+
+.medium > .mat-icon-button {
+	@include icon-button-dimensions($button-base-size - 5px)
+}
+
+.small > .mat-icon-button {
+	@include icon-button-dimensions($button-base-size - 10px)
+}

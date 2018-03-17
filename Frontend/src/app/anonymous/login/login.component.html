@@ -1,6 +1,6 @@
 <form [formGroup]="form">
+	<main-title>Anmelden</main-title>
 	<div fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="20px">
-		<h2 class="mat-display-1">Anmelden</h2>
 		<mat-form-field>
 			<input matInput placeholder="E-Mail-Adresse" formControlName="mailCtrl" required autocomplete="email" type="email">
 			<mat-error *ngIf="	form.get('mailCtrl').hasError('required') ||

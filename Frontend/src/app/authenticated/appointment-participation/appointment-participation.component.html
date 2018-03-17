@@ -1,4 +1,6 @@
-<div [class.readonly]="readonly" [class.editable]="!readonly" fxLayout="row" fxLayoutAlign="start center">
+<div [class.readonly]="readonly" [class.editable]="!readonly"
+	ngClass.xs="small" ngClass.sm="medium" ngClass.gt-sm="large"
+	fxLayout="row" fxLayoutAlign="start center">
 	<button mat-icon-button [color]="accepted ? 'primary' : ''" (click)="accept($event)">
 		<mat-icon>check_circle</mat-icon>
 	</button>

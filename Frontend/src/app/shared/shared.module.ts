@@ -44,10 +44,11 @@ import { ErrorHandlerInterceptor } from './interceptors/error-handler.intercepto
 import { ErrorDialogComponent } from './error-dialog/error-dialog.component';
 import { LoadingDialogComponent } from './loading-dialog/loading-dialog.component';
 import { AreYouSureDialogComponent } from './are-you-sure-dialog/are-you-sure-dialog.component';
-import { NoContentComponent } from './no-content/no-content.component';
 
 // Other
 import { MainLayoutComponent } from './main-layout/main-layout.component';
+import { MainTitleComponent } from './main-title/main-title.component';
+import { NoContentComponent } from './no-content/no-content.component';
 import { CanActivateViaAuthGuard } from './guards/can-activate-via-auth.guard';
 
 const dialogs = [
@@ -99,6 +100,7 @@ const injectables = [
 
 const components = [
 	MainLayoutComponent,
+	MainTitleComponent,
 	NoContentComponent
 ];
 
