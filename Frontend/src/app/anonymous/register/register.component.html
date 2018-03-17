@@ -1,6 +1,6 @@
 <form [formGroup]="form">
+	<main-title>Registrieren</main-title>
 	<div fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="20px">
-		<h2 class="mat-display-1">Registrieren</h2>
 		<mat-form-field>
 			<input matInput placeholder="Vollständiger Name" formControlName="nameCtrl" required autocomplete="name">
 			<mat-error *ngIf="	form.get('nameCtrl').hasError('required') ||

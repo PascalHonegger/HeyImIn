@@ -5,7 +5,7 @@
 				{{event.viewEventInformation.title}}
 			</mat-panel-title>
 			<mat-panel-description fxFlex="nogrow" fxLayoutAlign="stretch center" *ngIf="event.latestAppointmentInformation">
-				{{event.latestAppointmentInformation.startTime | date:'medium'}}
+				{{event.latestAppointmentInformation.startTime | date:'short'}}
 				<appointment-participation [readonly]="false" [currentResponse]="event.latestAppointmentInformation.currentResponse"
 				[participantId]="currentUserId" [appointmentId]="event.latestAppointmentInformation.appointmentId"
 				(selectedNewResponse)="eventChanged.emit()"></appointment-participation>
@@ -14,7 +14,7 @@
 		<div>
 			<event-info-display [info]="event.viewEventInformation"></event-info-display>
 		</div>
-		<mat-action-row fxLayoutGap="20px">
+		<mat-action-row fxLayoutGap="10px">
 			<ng-container *ngIf="event.viewEventInformation.currentUserDoesParticipate; else notParticipatingTemplate">
 				<button mat-raised-button (click)="leaveEvent(event.eventId)" color="warn" type="button">
 					Verlassen
