@@ -62,7 +62,7 @@
 				<edit-notifications #editNotifications [notifications]="eventDetails.notificationConfigurationResponse" [eventInfo]="eventDetails.information"></edit-notifications>
 			</mat-card-content>
 			<mat-card-actions>
-				<button mat-raised-button (click)="setNotifications(editNotifications.updatedNotifications)" color="primary" type="button">
+				<button mat-raised-button [disabled]="!editNotifications.formValid" (click)="setNotifications(editNotifications.updatedNotifications)" color="primary" type="button">
 					Speichern
 				</button>
 			</mat-card-actions>

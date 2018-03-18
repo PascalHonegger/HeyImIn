@@ -34,7 +34,7 @@ export class ShowLoadingDialogInterceptor implements HttpInterceptor {
 		this.hasDialogOpen
 			.pipe(
 				map(value => value > 0),
-				debounceTime(100),
+				debounceTime(200),
 				distinctUntilChanged()
 			)
 			.subscribe(
