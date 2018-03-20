@@ -172,7 +172,8 @@ module.exports = function (env) {
        * NOTE: To debug prod builds uncomment //debug lines and comment //prod lines
        */
       new UglifyJsPlugin({
-        sourceMap: false, //debug true
+        sourceMap: false, //debug true,
+        parallel: true,
         uglifyOptions: getUglifyOptions(supportES2015)
       })
 
