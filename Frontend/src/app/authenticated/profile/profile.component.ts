@@ -47,6 +47,9 @@ export class ProfileComponent {
 					mailCtrl: newMail
 				});
 
+				this.authService.session.fullName = newName;
+				this.authService.session.email = newMail;
+
 				this.snackBar.open('Persönliche Daten gespeichert', 'Ok');
 			}
 		);
