@@ -24,6 +24,6 @@ export class CreateEventComponent {
 	public createEvent(newEventInfo: GeneralEventInfo) {
 		this.organizeEventServer
 			.createEvent(newEventInfo)
-			.subscribe((id) => this.router.navigate(['/ViewEvent', id]));
+			.subscribe((id) => this.router.navigate(['/EditEvent', id]));
 	}
 }
