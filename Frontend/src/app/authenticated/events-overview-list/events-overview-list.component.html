@@ -1,7 +1,7 @@
 <mat-accordion>
 	<mat-expansion-panel *ngFor="let event of events; let i = index" [expanded]="i === 0">
 		<mat-expansion-panel-header>
-			<mat-panel-title>
+			<mat-panel-title fxFlex.xs="grow">
 				{{event.viewEventInformation.title}}
 			</mat-panel-title>
 			<mat-panel-description fxFlex="nogrow" fxLayoutAlign="stretch center" *ngIf="event.latestAppointmentInformation">
