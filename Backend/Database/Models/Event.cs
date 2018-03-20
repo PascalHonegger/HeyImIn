@@ -51,7 +51,7 @@ namespace HeyImIn.Database.Models
 		///     reminder email
 		/// </summary>
 		[Required]
-		[Range(0, int.MaxValue)]
+		[Range(FieldLengths.RealisticMinimumHours, FieldLengths.RealisticMaximumHours)]
 		public int ReminderTimeWindowInHours { get; set; }
 
 		/// <summary>
@@ -60,7 +60,7 @@ namespace HeyImIn.Database.Models
 		///     Every change that happens after a summary mail was sent will trigger an updated summary to be sent
 		/// </summary>
 		[Required]
-		[Range(0, int.MaxValue)]
+		[Range(FieldLengths.RealisticMinimumHours, FieldLengths.RealisticMaximumHours)]
 		public int SummaryTimeWindowInHours { get; set; }
 
 		public virtual ICollection<Appointment> Appointments { get; set; }

@@ -13,5 +13,7 @@
 		public const int TitleMaxLength = 40;
 		public const int MeetingPlaceMaxLength = 40;
 		public const int DescriptionMaxLength = 120;
+		public const int RealisticMinimumHours = 1;
+		public const int RealisticMaximumHours = 720; // 30 days
 	}
 }
