@@ -19,10 +19,10 @@ namespace HeyImIn.WebApplication.FrontendModels
 
 		public bool IsPrivate { get; set; }
 
-		[Range(0, int.MaxValue)]
+		[Range(0, FieldLengths.RealisticMaximumHours)]
 		public int ReminderTimeWindowInHours { get; set; }
 
-		[Range(0, int.MaxValue)]
+		[Range(0, FieldLengths.RealisticMaximumHours)]
 		public int SummaryTimeWindowInHours { get; set; }
 	}
 }

@@ -219,7 +219,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				if (!appointment.Event.EventParticipations.Select(e => e.Participant).Contains(currentUser))
 				{
-					// Automatically add a user to an event if he's 
+					// Automatically add a user to an event if he's not yet part of it
 					EventParticipation eventParticipation = context.EventParticipations.Create();
 					eventParticipation.Event = appointment.Event;
 					eventParticipation.Participant = currentUser;
@@ -237,6 +237,10 @@ namespace HeyImIn.WebApplication.Controllers
 					_auditLog.InfoFormat("{0}(response={1}): The organizer set the response to the appointment {2} for user {3}", nameof(SetAppointmentResponse), setAppointmentResponseDto.Response, appointment.Id, userToSetResponseFor.Id);
 
 					await _notificationService.NotifyOrganizerUpdatedUserInfoAsync(appointment.Event, userToSetResponseFor, "Der Organisator hat Ihre Zusage an einem Termin editiert.");
+				}
+				else
+				{
+					_log.DebugFormat("{0}(response={1}): Set own response for appointment {2}", nameof(SetAppointmentResponse), setAppointmentResponseDto.Response, appointment.Id);
 				}
 
 				await _notificationService.SendLastMinuteChangeIfRequiredAsync(appointment);

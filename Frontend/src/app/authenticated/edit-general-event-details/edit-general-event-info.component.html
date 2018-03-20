@@ -21,18 +21,18 @@
 		</mat-form-field>
 		<mat-form-field>
 			<input matInput placeholder="Zeitspanne der Reminder" formControlName="reminderCtrl" required type="number">
-			<mat-error *ngIf="form.get('reminderCtrl').hasError('required') || form.get('reminderCtrl').hasError('min')">
-				Bitte geben Sie eine positive Zahl ein
+			<mat-error *ngIf="form.get('reminderCtrl').hasError('required') || form.get('reminderCtrl').hasError('min') || form.get('reminderCtrl').hasError('max')">
+				Bitte geben Sie eine Zahl zwischen 1 und 720 ein
 			</mat-error>
 			<span matSuffix>&nbsp;Stunden</span>
 		</mat-form-field>
 		<mat-form-field>
 			<input matInput placeholder="Zeitspanne der Zusammenfassung" formControlName="summaryCtrl" required type="number">
-			<mat-error *ngIf="form.get('summaryCtrl').hasError('required') || form.get('summaryCtrl').hasError('min')">
-				Bitte geben Sie eine positive Zahl ein
+			<mat-error *ngIf="form.get('summaryCtrl').hasError('required') || form.get('summaryCtrl').hasError('min') || form.get('summaryCtrl').hasError('max')">
+				Bitte geben Sie eine Zahl zwischen 1 und 720 ein
 			</mat-error>
 			<span matSuffix>&nbsp;Stunden</span>
 		</mat-form-field>
-		<mat-slide-toggle formControlName="isPrivateCtrl">Privater Event</mat-slide-toggle>
+		<mat-slide-toggle formControlName="isPrivateCtrl">Privater Event (Teilnahme auf Einladung)</mat-slide-toggle>
 	</div>
 </form>
