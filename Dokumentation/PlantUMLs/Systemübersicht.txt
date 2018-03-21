@@ -12,7 +12,7 @@ cloud "Azure" {
     [ASP.net Framework] as asp
     HTTPS .d. asp
     interface "Umgebungsvariablen" as Environment
-    [Web-App] -d- Environment : "Sentisitve Daten"
+    [Web-App] -d- Environment : "Sensitive Daten"
     interface "Entity Framework" as EF
   }
   frame "SQL-Datenbank" {
