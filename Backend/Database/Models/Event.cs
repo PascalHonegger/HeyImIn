@@ -47,7 +47,7 @@ namespace HeyImIn.Database.Models
 		public bool IsPrivate { get; set; }
 
 		/// <summary>
-		///     The amount of hours before an <see cref="Appointment" /> where the <see cref="EventParticipations" /> get a
+		///     The number of hours before an <see cref="Appointment" /> where the <see cref="EventParticipations" /> get a
 		///     reminder email
 		/// </summary>
 		[Required]
@@ -55,7 +55,7 @@ namespace HeyImIn.Database.Models
 		public int ReminderTimeWindowInHours { get; set; }
 
 		/// <summary>
-		///     The amount of hours before an <see cref="Appointment" /> where the <see cref="EventParticipations" /> get a summary
+		///     The number of hours before an <see cref="Appointment" /> where the <see cref="EventParticipations" /> get a summary
 		///     email
 		///     Every change that happens after a summary mail was sent will trigger an updated summary to be sent
 		/// </summary>

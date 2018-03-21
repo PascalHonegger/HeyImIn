@@ -12,7 +12,7 @@ namespace HeyImIn.Database.Migrations
 
 		protected override void Seed(HeyImInDatabaseContext context)
 		{
-			//  This method will be called after migrating to the latest version.
+			// This method will be called after migrating to the latest version.
 		}
 	}
 }
