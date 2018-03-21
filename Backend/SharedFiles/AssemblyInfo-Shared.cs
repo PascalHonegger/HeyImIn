@@ -6,7 +6,7 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyProduct("Hey I'm in")]
+[assembly: AssemblyProduct("Hey, I'm in")]
 [assembly: AssemblyCompany("Atos AG")]
 [assembly: AssemblyCopyright("Copyright © Atos AG 2018. All rights reserved.")]
 [assembly: AssemblyCulture("")]

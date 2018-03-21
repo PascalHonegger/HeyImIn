@@ -23,7 +23,7 @@ namespace HeyImIn.MailNotifier.Impl
 		public async Task SendMailAsync(IReadOnlyCollection<string> recipientEmails, string subject, string bodyText)
 		{
 			var message = new SendGridMessage();
-			message.SetFrom("no-reply@hey-im-in.ch", "Hey I'm in");
+			message.SetFrom("no-reply@hey-im-in.ch", "Hey, I'm in");
 
 			foreach (string recipient in recipientEmails)
 			{

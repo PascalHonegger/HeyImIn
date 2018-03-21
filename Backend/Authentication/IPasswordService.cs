@@ -22,7 +22,7 @@
 		bool VerifyPassword(string password, string hash);
 
 		/// <summary>
-		///     Tests wheter a password needs to be rehashed in order to stay secure (E.g. hashing algorithm changed)
+		///     Tests whether a password needs to be rehashed in order to stay secure (E.g. hashing algorithm changed)
 		/// </summary>
 		/// <param name="hash">Hash to test</param>
 		/// <returns>True if the password needs to be rehashed</returns>
