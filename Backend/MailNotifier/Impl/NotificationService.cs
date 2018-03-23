@@ -109,23 +109,48 @@ Sie können den betroffenen Event unter {_baseWebUrl}ViewEvent/{@event.Id}{authT
 
 			List<AppointmentParticipation> participationsAwaitingReminder = FilterParticipations(appointment.AppointmentParticipations, p => !p.SentReminder, e => e.SendReminderEmail);
 
-			foreach (AppointmentParticipation participation in participationsAwaitingReminder)
+			List<int> participantIds = participationsAwaitingReminder.Select(p => p.ParticipantId).ToList();
+			IEnumerable<EventParticipation> eventParticipantsWithoutAppointmentAnswer = appointment.Event.EventParticipations.Where(e => !participantIds.Contains(e.ParticipantId));
+
+			foreach (AppointmentParticipation appointmentParticipation in participationsAwaitingReminder)
 			{
-				string authTokenSuffix = await CreateAuthTokenSuffixAsync(participation.Participant.Id);
+				string message = await ComposeMessageAsync(appointmentParticipation.Participant, "noch keine Antwort gegeben");
 
-				string message = $@"Hallo {participation.Participant.FullName}
+				await _mailSender.SendMailAsync(appointmentParticipation.Participant.Email, reminderSubject, message);
 
-Sie haben dem Termin am {startTime:g} zum Event '{appointment.Event.Title}' zugesagt.
+				appointmentParticipation.SentReminder = true;
+			}
 
-Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{appointment.Event.Id}{authTokenSuffix} ansehen.";
+			foreach (EventParticipation eventParticipation in eventParticipantsWithoutAppointmentAnswer)
+			{
+				string message = await ComposeMessageAsync(eventParticipation.Participant, "noch keine Antwort gegeben");
 
+				await _mailSender.SendMailAsync(eventParticipation.Participant.Email, reminderSubject, message);
 
-				await _mailSender.SendMailAsync(participation.Participant.Email, reminderSubject, message);
+				var newAppointmentParticipation = new AppointmentParticipation
+				{
+					Appointment = appointment,
+					Participant = eventParticipation.Participant,
+					AppointmentParticipationAnswer = null,
+					SentReminder = true,
+					SentSummary = false
+				};
 
-				participation.SentReminder = true;
+				appointment.AppointmentParticipations.Add(newAppointmentParticipation);
 			}
 
 			_log.InfoFormat("{0}(): Sent {1} reminders for appointment {2}", nameof(SendAndUpdateRemindersAsync), participationsAwaitingReminder.Count, appointment.Id);
+
+			async Task<string> ComposeMessageAsync(User participant, string state)
+			{
+				string authTokenSuffix = await CreateAuthTokenSuffixAsync(participant.Id);
+
+				return $@"Hallo {participant.FullName}
+
+Sie haben für den Termin am {startTime:g} zum Event '{appointment.Event.Title}' {state}.
+
+Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{appointment.Event.Id}{authTokenSuffix} ansehen.";
+			}
 		}
 
 		public async Task SendAndUpdateSummariesAsync(Appointment appointment)
@@ -277,8 +302,8 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{@event.Id}{a
 		///     Returns all participations which pass the provided filters and were accepted
 		/// </summary>
 		private static List<AppointmentParticipation> FilterParticipations(IEnumerable<AppointmentParticipation> participations,
-																	Func<AppointmentParticipation, bool> participationFilter,
-																	Func<EventParticipation, bool> eventFilter)
+																		   Func<AppointmentParticipation, bool> participationFilter,
+																		   Func<EventParticipation, bool> eventFilter)
 		{
 			return participations
 				.Where(p => p.AppointmentParticipationAnswer == AppointmentParticipationAnswer.Accepted)
