@@ -23,8 +23,7 @@ namespace HeyImIn.Database.Models
 		[Index("UniqueAppointmentParticipation", IsUnique = true, Order = 2)]
 		public int ParticipantId { get; set; }
 
-		[Required]
-		public AppointmentParticipationAnswer AppointmentParticipationAnswer { get; set; }
+		public AppointmentParticipationAnswer? AppointmentParticipationAnswer { get; set; }
 
 		/// <summary>
 		///     Wheter a reminder has already been sent
