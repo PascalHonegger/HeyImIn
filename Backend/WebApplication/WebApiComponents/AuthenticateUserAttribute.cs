@@ -1,4 +1,5 @@
-﻿using HeyImIn.WebApplication.Helpers;
+﻿using System;
+using HeyImIn.WebApplication.Helpers;
 using Microsoft.AspNetCore.Authorization;
 
 namespace HeyImIn.WebApplication.WebApiComponents
@@ -7,9 +8,9 @@ namespace HeyImIn.WebApplication.WebApiComponents
 	///     Authenticates the user and calls <see cref="HttpActionExtensions.SetUserId" /> &
 	///     <see cref="HttpActionExtensions.SetSessionToken" />
 	/// </summary>
-	public class AuthenticateUserAttribute : AuthorizeAttribute
+	public class AuthenticateUserAttribute : Attribute // TODO : AuthorizeAttribute
 	{
-		public AuthenticateUserAttribute() : base("RequiresLogin")
+		public AuthenticateUserAttribute() // TODO : base("RequiresLogin")
 		{
 		}
 	}

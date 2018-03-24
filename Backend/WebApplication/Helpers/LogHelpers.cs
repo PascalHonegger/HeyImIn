@@ -11,7 +11,7 @@ namespace HeyImIn.WebApplication.Helpers
 		/// <returns></returns>
 		public static ILog GetAuditLog(Type type)
 		{
-			return LogManager.GetLogger(AuditLoggerName, type);
+			return LogManager.GetLogger(type); // TODO
 		}
 
 		// Have to be in sync with log4net.config

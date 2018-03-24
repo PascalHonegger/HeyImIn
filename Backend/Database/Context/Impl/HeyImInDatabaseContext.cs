@@ -11,9 +11,10 @@ namespace HeyImIn.Database.Context.Impl
 	// ReSharper disable once ClassWithVirtualMembersNeverInherited.Global => Entity Framework
 	public class HeyImInDatabaseContext : DbContext, IDatabaseContext
 	{
-		public HeyImInDatabaseContext(string connectionString)
+		// ReSharper disable once SuggestBaseTypeForParameter
+		public HeyImInDatabaseContext(DbContextOptions<HeyImInDatabaseContext> options) : base(options)
 		{
-			_connectionString = connectionString;
+			
 		}
 
 		// Main tables
@@ -35,19 +36,20 @@ namespace HeyImIn.Database.Context.Impl
 			modelBuilder.Entity<User>().HasMany(u => u.Sessions).WithOne(p => p.User).OnDelete(DeleteBehavior.Cascade);
 			modelBuilder.Entity<User>().HasMany(u => u.AppointmentParticipations).WithOne(p => p.Participant).OnDelete(DeleteBehavior.Restrict);
 			modelBuilder.Entity<User>().HasMany(u => u.EventParticipations).WithOne(p => p.Participant).OnDelete(DeleteBehavior.Restrict);
+			modelBuilder.Entity<User>().HasMany(u => u.OrganizedEvents).WithOne(p => p.Organizer).OnDelete(DeleteBehavior.Restrict);
 
+			modelBuilder.Entity<Event>().HasMany(e => e.EventInvitations).WithOne(p => p.Event).OnDelete(DeleteBehavior.Cascade);
 			modelBuilder.Entity<Event>().HasMany(e => e.EventParticipations).WithOne(p => p.Event).OnDelete(DeleteBehavior.Restrict);
+			modelBuilder.Entity<Event>().HasMany(e => e.Appointments).WithOne(p => p.Event).OnDelete(DeleteBehavior.Restrict);
+
+			modelBuilder.Entity<Appointment>().HasMany(a => a.AppointmentParticipations).WithOne(p => p.Appointment).OnDelete(DeleteBehavior.Restrict);
 
 			modelBuilder.Entity<AppointmentParticipation>().HasIndex(a => new { a.ParticipantId, a.AppointmentId }).IsUnique();
+
 			modelBuilder.Entity<EventParticipation>().HasIndex(e => new { e.ParticipantId, e.EventId }).IsUnique();
 
 			// TODO Add all relations
 			// TODO Cleanup delete code?
-		}
-
-		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-		{
-			optionsBuilder.UseSqlServer(_connectionString);
 		}
 
 		public virtual DbSet<User> Users { get; set; }
@@ -67,8 +69,6 @@ namespace HeyImIn.Database.Context.Impl
 		public virtual DbSet<PasswordReset> PasswordResets { get; set; }
 
 		public virtual DbSet<EventInvitation> EventInvitations { get; set; }
-
-		private readonly string _connectionString;
 
 		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 	}

@@ -1,5 +1,4 @@
-﻿using Autofac.Extensions.DependencyInjection;
-using Microsoft.AspNetCore;
+﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
 namespace HeyImIn.WebApplication
@@ -15,7 +14,6 @@ namespace HeyImIn.WebApplication
 		{
 			return WebHost.CreateDefaultBuilder(args)
 				.UseKestrel()
-				.ConfigureServices(services => services.AddAutofac())
 				.UseIISIntegration()
 				.UseAzureAppServices()
 				.UseStartup<Startup>()
