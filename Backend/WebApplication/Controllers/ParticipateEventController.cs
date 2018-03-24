@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using System.Web.Http;
-using System.Web.Http.Description;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
 using HeyImIn.MailNotifier;
@@ -14,11 +11,13 @@ using HeyImIn.WebApplication.FrontendModels.ResponseTypes;
 using HeyImIn.WebApplication.Helpers;
 using HeyImIn.WebApplication.WebApiComponents;
 using log4net;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HeyImIn.WebApplication.Controllers
 {
 	[AuthenticateUser]
-	public class ParticipateEventController : ApiController
+	public class ParticipateEventController : Controller
 	{
 		public ParticipateEventController(INotificationService notificationService, GetDatabaseContext getDatabaseContext)
 		{
@@ -34,12 +33,12 @@ namespace HeyImIn.WebApplication.Controllers
 		///     <see cref="EventOverview" />
 		/// </returns>
 		[HttpGet]
-		[ResponseType(typeof(EventOverview))]
-		public async Task<IHttpActionResult> GetOverview()
+		[ProducesResponseType(typeof(EventOverview), 200)]
+		public async Task<IActionResult> GetOverview()
 		{
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
-				int currentUserId = ActionContext.Request.GetUserId();
+				int currentUserId = HttpContext.GetUserId();
 
 				List<Event> yourEvents = await context.Events
 					.Where(e => (e.OrganizerId == currentUserId) || e.EventParticipations.Select(ep => ep.ParticipantId).Contains(currentUserId))
@@ -76,8 +75,8 @@ namespace HeyImIn.WebApplication.Controllers
 		///     <see cref="EventDetails" />
 		/// </returns>
 		[HttpGet]
-		[ResponseType(typeof(EventDetails))]
-		public async Task<IHttpActionResult> GetDetails(int eventId)
+		[ProducesResponseType(typeof(EventDetails), 200)]
+		public async Task<IActionResult> GetDetails(int eventId)
 		{
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
@@ -92,7 +91,7 @@ namespace HeyImIn.WebApplication.Controllers
 					return NotFound();
 				}
 
-				int currentUserId = ActionContext.Request.GetUserId();
+				int currentUserId = HttpContext.GetUserId();
 
 				ViewEventInformation viewEventInformation = ViewEventInformation.FromEvent(@event, currentUserId);
 
@@ -131,8 +130,8 @@ namespace HeyImIn.WebApplication.Controllers
 		///     <see cref="Event.Id" />
 		/// </param>
 		[HttpPost]
-		[ResponseType(typeof(void))]
-		public async Task<IHttpActionResult> JoinEvent([FromBody] JoinEventDto joinEventDto)
+		[ProducesResponseType(typeof(void), 200)]
+		public async Task<IActionResult> JoinEvent([FromBody] JoinEventDto joinEventDto)
 		{
 			// Validate parameters
 			if (!ModelState.IsValid || (joinEventDto == null))
@@ -151,7 +150,7 @@ namespace HeyImIn.WebApplication.Controllers
 					return BadRequest(RequestStringMessages.EventNotFound);
 				}
 
-				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
+				User currentUser = await HttpContext.GetCurrentUserAsync(context);
 
 				if (@event.EventParticipations.Any(e => e.Participant == currentUser))
 				{
@@ -186,8 +185,8 @@ namespace HeyImIn.WebApplication.Controllers
 		///     <see cref="Event.Id" />
 		/// </param>
 		[HttpPost]
-		[ResponseType(typeof(void))]
-		public async Task<IHttpActionResult> RemoveFromEvent([FromBody] RemoveFromEventDto removeFromEventDto)
+		[ProducesResponseType(typeof(void), 200)]
+		public async Task<IActionResult> RemoveFromEvent([FromBody] RemoveFromEventDto removeFromEventDto)
 		{
 			// Validate parameters
 			if (!ModelState.IsValid || (removeFromEventDto == null))
@@ -211,7 +210,7 @@ namespace HeyImIn.WebApplication.Controllers
 					return BadRequest(RequestStringMessages.UserNotFound);
 				}
 
-				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
+				User currentUser = await HttpContext.GetCurrentUserAsync(context);
 
 				bool changingOtherUser = currentUser != userToRemove;
 
@@ -264,8 +263,8 @@ namespace HeyImIn.WebApplication.Controllers
 		///     Configures the enabled notifications of the current user for the specified event
 		/// </summary>
 		[HttpPost]
-		[ResponseType(typeof(void))]
-		public async Task<IHttpActionResult> ConfigureNotifications([FromBody] NotificationConfigurationDto notificationConfigurationDto)
+		[ProducesResponseType(typeof(void), 200)]
+		public async Task<IActionResult> ConfigureNotifications([FromBody] NotificationConfigurationDto notificationConfigurationDto)
 		{
 			// Validate parameters
 			if (!ModelState.IsValid || (notificationConfigurationDto == null))
@@ -282,7 +281,7 @@ namespace HeyImIn.WebApplication.Controllers
 					return BadRequest(RequestStringMessages.EventNotFound);
 				}
 
-				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
+				User currentUser = await HttpContext.GetCurrentUserAsync(context);
 
 				EventParticipation participation = @event.EventParticipations.FirstOrDefault(e => e.Participant == currentUser);
 
@@ -313,6 +312,6 @@ namespace HeyImIn.WebApplication.Controllers
 		private const int ShownAppointmentsPerEvent = 5;
 
 		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-		private static readonly ILog _auditLog = LogHelpers.GetAuditLog();
+		private static readonly ILog _auditLog = LogHelpers.GetAuditLog(MethodBase.GetCurrentMethod().DeclaringType);
 	}
 }

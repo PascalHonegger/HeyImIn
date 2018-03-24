@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -8,6 +7,7 @@ using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
 using HeyImIn.MailNotifier;
 using log4net;
+using Microsoft.EntityFrameworkCore;
 
 namespace HeyImIn.WebApplication.Services.Impl
 {
@@ -29,11 +29,11 @@ namespace HeyImIn.WebApplication.Services.Impl
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
 				List<Appointment> appointmentsWithPossibleReminders = await context.Appointments
-					.Where(a => (a.StartTime >= DateTime.UtcNow) && (DbFunctions.AddHours(a.StartTime, -a.Event.ReminderTimeWindowInHours) <= DateTime.UtcNow))
+					.Where(a => (a.StartTime >= DateTime.UtcNow) && (a.StartTime.AddHours(-a.Event.ReminderTimeWindowInHours) <= DateTime.UtcNow))
 					.ToListAsync();
 
 				List<Appointment> appointmentsWithPossibleSummaries = await context.Appointments
-					.Where(a => (a.StartTime >= DateTime.UtcNow) && (DbFunctions.AddHours(a.StartTime, -a.Event.SummaryTimeWindowInHours) <= DateTime.UtcNow))
+					.Where(a => (a.StartTime >= DateTime.UtcNow) && (a.StartTime.AddHours(-a.Event.SummaryTimeWindowInHours) <= DateTime.UtcNow))
 					.ToListAsync();
 
 				foreach (Appointment appointmentsWithPossibleReminder in appointmentsWithPossibleReminders)

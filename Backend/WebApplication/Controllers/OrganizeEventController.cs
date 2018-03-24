@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using System.Web.Http;
-using System.Web.Http.Description;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
 using HeyImIn.MailNotifier;
@@ -17,11 +14,13 @@ using HeyImIn.WebApplication.Helpers;
 using HeyImIn.WebApplication.Services;
 using HeyImIn.WebApplication.WebApiComponents;
 using log4net;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HeyImIn.WebApplication.Controllers
 {
 	[AuthenticateUser]
-	public class OrganizeEventController : ApiController
+	public class OrganizeEventController : Controller
 	{
 		public OrganizeEventController(INotificationService notificationService, IDeleteService deleteService, GetDatabaseContext getDatabaseContext)
 		{
@@ -38,8 +37,8 @@ namespace HeyImIn.WebApplication.Controllers
 		///     <see cref="Event.Id" />
 		/// </param>
 		[HttpDelete]
-		[ResponseType(typeof(void))]
-		public async Task<IHttpActionResult> DeleteEvent(int eventId)
+		[ProducesResponseType(typeof(void), 200)]
+		public async Task<IActionResult> DeleteEvent(int eventId)
 		{
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
@@ -56,7 +55,7 @@ namespace HeyImIn.WebApplication.Controllers
 					return BadRequest(RequestStringMessages.EventNotFound);
 				}
 
-				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
+				User currentUser = await HttpContext.GetCurrentUserAsync(context);
 
 				if (@event.Organizer != currentUser)
 				{
@@ -82,8 +81,8 @@ namespace HeyImIn.WebApplication.Controllers
 		///     Informs the users about the change
 		/// </summary>
 		[HttpPost]
-		[ResponseType(typeof(void))]
-		public async Task<IHttpActionResult> UpdateEventInfo([FromBody] UpdatedEventInfoDto updatedEventInfoDto)
+		[ProducesResponseType(typeof(void), 200)]
+		public async Task<IActionResult> UpdateEventInfo([FromBody] UpdatedEventInfoDto updatedEventInfoDto)
 		{
 			// Validate parameters
 			if (!ModelState.IsValid || (updatedEventInfoDto == null))
@@ -103,7 +102,7 @@ namespace HeyImIn.WebApplication.Controllers
 					return BadRequest(RequestStringMessages.EventNotFound);
 				}
 
-				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
+				User currentUser = await HttpContext.GetCurrentUserAsync(context);
 
 				if (@event.Organizer != currentUser)
 				{
@@ -136,8 +135,8 @@ namespace HeyImIn.WebApplication.Controllers
 		///     <see cref="Event.Id" />
 		/// </returns>
 		[HttpPost]
-		[ResponseType(typeof(int))]
-		public async Task<IHttpActionResult> CreateEvent([FromBody] GeneralEventInformation generalEventInformation)
+		[ProducesResponseType(typeof(int), 200)]
+		public async Task<IActionResult> CreateEvent([FromBody] GeneralEventInformation generalEventInformation)
 		{
 			// Validate parameters
 			if (!ModelState.IsValid || (generalEventInformation == null))
@@ -155,7 +154,7 @@ namespace HeyImIn.WebApplication.Controllers
 				newEvent.IsPrivate = generalEventInformation.IsPrivate;
 				newEvent.ReminderTimeWindowInHours = generalEventInformation.ReminderTimeWindowInHours;
 				newEvent.SummaryTimeWindowInHours = generalEventInformation.SummaryTimeWindowInHours;
-				newEvent.OrganizerId = ActionContext.Request.GetUserId();
+				newEvent.OrganizerId = HttpContext.GetUserId();
 
 				context.Events.Add(newEvent);
 
@@ -177,8 +176,8 @@ namespace HeyImIn.WebApplication.Controllers
 		///     <see cref="EditEventDetails" />
 		/// </returns>
 		[HttpGet]
-		[ResponseType(typeof(EditEventDetails))]
-		public async Task<IHttpActionResult> GetEditDetails(int eventId)
+		[ProducesResponseType(typeof(EditEventDetails), 200)]
+		public async Task<IActionResult> GetEditDetails(int eventId)
 		{
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
@@ -192,7 +191,7 @@ namespace HeyImIn.WebApplication.Controllers
 					return NotFound();
 				}
 
-				int currentUserId = ActionContext.Request.GetUserId();
+				int currentUserId = HttpContext.GetUserId();
 
 				if (@event.OrganizerId != currentUserId)
 				{
@@ -222,6 +221,6 @@ namespace HeyImIn.WebApplication.Controllers
 		private readonly GetDatabaseContext _getDatabaseContext;
 
 		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-		private static readonly ILog _auditLog = LogHelpers.GetAuditLog();
+		private static readonly ILog _auditLog = LogHelpers.GetAuditLog(MethodBase.GetCurrentMethod().DeclaringType);
 	}
 }

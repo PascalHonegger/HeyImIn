@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Data.Entity;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using System.Web.Http;
-using System.Web.Http.Description;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
 using HeyImIn.MailNotifier;
@@ -14,11 +11,13 @@ using HeyImIn.WebApplication.Helpers;
 using HeyImIn.WebApplication.Services;
 using HeyImIn.WebApplication.WebApiComponents;
 using log4net;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HeyImIn.WebApplication.Controllers
 {
 	[AuthenticateUser]
-	public class OrganizeAppointmentController : ApiController
+	public class OrganizeAppointmentController : Controller
 	{
 		public OrganizeAppointmentController(INotificationService notificationService, IDeleteService deleteService, GetDatabaseContext getDatabaseContext)
 		{
@@ -35,8 +34,8 @@ namespace HeyImIn.WebApplication.Controllers
 		///     <see cref="Appointment.Id" />
 		/// </param>
 		[HttpDelete]
-		[ResponseType(typeof(void))]
-		public async Task<IHttpActionResult> DeleteAppointment(int appointmentId)
+		[ProducesResponseType(typeof(void), 200)]
+		public async Task<IActionResult> DeleteAppointment(int appointmentId)
 		{
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
@@ -51,7 +50,7 @@ namespace HeyImIn.WebApplication.Controllers
 					return BadRequest(RequestStringMessages.AppointmentNotFound);
 				}
 
-				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
+				User currentUser = await HttpContext.GetCurrentUserAsync(context);
 
 				Event @event = appointment.Event;
 
@@ -78,8 +77,8 @@ namespace HeyImIn.WebApplication.Controllers
 		///     Adds new appointsments to the event
 		/// </summary>
 		[HttpPost]
-		[ResponseType(typeof(void))]
-		public async Task<IHttpActionResult> AddAppointments([FromBody] AddAppointsmentsDto addAppointsmentsDto)
+		[ProducesResponseType(typeof(void), 200)]
+		public async Task<IActionResult> AddAppointments([FromBody] AddAppointsmentsDto addAppointsmentsDto)
 		{
 			// Validate parameters
 			if (!ModelState.IsValid || (addAppointsmentsDto == null))
@@ -101,7 +100,7 @@ namespace HeyImIn.WebApplication.Controllers
 					return BadRequest(RequestStringMessages.EventNotFound);
 				}
 
-				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
+				User currentUser = await HttpContext.GetCurrentUserAsync(context);
 
 				if (@event.Organizer != currentUser)
 				{
@@ -137,8 +136,8 @@ namespace HeyImIn.WebApplication.Controllers
 		///     <see cref="Appointment.Id" />
 		/// </param>
 		[HttpPost]
-		[ResponseType(typeof(void))]
-		public async Task<IHttpActionResult> SetAppointmentResponse([FromBody] SetAppointmentResponseDto setAppointmentResponseDto)
+		[ProducesResponseType(typeof(void), 200)]
+		public async Task<IActionResult> SetAppointmentResponse([FromBody] SetAppointmentResponseDto setAppointmentResponseDto)
 		{
 			// Validate parameters
 			if (!ModelState.IsValid || (setAppointmentResponseDto == null))
@@ -167,7 +166,7 @@ namespace HeyImIn.WebApplication.Controllers
 					return BadRequest(RequestStringMessages.UserNotFound);
 				}
 
-				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
+				User currentUser = await HttpContext.GetCurrentUserAsync(context);
 
 				bool changingOtherUser = currentUser != userToSetResponseFor;
 
@@ -254,6 +253,6 @@ namespace HeyImIn.WebApplication.Controllers
 		private readonly GetDatabaseContext _getDatabaseContext;
 
 		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-		private static readonly ILog _auditLog = LogHelpers.GetAuditLog();
+		private static readonly ILog _auditLog = LogHelpers.GetAuditLog(MethodBase.GetCurrentMethod().DeclaringType);
 	}
 }

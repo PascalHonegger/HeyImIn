@@ -1,7 +1,6 @@
 ﻿using System;
+using System.Reflection;
 using System.Threading.Tasks;
-using System.Web.Http;
-using System.Web.Http.Description;
 using HeyImIn.Authentication;
 using HeyImIn.Database.Models;
 using HeyImIn.WebApplication.FrontendModels.ParameterTypes;
@@ -9,10 +8,12 @@ using HeyImIn.WebApplication.FrontendModels.ResponseTypes;
 using HeyImIn.WebApplication.Helpers;
 using HeyImIn.WebApplication.WebApiComponents;
 using log4net;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace HeyImIn.WebApplication.Controllers
 {
-	public class SessionController : ApiController
+	public class SessionController : Controller
 	{
 		public SessionController(IAuthenticationService authenticationService, ISessionService sessionService)
 		{
@@ -25,9 +26,9 @@ namespace HeyImIn.WebApplication.Controllers
 		/// </summary>
 		/// <returns>The created <see cref="FrontendSession" /> containing user information</returns>
 		[HttpPost]
-		[ResponseType(typeof(FrontendSession))]
+		[ProducesResponseType(typeof(FrontendSession), 200)]
 		[AllowAnonymous]
-		public async Task<IHttpActionResult> StartSession([FromBody] StartSessionDto startSessionDto)
+		public async Task<IActionResult> StartSession([FromBody] StartSessionDto startSessionDto)
 		{
 			// Validate parameters
 			if (!ModelState.IsValid || (startSessionDto == null))
@@ -55,9 +56,9 @@ namespace HeyImIn.WebApplication.Controllers
 		/// <param name="sessionToken">Unique session token</param>
 		/// <returns>The found <see cref="FrontendSession" /></returns>
 		[HttpGet]
-		[ResponseType(typeof(FrontendSession))]
+		[ProducesResponseType(typeof(FrontendSession), 200)]
 		[AllowAnonymous]
-		public async Task<IHttpActionResult> GetSession(Guid sessionToken)
+		public async Task<IActionResult> GetSession(Guid sessionToken)
 		{
 			Session session = await _sessionService.GetAndExtendSessionAsync(sessionToken);
 
@@ -73,11 +74,11 @@ namespace HeyImIn.WebApplication.Controllers
 		///     Stops the active session => Log out and invalidate session
 		/// </summary>
 		[HttpPost]
-		[ResponseType(typeof(void))]
+		[ProducesResponseType(typeof(void), 200)]
 		[AuthenticateUser]
-		public async Task<IHttpActionResult> StopActiveSession()
+		public async Task<IActionResult> StopActiveSession()
 		{
-			Guid token = Request.GetSessionToken();
+			Guid token = HttpContext.GetSessionToken();
 
 			await _sessionService.InvalidateSessionAsync(token);
 
@@ -88,6 +89,6 @@ namespace HeyImIn.WebApplication.Controllers
 
 		private readonly IAuthenticationService _authenticationService;
 		private readonly ISessionService _sessionService;
-		private static readonly ILog _auditLog = LogHelpers.GetAuditLog();
+		private static readonly ILog _auditLog = LogHelpers.GetAuditLog(MethodBase.GetCurrentMethod().DeclaringType);
 	}
 }

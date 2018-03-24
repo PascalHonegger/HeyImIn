@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using System.Web.Http;
-using System.Web.Http.Description;
 using HeyImIn.Authentication;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
@@ -17,10 +14,13 @@ using HeyImIn.WebApplication.Helpers;
 using HeyImIn.WebApplication.Services;
 using HeyImIn.WebApplication.WebApiComponents;
 using log4net;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HeyImIn.WebApplication.Controllers
 {
-	public class UserController : ApiController
+	public class UserController : Controller
 	{
 		public UserController(IPasswordService passwordService, ISessionService sessionService, INotificationService notificationService, IDeleteService deleteService, GetDatabaseContext getDatabaseContext)
 		{
@@ -37,9 +37,9 @@ namespace HeyImIn.WebApplication.Controllers
 		/// </summary>
 		/// <param name="setUserDataDto">New user data</param>
 		[HttpPost]
-		[ResponseType(typeof(void))]
+		[ProducesResponseType(typeof(void), 200)]
 		[AuthenticateUser]
-		public async Task<IHttpActionResult> SetNewUserData([FromBody] SetUserDataDto setUserDataDto)
+		public async Task<IActionResult> SetNewUserData([FromBody] SetUserDataDto setUserDataDto)
 		{
 			// Validate parameters
 			if (!ModelState.IsValid || (setUserDataDto == null))
@@ -49,7 +49,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
-				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
+				User currentUser = await HttpContext.GetCurrentUserAsync(context);
 
 				if (currentUser.Email != setUserDataDto.NewEmail)
 				{
@@ -78,9 +78,9 @@ namespace HeyImIn.WebApplication.Controllers
 		/// </summary>
 		/// <param name="setPasswordDto">Current and new password</param>
 		[HttpPost]
-		[ResponseType(typeof(void))]
+		[ProducesResponseType(typeof(void), 200)]
 		[AuthenticateUser]
-		public async Task<IHttpActionResult> SetNewPassword([FromBody] SetPasswordDto setPasswordDto)
+		public async Task<IActionResult> SetNewPassword([FromBody] SetPasswordDto setPasswordDto)
 		{
 			// Validate parameters
 			if (!ModelState.IsValid || (setPasswordDto == null))
@@ -90,7 +90,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
-				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
+				User currentUser = await HttpContext.GetCurrentUserAsync(context);
 
 				bool currentPasswordCorrect = _passwordService.VerifyPassword(setPasswordDto.CurrentPassword, currentUser.PasswordHash);
 
@@ -114,13 +114,13 @@ namespace HeyImIn.WebApplication.Controllers
 		///     E.g. sends cancelation for organized and participating events
 		/// </summary>
 		[HttpDelete]
-		[ResponseType(typeof(void))]
+		[ProducesResponseType(typeof(void), 200)]
 		[AuthenticateUser]
-		public async Task<IHttpActionResult> DeleteAccount()
+		public async Task<IActionResult> DeleteAccount()
 		{
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
-				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
+				User currentUser = await HttpContext.GetCurrentUserAsync(context);
 
 				List<Appointment> userAppointments = currentUser.AppointmentParticipations.Select(a => a.Appointment).ToList();
 
@@ -149,9 +149,9 @@ namespace HeyImIn.WebApplication.Controllers
 		/// </summary>
 		/// <returns>A newly created <see cref="FrontendSession" /> so the registering user doesn't have to log in manually</returns>
 		[HttpPost]
-		[ResponseType(typeof(FrontendSession))]
+		[ProducesResponseType(typeof(FrontendSession), 200)]
 		[AllowAnonymous]
-		public async Task<IHttpActionResult> Register([FromBody] RegisterDto registerDto)
+		public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
 		{
 			// Validate parameters
 			if (!ModelState.IsValid || (registerDto == null))
@@ -192,6 +192,6 @@ namespace HeyImIn.WebApplication.Controllers
 		private readonly GetDatabaseContext _getDatabaseContext;
 
 		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-		private static readonly ILog _auditLog = LogHelpers.GetAuditLog();
+		private static readonly ILog _auditLog = LogHelpers.GetAuditLog(MethodBase.GetCurrentMethod().DeclaringType);
 	}
 }

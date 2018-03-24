@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Reflection;
-using System.Web.Http.Controllers;
-using System.Web.Http.Filters;
 using HeyImIn.WebApplication.Helpers;
 using log4net;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace HeyImIn.WebApplication.WebApiComponents
 {
@@ -13,18 +12,18 @@ namespace HeyImIn.WebApplication.WebApiComponents
 	/// </summary>
 	public class LogActionAttribute : ActionFilterAttribute
 	{
-		public override void OnActionExecuting(HttpActionContext actionContext)
+		public override void OnActionExecuting(ActionExecutingContext actionContext)
 		{
 			// Save a stopwatch to measure the time it took to execute the request
-			actionContext.Request.Properties[StopwatchName] = Stopwatch.StartNew();
+			actionContext.HttpContext.Items[StopwatchName] = Stopwatch.StartNew();
 
-			int? userId = actionContext.Request.TryGetUserId();
+			int? userId = actionContext.HttpContext.TryGetUserId();
 			if (userId.HasValue)
 			{
 				LogicalThreadContext.Properties[LogHelpers.UserIdLogKey] = userId.Value;
 			}
 
-			Guid? sessionToken = actionContext.Request.TryGetSessionToken();
+			Guid? sessionToken = actionContext.HttpContext.TryGetSessionToken();
 			if (sessionToken.HasValue)
 			{
 				// Don't insert the full ID as that could be a security problem
@@ -36,15 +35,16 @@ namespace HeyImIn.WebApplication.WebApiComponents
 			base.OnActionExecuting(actionContext);
 		}
 
-		public override void OnActionExecuted(HttpActionExecutedContext actionExecutedContext)
+		public override void OnActionExecuted(ActionExecutedContext actionExecutedContext)
 		{
 			base.OnActionExecuted(actionExecutedContext);
-			var stopwatch = actionExecutedContext.Request.Properties[StopwatchName] as Stopwatch;
+			var stopwatch = actionExecutedContext.HttpContext.Items[StopwatchName] as Stopwatch;
 
 			string duration = stopwatch?.Elapsed.ToString("g") ?? "Unknown";
-			string url = actionExecutedContext.Request.RequestUri.AbsolutePath;
+			string method = actionExecutedContext.HttpContext.Request.Method;
+			string path = actionExecutedContext.HttpContext.Request.Path;
 
-			_log.DebugFormat("{0}(): WebApi method {1} returned, Duration = {2}", nameof(OnActionExecuted), url, duration);
+			_log.DebugFormat("{0}(): Finished {1} {2} in {3}", nameof(OnActionExecuted), method, path, duration);
 
 			LogicalThreadContext.Properties.Remove(LogHelpers.UserIdLogKey);
 			LogicalThreadContext.Properties.Remove(LogHelpers.SessionTokenLogKey);

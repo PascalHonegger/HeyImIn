@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
-using System.Web.Http;
 using HeyImIn.WebApplication.Services;
 using log4net;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace HeyImIn.WebApplication.Controllers
 {
 	[AllowAnonymous]
-	public class CronController : ApiController
+	public class CronController : Controller
 	{
 		private readonly IEnumerable<ICronService> _cronRunners;
 

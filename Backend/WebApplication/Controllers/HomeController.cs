@@ -2,12 +2,13 @@
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Web.Http;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace HeyImIn.WebApplication.Controllers
 {
 	[AllowAnonymous]
-	public class HomeController : ApiController
+	public class HomeController : Controller
 	{
 		/// <summary>
 		///     Default / fallback route which redirects to index.html
@@ -17,7 +18,7 @@ namespace HeyImIn.WebApplication.Controllers
 		public HttpResponseMessage Index()
 		{
 			// Taken from MediaGateway project
-			HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.MovedPermanently);
+			var response = new HttpResponseMessage(HttpStatusCode.MovedPermanently);
 			response.Headers.Location = new Uri("client/index.html", UriKind.Relative);
 			response.Headers.CacheControl = CacheControlHeaderValue.Parse("no-cache, no-store, must-revalidate");
 			return response;

@@ -1,9 +1,9 @@
-﻿using System.Data.Entity;
-using System.Reflection;
+﻿using System.Reflection;
 using System.Threading.Tasks;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
 using log4net;
+using Microsoft.EntityFrameworkCore;
 
 namespace HeyImIn.Authentication.Impl
 {
