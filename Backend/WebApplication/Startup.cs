@@ -2,13 +2,10 @@
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using Autofac;
-using Autofac.Features.ResolveAnything;
 using HeyImIn.Authentication;
 using HeyImIn.Authentication.Impl;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Context.Impl;
-using HeyImIn.External.DependencyInjection;
 using HeyImIn.MailNotifier;
 using HeyImIn.MailNotifier.Impl;
 using HeyImIn.WebApplication.Controllers;
@@ -22,8 +19,10 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Cors.Internal;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using SendGrid;
@@ -55,32 +54,22 @@ namespace HeyImIn.WebApplication
 					options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
 				});
 
-			services.AddLogging();
+			string connectionString = _configuration.GetConnectionString("HeyImIn");
+			services.AddDbContext<HeyImInDatabaseContext>(options => options.UseSqlServer(connectionString));
 
-			services.AddAuthorization(options => options.AddPolicy("RequiresLogin", policy => policy.AddRequirements(new RequiresLoginRequirement())));
-
-#if DEBUG
-			services.AddCors(options => options.AddPolicy("AllowFrontend", p => p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod()));
-			services.Configure<MvcOptions>(options =>
-			{
-				options.Filters.Add(new CorsAuthorizationFilterFactory("AllowFrontend"));
-			});
-#endif
-		}
-
-		// ReSharper disable once UnusedMember.Global => This method gets called by the runtime. Use this method to add services to the autofac container.
-		public void ConfigureContainer(ContainerBuilder builder)
-		{
-			// Add future assemblies here to ensure the types can be resolved
-			AssemblyScanner.Scan(builder,
-				typeof(HomeController).Assembly,            // WebApplication
-				typeof(IDatabaseContext).Assembly,          // Database
-				typeof(INotificationService).Assembly,      // MailNotifier
-				typeof(IAuthenticationService).Assembly     // Authentication
-			);
+			// Register all services as their interfaces
+			services.Scan(scan => scan
+				.FromAssembliesOf(
+					typeof(HomeController), // WebApplication
+					typeof(IDatabaseContext), // Database
+					typeof(INotificationService), // MailNotifier
+					typeof(IAuthenticationService) // Authentication
+				)
+				.AddClasses()
+				.AsMatchingInterface()
+				.WithTransientLifetime());
 
 			// Custom types with sensitive / global configuration
-			string connectionString = _configuration.GetConnectionString("HeyImIn");
 			var sendGridApiKey = _configuration.GetValue<string>("SENDGRID_API_KEY");
 
 			// Other configuration values
@@ -90,20 +79,24 @@ namespace HeyImIn.WebApplication
 			int workFactor = _configuration.GetValue("PasswordHashWorkFactor", 10);
 
 			// Register custom types
-			builder.Register(c => new HeyImInDatabaseContext(connectionString)).As<IDatabaseContext>().InstancePerDependency();
-			builder.Register(c => new SendGridClient(sendGridApiKey)).As<ISendGridClient>();
-			builder.Register(c => new PasswordService(workFactor)).As<IPasswordService>();
-			builder.Register(c => new NotificationService(c.Resolve<IMailSender>(), c.Resolve<ISessionService>(), baseWebUrl, mailTimeZoneName)).As<INotificationService>();
-			builder.RegisterTypes(typeof(CronSendNotificationsService)).As<ICronService>(); // Add future cron services here
+			services
+				.AddTransient<IDatabaseContext, HeyImInDatabaseContext>() // Redirect interface to class
+				.AddTransient<ISendGridClient>(c => new SendGridClient(sendGridApiKey))
+				.AddTransient<IPasswordService>(c => new PasswordService(workFactor))
+				.AddTransient<INotificationService>(c => new NotificationService(c.GetService<IMailSender>(), c.GetService<ISessionService>(), baseWebUrl, mailTimeZoneName))
+				.AddTransient<ICronService, CronSendNotificationsService>()
+				.AddTransient<GetDatabaseContext>(c => c.GetService<IDatabaseContext>);
 
-			// Register other types
-			builder.RegisterSource(new AnyConcreteTypeNotAlreadyRegisteredSource());
+			// TODO Dafuq?
+			services.AddAuthentication(Microsoft.AspNetCore.Server.IISIntegration.IISDefaults.AuthenticationScheme);
+			services.AddAuthorization(options => options.AddPolicy("RequiresLogin", policy => policy.AddRequirements(new RequiresLoginRequirement())));
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure(IApplicationBuilder app, IApplicationLifetime lifetime, IHostingEnvironment env, GetDatabaseContext contextFunc)
+		public void Configure(IApplicationBuilder app, IApplicationLifetime lifetime, IHostingEnvironment env, ILoggerFactory loggerFactory, GetDatabaseContext contextFunc)
 		{
 			ConfigureLog4Net(env);
+			loggerFactory.AddLog4Net();
 
 			using (IDatabaseContext context = contextFunc())
 			{
@@ -119,9 +112,10 @@ namespace HeyImIn.WebApplication
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
+				app.UseCors(p => p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 			}
 
-			app.UseMvc(routes => routes.MapRoute("default", "{controller=Home}/{action=Index}"));
+			app.UseMvc(routes => routes.MapRoute("default", "api/{controller=Home}/{action=Index}"));
 		}
 
 		private static void ConfigureLog4Net(IHostingEnvironment env)
@@ -165,8 +159,8 @@ namespace HeyImIn.WebApplication
 			}
 
 			_log.InfoFormat("{0}(): {1}", nameof(LogStopping), StartEndPrefix);
-			_log.InfoFormat("{0}(): {1} Stopping...", nameof(LogStarted), StartEndPrefix);
-			_log.InfoFormat("{0}(): {1}", nameof(LogStarted), StartEndPrefix);
+			_log.InfoFormat("{0}(): {1} Stopping...", nameof(LogStopping), StartEndPrefix);
+			_log.InfoFormat("{0}(): {1}", nameof(LogStopping), StartEndPrefix);
 		}
 
 		private static void LogStopped()
