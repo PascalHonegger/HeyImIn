@@ -1,4 +1,5 @@
-﻿using log4net;
+﻿using System;
+using log4net;
 
 namespace HeyImIn.WebApplication.Helpers
 {
@@ -8,9 +9,9 @@ namespace HeyImIn.WebApplication.Helpers
 		///     Returns the unique audit log to be used for important messages
 		/// </summary>
 		/// <returns></returns>
-		public static ILog GetAuditLog()
+		public static ILog GetAuditLog(Type type)
 		{
-			return LogManager.GetLogger(AuditLoggerName);
+			return LogManager.GetLogger(AuditLoggerName, type);
 		}
 
 		// Have to be in sync with log4net.config

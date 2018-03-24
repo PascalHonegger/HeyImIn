@@ -23,7 +23,6 @@ namespace HeyImIn.Database.Models
 		[Required]
 		[EmailAddress]
 		[MaxLength(FieldLengths.UserEmailMaxLength)]
-		[Index(IsUnique = true)]
 		public string Email { get; set; }
 
 		/// <summary>

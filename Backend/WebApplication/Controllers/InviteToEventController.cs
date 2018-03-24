@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using System.Web.Http;
-using System.Web.Http.Description;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
 using HeyImIn.MailNotifier;
@@ -13,11 +10,13 @@ using HeyImIn.WebApplication.FrontendModels.ParameterTypes;
 using HeyImIn.WebApplication.Helpers;
 using HeyImIn.WebApplication.WebApiComponents;
 using log4net;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HeyImIn.WebApplication.Controllers
 {
 	[AuthenticateUser]
-	public class InviteToEventController : ApiController
+	public class InviteToEventController : Controller
 	{
 		public InviteToEventController(INotificationService notificationService, GetDatabaseContext getDatabaseContext)
 		{
@@ -29,8 +28,8 @@ namespace HeyImIn.WebApplication.Controllers
 		///     Adds new appointments to the event
 		/// </summary>
 		[HttpPost]
-		[ResponseType(typeof(void))]
-		public async Task<IHttpActionResult> InviteParticipants([FromBody] InviteParticipantsDto inviteParticipantsDto)
+		[ProducesResponseType(typeof(void), 200)]
+		public async Task<IActionResult> InviteParticipants([FromBody] InviteParticipantsDto inviteParticipantsDto)
 		{
 			// Validate parameters
 			if (!ModelState.IsValid || (inviteParticipantsDto == null))
@@ -50,7 +49,7 @@ namespace HeyImIn.WebApplication.Controllers
 					return BadRequest(RequestStringMessages.EventNotFound);
 				}
 
-				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
+				User currentUser = await HttpContext.GetCurrentUserAsync(context);
 
 				if (@event.Organizer != currentUser)
 				{
@@ -103,8 +102,8 @@ namespace HeyImIn.WebApplication.Controllers
 		/// </summary>
 		/// <returns><see cref="Event.Id" /> of the accepted invite</returns>
 		[HttpPost]
-		[ResponseType(typeof(int))]
-		public async Task<IHttpActionResult> AcceptInvitation([FromBody] AcceptInvitationDto acceptInvitationDto)
+		[ProducesResponseType(typeof(int), 200)]
+		public async Task<IActionResult> AcceptInvitation([FromBody] AcceptInvitationDto acceptInvitationDto)
 		{
 			// Validate parameters
 			if (!ModelState.IsValid || (acceptInvitationDto == null))
@@ -140,7 +139,7 @@ namespace HeyImIn.WebApplication.Controllers
 				// => These invitations are always considered as valid, even if already used
 
 
-				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
+				User currentUser = await HttpContext.GetCurrentUserAsync(context);
 
 				EventParticipation participation = context.EventParticipations.Create();
 				participation.Event = invitation.Event;

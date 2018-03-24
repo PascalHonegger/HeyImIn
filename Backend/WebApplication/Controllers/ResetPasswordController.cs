@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Data.Entity;
 using System.Reflection;
 using System.Threading.Tasks;
-using System.Web.Http;
-using System.Web.Http.Description;
 using HeyImIn.Authentication;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
@@ -11,10 +8,13 @@ using HeyImIn.MailNotifier;
 using HeyImIn.WebApplication.FrontendModels.ParameterTypes;
 using HeyImIn.WebApplication.Helpers;
 using log4net;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace HeyImIn.WebApplication.Controllers
 {
-	public class ResetPasswordController : ApiController
+	public class ResetPasswordController : Controller
 	{
 		public ResetPasswordController(IPasswordService passwordService, INotificationService notificationService, GetDatabaseContext getDatabaseContext)
 		{
@@ -27,9 +27,9 @@ namespace HeyImIn.WebApplication.Controllers
 		///     Sends a password reset code to the provided email address, if a user with than email is registered
 		/// </summary>
 		[HttpPost]
-		[ResponseType(typeof(void))]
+		[ProducesResponseType(typeof(void), 200)]
 		[AllowAnonymous]
-		public async Task<IHttpActionResult> RequestPasswordReset([FromBody] RequestPasswordResetDto requestPasswordResetDto)
+		public async Task<IActionResult> RequestPasswordReset([FromBody] RequestPasswordResetDto requestPasswordResetDto)
 		{
 			// Validate parameters
 			if (!ModelState.IsValid || (requestPasswordResetDto == null))
@@ -64,9 +64,9 @@ namespace HeyImIn.WebApplication.Controllers
 		///     Sets a new password for a password reset code
 		/// </summary>
 		[HttpPost]
-		[ResponseType(typeof(void))]
+		[ProducesResponseType(typeof(void), 200)]
 		[AllowAnonymous]
-		public async Task<IHttpActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
+		public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
 		{
 			// Validate parameters
 			if (!ModelState.IsValid || (resetPasswordDto == null))

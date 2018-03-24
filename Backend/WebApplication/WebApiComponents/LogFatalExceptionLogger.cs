@@ -1,9 +1,8 @@
-﻿using System;
+﻿/*using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Web.Http.ExceptionHandling;
 using log4net;
 
 namespace HeyImIn.WebApplication.WebApiComponents
@@ -31,3 +30,4 @@ namespace HeyImIn.WebApplication.WebApiComponents
 		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 	}
 }
+*/

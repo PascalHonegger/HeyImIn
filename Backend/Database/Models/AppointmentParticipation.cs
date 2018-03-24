@@ -13,14 +13,12 @@ namespace HeyImIn.Database.Models
 
 		[Required]
 		[ForeignKey(nameof(Appointment))]
-		[Index("UniqueAppointmentParticipation", IsUnique = true, Order = 1)]
 		public int AppointmentId { get; set; }
 
 		public virtual User Participant { get; set; }
 
 		[Required]
 		[ForeignKey(nameof(Participant))]
-		[Index("UniqueAppointmentParticipation", IsUnique = true, Order = 2)]
 		public int ParticipantId { get; set; }
 
 		public AppointmentParticipationAnswer? AppointmentParticipationAnswer { get; set; }
