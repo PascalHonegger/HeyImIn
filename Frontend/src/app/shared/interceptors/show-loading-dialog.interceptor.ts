@@ -6,11 +6,10 @@ import {
 	HttpInterceptor
 } from '@angular/common/http';
 
-import { Observable } from 'rxjs/Observable';
+import { Observable, Subject } from 'rxjs';
 import { finalize, map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { LoadingDialogComponent } from '../loading-dialog/loading-dialog.component';
-import { Subject } from 'rxjs/Subject';
 
 /**
  * Displays a global loading dialog while a server request is running
