@@ -50,7 +50,7 @@ module.exports = function (env) {
   const ENV = process.env.NODE_ENV = process.env.ENV = 'production';
   const supportES2015 = buildUtils.supportES2015(buildUtils.DEFAULT_METADATA.tsConfigPath);
   const METADATA = Object.assign({}, buildUtils.DEFAULT_METADATA, {
-    baseUrl: buildUtils.DEFAULT_METADATA.AOT ? '/client/' : buildUtils.DEFAULT_METADATA.baseUrl,
+    baseUrl: buildUtils.DEFAULT_METADATA.baseUrl,
     host: process.env.HOST || 'localhost',
     port: process.env.PORT || 8080,
     ENV: ENV,
@@ -74,7 +74,7 @@ module.exports = function (env) {
        *
        * See: http://webpack.github.io/docs/configuration.html#output-path
        */
-      path: helpers.root('../Backend/WebApplication/client'),
+      path: helpers.root('../Backend/WebApplication/wwwroot'),
 
       /**
        * Specifies the name of each output file on disk.
