@@ -17,8 +17,6 @@ using log4net;
 using log4net.Util;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Cors.Internal;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -83,12 +81,12 @@ namespace HeyImIn.WebApplication
 				.AddTransient<IDatabaseContext, HeyImInDatabaseContext>() // Redirect interface to class
 				.AddTransient<ISendGridClient>(c => new SendGridClient(sendGridApiKey))
 				.AddTransient<IPasswordService>(c => new PasswordService(workFactor))
-				.AddTransient<INotificationService>(c => new NotificationService(c.GetService<IMailSender>(), c.GetService<ISessionService>(), baseWebUrl, mailTimeZoneName))
+				.AddTransient<INotificationService>(c => new NotificationService(c.GetRequiredService<IMailSender>(), c.GetRequiredService<ISessionService>(), baseWebUrl, mailTimeZoneName))
 				.AddTransient<ICronService, CronSendNotificationsService>()
-				.AddTransient<GetDatabaseContext>(c => c.GetService<IDatabaseContext>);
+				.AddTransient<GetDatabaseContext>(c => c.GetRequiredService<IDatabaseContext>);
 
 			// TODO Dafuq?
-			services.AddAuthentication(Microsoft.AspNetCore.Server.IISIntegration.IISDefaults.AuthenticationScheme);
+			services.AddAuthentication(Microsoft.AspNetCore.Server.HttpSys.HttpSysDefaults.AuthenticationScheme);
 			services.AddAuthorization(options => options.AddPolicy("RequiresLogin", policy => policy.AddRequirements(new RequiresLoginRequirement())));
 		}
 
@@ -103,8 +101,6 @@ namespace HeyImIn.WebApplication
 				context.Migrate();
 			}
 
-			// TODO DatabaseConfiguration.ConfigureMigrations();
-
 			lifetime.ApplicationStarted.Register(LogStarted);
 			lifetime.ApplicationStopping.Register(LogStopping);
 			lifetime.ApplicationStopped.Register(LogStopped);
@@ -115,7 +111,15 @@ namespace HeyImIn.WebApplication
 				app.UseCors(p => p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 			}
 
-			app.UseMvc(routes => routes.MapRoute("default", "api/{controller=Home}/{action=Index}"));
+			// Map API-calls to the backend routing
+			app.Map("/api", context =>
+			{
+				context.UseMvc(routes => routes.MapRoute("default", "api/{controller}/{action}"));
+			});
+
+			// Redirect all other requests to frontend routing (angular)
+			app.UseStaticFiles();
+			app.UseMvc(routes => { routes.MapSpaFallbackRoute("angular", new { controller = "Home", action = "Index" }); });
 		}
 
 		private static void ConfigureLog4Net(IHostingEnvironment env)

@@ -1,14 +1,14 @@
-del /S /F /Q ..\Backend\WebApplication\client\assets
-del /F /Q ..\Backend\WebApplication\client\*.css
-del /F /Q ..\Backend\WebApplication\client\*.eot
-del /F /Q ..\Backend\WebApplication\client\*.html
-del /F /Q ..\Backend\WebApplication\client\*.jpg
-del /F /Q ..\Backend\WebApplication\client\*.js
-del /F /Q ..\Backend\WebApplication\client\*.map
-del /F /Q ..\Backend\WebApplication\client\*.svg
-del /F /Q ..\Backend\WebApplication\client\*.ttf
-del /F /Q ..\Backend\WebApplication\client\*.txt
-del /F /Q ..\Backend\WebApplication\client\*.woff
-del /F /Q ..\Backend\WebApplication\client\*.woff2
+del /S /F /Q ..\Backend\WebApplication\wwwroot\assets
+del /F /Q ..\Backend\WebApplication\wwwroot\*.css
+del /F /Q ..\Backend\WebApplication\wwwroot\*.eot
+del /F /Q ..\Backend\WebApplication\wwwroot\*.html
+del /F /Q ..\Backend\WebApplication\wwwroot\*.jpg
+del /F /Q ..\Backend\WebApplication\wwwroot\*.js
+del /F /Q ..\Backend\WebApplication\wwwroot\*.map
+del /F /Q ..\Backend\WebApplication\wwwroot\*.svg
+del /F /Q ..\Backend\WebApplication\wwwroot\*.ttf
+del /F /Q ..\Backend\WebApplication\wwwroot\*.txt
+del /F /Q ..\Backend\WebApplication\wwwroot\*.woff
+del /F /Q ..\Backend\WebApplication\wwwroot\*.woff2
 
 npm run build:aot:prod
