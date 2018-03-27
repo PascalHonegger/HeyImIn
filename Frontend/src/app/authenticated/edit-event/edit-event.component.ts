@@ -1,9 +1,7 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatSnackBar, MatDialog } from '@angular/material';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AreYouSureDialogComponent } from '../../shared/are-you-sure-dialog/are-you-sure-dialog.component';
-import { Subscription } from 'rxjs/Subscription';
-import { ParticipateEventClient } from '../../shared/backend-clients/participate-event.client';
 import { OrganizeAppointmentClient } from '../../shared/backend-clients/organize-appointment.client';
 import { OrganizeEventClient } from '../../shared/backend-clients/organize-event.client';
 import { EditEventDetails } from '../../shared/server-model/event-edit-details.model';
@@ -17,10 +15,9 @@ import { InviteToEventClient } from '../../shared/backend-clients/invite-to-even
 	styleUrls: ['./edit-event.component.scss'],
 	templateUrl: './edit-event.component.html'
 })
-export class EditEventComponent implements OnDestroy {
+export class EditEventComponent {
 	public eventDetails: EditEventDetails;
 
-	private subscription: Subscription;
 	private _eventId: number;
 
 	public get eventId(): number {
@@ -32,20 +29,15 @@ export class EditEventComponent implements OnDestroy {
 		this.loadEventDetails();
 	}
 
-	constructor(private participateEventServer: ParticipateEventClient,
-				private inviteToEventServer: InviteToEventClient,
+	constructor(private inviteToEventServer: InviteToEventClient,
 				private organizeEventServer: OrganizeEventClient,
 				private organizeAppointmentServer: OrganizeAppointmentClient,
 				private snackBar: MatSnackBar,
 				private router: Router,
 				private dialog: MatDialog,
 				route: ActivatedRoute) {
-					this.subscription = route.params.subscribe(params => this.eventId = +params['id']);
+					route.params.subscribe(params => this.eventId = +params['id']);
 				}
-
-	public ngOnDestroy() {
-		this.subscription.unsubscribe();
-	}
 
 	public saveEvent(newEventInfo: GeneralEventInfo) {
 		this.organizeEventServer

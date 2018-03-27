@@ -1,8 +1,7 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatSnackBar, MatDialog } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../shared/services/auth.service';
-import { Subscription } from 'rxjs/Subscription';
 import { ParticipateEventClient } from '../../shared/backend-clients/participate-event.client';
 import { EventDetails } from '../../shared/server-model/event-details.model';
 import { NotificationConfiguration } from '../../shared/server-model/notification-configuration.model';
@@ -13,11 +12,10 @@ import { DetailOverviewBase } from '../detail-overview-base';
 	styleUrls: ['./view-event.component.scss'],
 	templateUrl: './view-event.component.html'
 })
-export class ViewEventComponent extends DetailOverviewBase implements OnDestroy {
+export class ViewEventComponent extends DetailOverviewBase {
 	public isOrganizingEvent: boolean;
 	public eventDetails: EventDetails;
 
-	private subscription: Subscription;
 	private _eventId: number;
 
 	public get eventId(): number {
@@ -35,12 +33,8 @@ export class ViewEventComponent extends DetailOverviewBase implements OnDestroy 
 				authService: AuthService,
 				route: ActivatedRoute) {
 					super(eventServer, dialog, authService);
-					this.subscription = route.params.subscribe(params => this.eventId = +params['id']);
+					route.params.subscribe(params => this.eventId = +params['id']);
 				}
-
-	public ngOnDestroy() {
-		this.subscription.unsubscribe();
-	}
 
 	public async leaveEvent() {
 		await this.leaveEventAsync(this.eventId);
