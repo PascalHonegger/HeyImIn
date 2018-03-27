@@ -44,7 +44,7 @@ namespace HeyImIn.WebApplication.Helpers
 		}
 		public static int GetUserId(this HttpContext requestMessage)
 		{
-			return 0; //(int)requestMessage.Items[UserIdPropertiesKey];
+			return 1; //(int)requestMessage.Items[UserIdPropertiesKey];
 		}
 		public static void SetUserId(this HttpContext requestMessage, int userId)
 		{

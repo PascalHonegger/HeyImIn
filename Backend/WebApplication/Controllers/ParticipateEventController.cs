@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 using HeyImIn.Database.Context;
@@ -40,24 +41,40 @@ namespace HeyImIn.WebApplication.Controllers
 			{
 				int currentUserId = HttpContext.GetUserId();
 
-				List<Event> yourEvents = await context.Events
-					.Where(e => (e.OrganizerId == currentUserId) || e.EventParticipations.Select(ep => ep.ParticipantId).Contains(currentUserId))
-					.Include(e => e.Appointments)
-					.Include(e => e.EventParticipations)
-					.ToListAsync();
-				List<Event> publicEvents = await context.Events
-					.Where(e => !e.IsPrivate)
-					.Include(e => e.Appointments)
-					.Include(e => e.EventParticipations)
-					.ToListAsync();
+				async Task<List<(Event @event, Appointment upcommingAppointment)>> GetAndFilterEvents(Expression<Func<Event, bool>> eventFilter)
+				{
+					List<Event> databaseResult = await context.Events
+						.Where(eventFilter)
+						.Include(e => e.EventParticipations)
+						.Include(e => e.Organizer)
+						.ToListAsync();
+
+					var result = new List<(Event @event, Appointment upcommingAppointment)>();
+
+					foreach (Event @event in databaseResult)
+					{
+						Appointment upcommingAppointment = await context.Entry(@event)
+							.Collection(e => e.Appointments)
+							.Query()
+							.Include(a => a.AppointmentParticipations)
+							.OrderBy(a => a.StartTime)
+							.FirstOrDefaultAsync(a => a.StartTime >= DateTime.UtcNow);
+
+						result.Add((@event, upcommingAppointment));
+					}
+
+					return result;
+				}
+
+				List<(Event @event, Appointment upcommingAppointment)> yourEvents = await GetAndFilterEvents(e => (e.OrganizerId == currentUserId) || e.EventParticipations.Select(ep => ep.ParticipantId).Contains(currentUserId));
+				List<(Event @event, Appointment upcommingAppointment)> publicEvents = await GetAndFilterEvents(e => !e.IsPrivate && (e.OrganizerId != currentUserId) && !e.EventParticipations.Select(ep => ep.ParticipantId).Contains(currentUserId));
 
 				List<EventOverviewInformation> yourEventInformations = yourEvents
-					.Select(e => EventOverviewInformation.FromEvent(e, currentUserId))
+					.Select(e => EventOverviewInformation.FromEvent(e.@event, e.upcommingAppointment, currentUserId))
 					.OrderBy(e => e.LatestAppointmentInformation?.StartTime ?? DateTime.MaxValue)
 					.ToList();
 				List<EventOverviewInformation> publicEventInformations = publicEvents
-					.Except(yourEvents)
-					.Select(e => EventOverviewInformation.FromEvent(e, currentUserId))
+					.Select(e => EventOverviewInformation.FromEvent(e.@event, e.upcommingAppointment, currentUserId))
 					.OrderBy(e => e.LatestAppointmentInformation?.StartTime ?? DateTime.MaxValue)
 					.ToList();
 
@@ -80,16 +97,30 @@ namespace HeyImIn.WebApplication.Controllers
 		{
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
-				Event @event = await context.Events
+				var eventWithAppointments = await context.Events
 					.Include(e => e.Organizer)
 					.Include(e => e.EventParticipations)
+						.ThenInclude(p => p.Participant)
 					.Include(e => e.Appointments)
-					.FirstOrDefaultAsync(e => e.Id == eventId);
+						.ThenInclude(a => a.AppointmentParticipations)
+					.Select(e =>
+						new
+						{
+							@event = e,
+							appointments = e.Appointments
+								.Where(a => a.StartTime >= DateTime.UtcNow)
+								.OrderBy(a => a.StartTime)
+								.Take(ShownAppointmentsPerEvent)
+								.AsQueryable()
+						})
+					.FirstOrDefaultAsync(e => e.@event.Id == eventId);
 
-				if (@event == null)
+				if (eventWithAppointments == null)
 				{
 					return NotFound();
 				}
+
+				Event @event = eventWithAppointments.@event;
 
 				int currentUserId = HttpContext.GetUserId();
 
@@ -102,10 +133,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				List<User> allParticipants = @event.EventParticipations.Select(e => e.Participant).ToList();
 
-				List<AppointmentDetails> upcomingAppointments = @event.Appointments
-					.Where(a => a.StartTime >= DateTime.UtcNow)
-					.OrderBy(a => a.StartTime)
-					.Take(ShownAppointmentsPerEvent)
+				List<AppointmentDetails> upcomingAppointments = eventWithAppointments.appointments
 					.Select(a => AppointmentDetails.FromAppointment(a, currentUserId, allParticipants))
 					.ToList();
 

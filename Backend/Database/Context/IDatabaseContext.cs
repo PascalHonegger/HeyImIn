@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using HeyImIn.Database.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace HeyImIn.Database.Context
 {
@@ -15,6 +16,8 @@ namespace HeyImIn.Database.Context
 	{
 		// DbContext methods we want to provide
 		Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken));
+
+		EntityEntry<TEntity> Entry<TEntity>(TEntity entity) where TEntity : class;
 
 		void Migrate();
 
