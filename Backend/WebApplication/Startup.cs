@@ -37,6 +37,12 @@ namespace HeyImIn.WebApplication
 		// ReSharper disable once UnusedMember.Global => This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
+			// Add ASP.NET services
+			string connectionString = _configuration.GetConnectionString("HeyImIn");
+			services.AddDbContext<HeyImInDatabaseContext>(options => options.UseSqlServer(connectionString));
+			services.AddResponseCompression();
+
+			// Add global filters / attributes
 			services
 				.AddMvc(options => { options.Filters.Add(new LogActionAttribute()); })
 				.AddJsonOptions(options =>
@@ -52,10 +58,8 @@ namespace HeyImIn.WebApplication
 					options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
 				});
 
-			string connectionString = _configuration.GetConnectionString("HeyImIn");
-			services.AddDbContext<HeyImInDatabaseContext>(options => options.UseSqlServer(connectionString));
-
-			// Register all services as their interfaces
+			// Register all services as their matching interface
+			// E.g. IMyService <-> MyService
 			services.Scan(scan => scan
 				.FromAssembliesOf(
 					typeof(HomeController), // WebApplication
@@ -112,13 +116,14 @@ namespace HeyImIn.WebApplication
 			}
 
 			// Map API-calls to the backend routing
-			app.Map("/api", context =>
+			app.MapWhen(route => route.Request.Path.Value.StartsWith("/api"), context =>
 			{
 				context.UseMvc(routes => routes.MapRoute("default", "api/{controller}/{action}"));
 			});
 
 			// Redirect all other requests to frontend routing (angular)
 			app.UseStaticFiles();
+			app.UseResponseCompression();
 			app.UseMvc(routes => { routes.MapSpaFallbackRoute("angular", new { controller = "Home", action = "Index" }); });
 		}
 
