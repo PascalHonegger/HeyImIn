@@ -14,7 +14,6 @@ namespace HeyImIn.Database.Context.Impl
 		// ReSharper disable once SuggestBaseTypeForParameter
 		public HeyImInDatabaseContext(DbContextOptions<HeyImInDatabaseContext> options) : base(options)
 		{
-			
 		}
 
 		// Main tables

@@ -47,7 +47,7 @@ namespace HeyImIn.WebApplication.Controllers
 					.Include(e => e.EventInvitations)
 					.Include(e => e.EventParticipations)
 					.Include(e => e.Appointments)
-					.Include(e => e.Appointments.Select(a => a.AppointmentParticipations))
+						.ThenInclude(a => a.AppointmentParticipations)
 					.FirstOrDefaultAsync(e => e.Id == eventId);
 
 				if (@event == null)
@@ -183,7 +183,10 @@ namespace HeyImIn.WebApplication.Controllers
 			{
 				Event @event = await context.Events
 					.Include(e => e.EventParticipations)
+						.ThenInclude(ep => ep.Participant)
 					.Include(e => e.Appointments)
+						.ThenInclude(ap => ap.AppointmentParticipations)
+					.Include(e => e.Organizer)
 					.FirstOrDefaultAsync(e => e.Id == eventId);
 
 				if (@event == null)
