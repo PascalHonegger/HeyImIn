@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import { InviteToEventClient } from '../../shared/backend-clients/invite-to-event.client';
@@ -8,13 +8,13 @@ import { InviteToEventClient } from '../../shared/backend-clients/invite-to-even
 	styleUrls: ['./accept-invite.component.scss'],
 	templateUrl: './accept-invite.component.html'
 })
-export class AcceptInviteComponent implements OnDestroy {
+export class AcceptInviteComponent {
 	public messageToDisplay: string = 'Ungültiger Link';
 
 	private subscription: Subscription;
 
 	constructor(server: InviteToEventClient, route: ActivatedRoute, router: Router) {
-		this.subscription = route.params.subscribe(params => {
+		route.params.subscribe(params => {
 			const token = params['token'];
 			this.messageToDisplay = 'Einladung wird angenommen...';
 			server.acceptInvitation(token).subscribe(
@@ -24,9 +24,5 @@ export class AcceptInviteComponent implements OnDestroy {
 				}
 			);
 		});
-	}
-
-	public ngOnDestroy() {
-		this.subscription.unsubscribe();
 	}
 }

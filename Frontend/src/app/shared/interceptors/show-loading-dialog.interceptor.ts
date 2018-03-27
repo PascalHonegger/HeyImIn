@@ -10,7 +10,7 @@ import { Observable } from 'rxjs/Observable';
 import { finalize, map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { LoadingDialogComponent } from '../loading-dialog/loading-dialog.component';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Subject } from 'rxjs/Subject';
 
 /**
  * Displays a global loading dialog while a server request is running
@@ -19,7 +19,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 export class ShowLoadingDialogInterceptor implements HttpInterceptor {
 	private currentlyOpenedDialog: MatDialogRef<LoadingDialogComponent>;
 
-	private hasDialogOpen: BehaviorSubject<number> = new BehaviorSubject(0);
+	private runningRequestsSource: Subject<number> = new Subject<number>();
 
 	private _runningRequests: number = 0;
 	private get runningRequests(): number {
@@ -27,11 +27,11 @@ export class ShowLoadingDialogInterceptor implements HttpInterceptor {
 	}
 	private set runningRequests(value: number) {
 		this._runningRequests = value;
-		this.hasDialogOpen.next(value);
+		this.runningRequestsSource.next(value);
 	}
 
 	constructor(private dialog: MatDialog) {
-		this.hasDialogOpen
+		this.runningRequestsSource
 			.pipe(
 				map(value => value > 0),
 				debounceTime(200),

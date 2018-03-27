@@ -1,11 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { MatSnackBar, MatDialog } from '@angular/material';
-import { Router, ActivatedRoute } from '@angular/router';
 import { Constants } from '../../shared/constants';
-import { ParticipateEventClient } from '../../shared/backend-clients/participate-event.client';
-import { OrganizeAppointmentClient } from '../../shared/backend-clients/organize-appointment.client';
-import { OrganizeEventClient } from '../../shared/backend-clients/organize-event.client';
 import { GeneralEventInfo } from '../../shared/server-model/general-event-info.model';
 
 @Component({
@@ -50,14 +45,7 @@ export class EditGeneralEventInfoComponent {
 		};
 	}
 
-	constructor(private eventServer: ParticipateEventClient,
-				private organizeEventServer: OrganizeEventClient,
-				private organizeAppointmentServer: OrganizeAppointmentClient,
-				private snackBar: MatSnackBar,
-				private router: Router,
-				private dialog: MatDialog,
-				formBuilder: FormBuilder,
-				route: ActivatedRoute) {
+	constructor(formBuilder: FormBuilder) {
 					this.form = formBuilder.group({
 						titleCtrl: ['', [Validators.required, Validators.maxLength(Constants.titleMaxLength)]],
 						meetingPlaceCtrl: ['', [Validators.required, Validators.maxLength(Constants.meetingPlaceMaxLength)]],

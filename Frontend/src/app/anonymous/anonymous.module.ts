@@ -13,7 +13,7 @@ const components = [
 	AnonymousLayoutComponent,
 	LoginComponent,
 	RegisterComponent,
-	ResetPasswordComponent,
+	ResetPasswordComponent
 ];
 
 @NgModule({
