@@ -1,8 +1,6 @@
 <div fxLayout.lt-sm="column" fxLayout.gt-sm="row">
-	<div fxFlex="nogrow" fxLayout="column" fxLayoutGap="5px" class="sum-container" ngClass.gt-xs="large-sum-container">
-		<div>{{appointment.acceptedParticipants}} {{appointment.acceptedParticipants === 1 ? 'Zusage' : 'Zusagen'}}</div>
-		<div>{{appointment.declinedParticipants}} {{appointment.declinedParticipants === 1 ? 'Absage' : 'Absagen'}}</div>
-		<div>{{appointment.notAnsweredParticipants}} ohne Antwort</div>
+	<div fxFlex="nogrow" class="sum-container" ngClass.gt-xs="large-sum-container">
+		<appointment-participation-summary [appointment]="appointment" orientation="column"></appointment-participation-summary>
 	</div>
 	<mat-table class="mat-elevation-z2" fxFlex [dataSource]="dataSource" matSort>
 		<!-- Name Column -->
@@ -12,7 +10,7 @@
 				{{element.participantName}}
 			</mat-cell>
 		</ng-container>
-	
+
 		<!-- Response Column -->
 		<ng-container matColumnDef="response">
 			<mat-header-cell *matHeaderCellDef mat-sort-header>Antwort</mat-header-cell>

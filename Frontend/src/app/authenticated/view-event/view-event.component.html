@@ -39,16 +39,19 @@
 								<mat-panel-title>
 									{{appointment.appointmentInformation.startTime | date:'short'}}
 								</mat-panel-title>
-								<mat-panel-description fxFlex="nogrow" fxLayoutAlign="stretch center">
-									<appointment-participation [readonly]="false" [currentResponse]="appointment.appointmentInformation.currentResponse"
-									[participantId]="currentUserId" [appointmentId]="appointment.appointmentInformation.appointmentId"
-									(selectedNewResponse)="loadEventDetails()"></appointment-participation>
+								<mat-panel-description fxHide.lt-md fxLayoutAlign="stretch center">
+									<appointment-participation-summary [appointment]="appointment.appointmentInformation" orientation="row"></appointment-participation-summary>
 								</mat-panel-description>
+								<div fxFlex="nogrow">
+									<appointment-participation [readonly]="false" [currentResponse]="appointment.appointmentInformation.currentResponse"
+										[participantId]="currentUserId" [appointmentId]="appointment.appointmentInformation.appointmentId"
+										(selectedNewResponse)="loadEventDetails()"></appointment-participation>
+								</div>
 							</mat-expansion-panel-header>
-							<div>
+							<ng-template matExpansionPanelContent>
 								<appointment-participant-table [participants]="appointment.participations" [isOrganizingEvent]="isOrganizingEvent"
 									[appointment]="appointment.appointmentInformation" (updatedResponse)="loadEventDetails()"></appointment-participant-table>
-							</div>
+							</ng-template>
 						</mat-expansion-panel>
 					</mat-accordion>
 				</ng-template>
