@@ -1,0 +1,20 @@
+@import '~styles/palettes';
+
+@mixin number-style() {
+	font-weight: bold;
+}
+
+.accepted {
+	@include number-style();
+	color: map-get($primary, 700)
+}
+
+.declined {
+	@include number-style();
+	color: map-get($warn, 700)
+}
+
+.not-answered {
+	@include number-style();
+	color: map-get($accent, 700)
+}

@@ -32,10 +32,10 @@
 								{{appointment.appointmentInformation.startTime | date:'short'}}
 							</mat-panel-title>
 						</mat-expansion-panel-header>
-						<div>
+						<ng-template matExpansionPanelContent>
 							<appointment-participant-table [participants]="appointment.participations" [isOrganizingEvent]="true" [appointment]="appointment.appointmentInformation"
 							(updatedResponse)="loadEventDetails()"></appointment-participant-table>
-						</div>
+						</ng-template>
 						<mat-action-row>
 							<button mat-raised-button (click)="cancelAppointment(appointment.appointmentInformation.appointmentId)" color="warn">Absagen</button>
 						</mat-action-row>

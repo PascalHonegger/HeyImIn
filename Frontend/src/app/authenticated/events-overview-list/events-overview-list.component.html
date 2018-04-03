@@ -4,16 +4,23 @@
 			<mat-panel-title fxFlex.xs="grow">
 				{{event.viewEventInformation.title}}
 			</mat-panel-title>
-			<mat-panel-description fxFlex="nogrow" fxLayoutAlign="stretch center" *ngIf="event.latestAppointmentInformation">
-				{{event.latestAppointmentInformation.startTime | date:'short'}}
-				<appointment-participation [readonly]="false" [currentResponse]="event.latestAppointmentInformation.currentResponse"
-				[participantId]="currentUserId" [appointmentId]="event.latestAppointmentInformation.appointmentId"
-				(selectedNewResponse)="eventChanged.emit()"></appointment-participation>
-			</mat-panel-description>
+			<ng-container *ngIf="event.latestAppointmentInformation">
+				<mat-panel-description fxFlex="nogrow" fxLayoutAlign="stretch center" fxLayoutGap.gt-xs="20px">
+					<appointment-participation-summary fxHide.lt-md [appointment]="event.latestAppointmentInformation" orientation="row"></appointment-participation-summary>
+	
+					<div>{{event.latestAppointmentInformation.startTime | date:'short'}}</div>
+					<appointment-participation [readonly]="false" [currentResponse]="event.latestAppointmentInformation.currentResponse"
+						[participantId]="currentUserId" [appointmentId]="event.latestAppointmentInformation.appointmentId"
+						(selectedNewResponse)="eventChanged.emit()"></appointment-participation>
+				</mat-panel-description>
+			</ng-container>
 		</mat-expansion-panel-header>
-		<div>
-			<event-info-display [info]="event.viewEventInformation"></event-info-display>
-		</div>
+		<ng-template matExpansionPanelContent>
+			<div fxLayoutGap="20px">
+				<appointment-participation-summary *ngIf="event.latestAppointmentInformation" fxHide.gt-sm [appointment]="event.latestAppointmentInformation" orientation="row"></appointment-participation-summary>
+				<event-info-display [info]="event.viewEventInformation"></event-info-display>
+			</div>
+		</ng-template>
 		<mat-action-row fxLayoutGap="10px">
 			<ng-container *ngIf="event.viewEventInformation.currentUserDoesParticipate; else notParticipatingTemplate">
 				<button mat-raised-button (click)="leaveEvent(event.eventId)" color="warn" type="button">
