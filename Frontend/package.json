@@ -21,14 +21,10 @@
 		"build:dev": "npm run clean:dist && npm run webpack -- --config config/webpack.dev.js --progress --profile",
 		"build:prod": "npm run clean:dist && npm run webpack -- --config config/webpack.prod.js  --progress --profile --bail",
 		"build": "npm run build:dev",
-		"clean:dll": "npm run rimraf -- dll",
 		"clean:aot": "npm run rimraf -- compiled",
-		"clean:dist": "npm run rimraf -- dist",
-		"clean:install": "npm set progress=false && npm install",
-		"clean": "npm cache clean --force && npm run rimraf -- node_modules doc coverage dist compiled dll",
+		"clean:dist": "npm run rimraf -- \"../Backend/WebApplication/wwwroot/*\"",
 		"lint": "npm run tslint \"src/**/*.ts\"",
 		"node": "node",
-		"preclean:install": "npm run clean",
 		"rimraf": "rimraf",
 		"server:dev:hmr": "npm run server:dev -- --hotOnly",
 		"server:aot:dev": "cross-env BUILD_AOT=1 npm run server:dev",
@@ -127,6 +123,6 @@
 	},
 	"engines": {
 		"node": ">= 8.9.4",
-		"npm": ">= 5.6.0"
+		"npm": ">= 5.8.0"
 	}
 }
