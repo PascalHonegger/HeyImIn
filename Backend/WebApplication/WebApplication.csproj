@@ -4,6 +4,13 @@
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <AssemblyName>HeyImIn.WebApplication</AssemblyName>
     <RootNamespace>HeyImIn.WebApplication</RootNamespace>
+    <Version>1.0.2</Version>
+    <PackageId>HeyImIn</PackageId>
+    <Authors>Pascal Honegger</Authors>
+    <Company>Atos AG</Company>
+    <Product>Hey, I'm in</Product>
+    <PackageProjectUrl></PackageProjectUrl>
+    <RepositoryUrl>https://github.com/PascalHonegger/HeyImIn</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
