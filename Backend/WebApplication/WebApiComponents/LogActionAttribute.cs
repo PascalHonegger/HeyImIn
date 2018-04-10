@@ -44,7 +44,7 @@ namespace HeyImIn.WebApplication.WebApiComponents
 			string duration = stopwatch?.Elapsed.ToString("g") ?? "Unknown";
 			string url = actionExecutedContext.Request.RequestUri.AbsolutePath;
 
-			_log.DebugFormat("{0}(): WebApi method {1} returned, Duration = {2}", nameof(OnActionExecuted), url, duration);
+			_log.DebugFormat("{0}(): WebApi method {1} returned, duration = {2}", nameof(OnActionExecuted), url, duration);
 
 			LogicalThreadContext.Properties.Remove(LogHelpers.UserIdLogKey);
 			LogicalThreadContext.Properties.Remove(LogHelpers.SessionTokenLogKey);
