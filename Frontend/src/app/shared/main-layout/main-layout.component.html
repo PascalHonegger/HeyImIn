@@ -1,32 +1,38 @@
 <!-- Inspired by HappyMeter -->
+<div class="layout-wrapper" fxLayout="column">
+	<mat-toolbar class="app-toolbar mat-primary mat-elevation-z6" role="navigation">
+		<mat-toolbar-row>
+			<img src="assets/img/atos-logo.png" class="app-logo" alt="Atos">
+			<a routerLink="/" fxFlex class="app-title">Hey, I'm in</a>
 
-<mat-toolbar class="app-toolbar mat-primary mat-elevation-z6" role="navigation">
-	<mat-toolbar-row>
-		<img src="assets/img/atos-logo.png" class="app-logo" alt="Atos">
-		<a routerLink="/" fxFlex class="app-title">Hey, I'm in</a>
+			<nav fxLayout="row" fxHide fxShow.gt-sm>
+				<a class="menu-link" [class.has-icon-min-width]="link.content" *ngFor="let link of links"
+					fxFlex mat-button [routerLink]="link.url"
+					routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
+					<mat-icon>{{link.matIcon}}</mat-icon>
+					<span>{{link.content}}</span>
+				</a>
+			</nav>
+		</mat-toolbar-row>
 
-		<nav fxLayout="row" fxHide fxShow.gt-sm>
-			<a class="menu-link" [class.has-icon-min-width]="link.content" *ngFor="let link of links"
-				fxFlex mat-button [routerLink]="link.url"
+		<mat-toolbar-row fxHide.gt-sm>
+			<nav fxLayout="row" class="nav-flex-div">
+				<a class="menu-link" [ngClass.xs]="['smaller-menu']" *ngFor="let link of links"
+				[fxFlex]="link.content ? 'grow' : 'none'" mat-button [routerLink]="link.url"
 				routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
-				<mat-icon>{{link.matIcon}}</mat-icon>
-				<span>{{link.content}}</span>
-			</a>
-		</nav>
-	</mat-toolbar-row>
+					<mat-icon [fxHide.xs]="link.content">{{link.matIcon}}</mat-icon>
+					<span>{{link.content}}</span>
+				</a>
+			</nav>
+		</mat-toolbar-row>
+	</mat-toolbar>
 
-	<mat-toolbar-row fxHide.gt-sm>
-		<nav fxLayout="row" class="nav-flex-div">
-			<a class="menu-link" [ngClass.xs]="['smaller-menu']" *ngFor="let link of links"
-			[fxFlex]="link.content ? 'grow' : 'none'" mat-button [routerLink]="link.url"
-			routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
-				<mat-icon [fxHide.xs]="link.content">{{link.matIcon}}</mat-icon>
-				<span>{{link.content}}</span>
-			</a>
-		</nav>
-	</mat-toolbar-row>
-</mat-toolbar>
+	<div role="main" ngClass.gt-xs="content-wrapper" ngClass.xs="content-wrapper-xs" fxFlex>
+		<ng-content></ng-content>
+	</div>
 
-<div role="main" ngClass.gt-xs="content-wrapper" ngClass.xs="content-wrapper-xs ">
-	<ng-content></ng-content>
+	<div ngClass.gt-xs="footer-wrapper" ngClass.xs="footer-wrapper-xs" fxLayoutAlign="end end">
+		<a mat-button href="https://github.com/PascalHonegger/HeyImIn" target="_blank" rel="noopener noreferrer"><img src="/assets/img/GitHub-mark.png" class="github-mark"> GitHub</a>
+		<a mat-button href="https://github.com/PascalHonegger/HeyImIn/issues/new" target="_blank" rel="noopener noreferrer"><mat-icon>feedback</mat-icon> Rückmeldung geben</a>
+	</div>
 </div>
