@@ -34,7 +34,7 @@
 				</div>
 				<ng-template #eventListTemplate>
 					<mat-accordion>
-						<mat-expansion-panel *ngFor="let appointment of eventDetails.upcomingAppointments; let i = index" [expanded]="i === 0">
+						<mat-expansion-panel *ngFor="let appointment of eventDetails.upcomingAppointments; index as i; trackBy: getAppointmentId" [expanded]="i === 0">
 							<mat-expansion-panel-header>
 								<mat-panel-title>
 									{{appointment.appointmentInformation.startTime | date:'short'}}

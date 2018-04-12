@@ -6,6 +6,7 @@ import { ParticipateEventClient } from '../../shared/backend-clients/participate
 import { EventDetails } from '../../shared/server-model/event-details.model';
 import { NotificationConfiguration } from '../../shared/server-model/notification-configuration.model';
 import { DetailOverviewBase } from '../detail-overview-base';
+import { AppointmentDetails } from '../../shared/server-model/event-edit-details.model';
 
 @Component({
 	selector: 'view-event',
@@ -35,6 +36,11 @@ export class ViewEventComponent extends DetailOverviewBase {
 					super(eventServer, dialog, authService);
 					route.params.subscribe(params => this.eventId = +params['id']);
 				}
+
+
+	public getAppointmentId(index: number, appointment: AppointmentDetails) {
+		return appointment.appointmentInformation.appointmentId;
+	}
 
 	public async leaveEvent() {
 		await this.leaveEventAsync(this.eventId);
