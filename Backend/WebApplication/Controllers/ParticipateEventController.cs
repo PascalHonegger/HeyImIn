@@ -178,7 +178,7 @@ namespace HeyImIn.WebApplication.Controllers
 		}
 
 		/// <summary>
-		///     Removes the specified user from an event. A user can remove himself any the <see cref="Event.Organizer" /> can
+		///     Removes the specified user from an event. A user can remove himself and the <see cref="Event.Organizer" /> can
 		///     remove any user
 		/// </summary>
 		/// <param name="removeFromEventDto">
