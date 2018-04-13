@@ -16,19 +16,20 @@
 		],
 		"baseUrl": "./src",
 		"paths": {
-			"@angular/*": ["node_modules/@angular/*"]
+			"@angular/*": ["../node_modules/@angular/*"]
 		},
 		"typeRoots": [
 			"node_modules/@types"
 		],
 		"types": [
 			"hammerjs",
-			"node"
+			"node",
+			"uglify-js",
+			"webpack"
 		]
 	},
 	"exclude": [
 		"node_modules",
-		"dist",
 		"src/**/*.spec.ts",
 		"src/**/*.e2e.ts"
 	],
