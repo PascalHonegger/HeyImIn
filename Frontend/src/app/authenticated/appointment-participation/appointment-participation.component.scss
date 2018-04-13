@@ -1,9 +1,25 @@
+@import '~styles/palettes';
+
+// Not active button colors
 .readonly {
 	color: gray;
 }
 
 .editable {
 	color: black;
+}
+
+// Active button colors
+.accepted {
+	color: $response-accepted;
+}
+
+.declined {
+	color: $response-declined;
+}
+
+.not-answered {
+	color: $response-not-answered;
 }
 
 @mixin icon-button-dimensions($size) {
