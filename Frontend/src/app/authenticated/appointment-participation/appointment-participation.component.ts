@@ -1,11 +1,12 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { OrganizeAppointmentClient } from '../../shared/backend-clients/organize-appointment.client';
 import { AppointmentParticipationAnswer } from '../../shared/server-model/appointment-participation-answer.model';
 
 @Component({
 	selector: 'appointment-participation',
 	styleUrls: ['./appointment-participation.component.scss'],
-	templateUrl: './appointment-participation.component.html'
+	templateUrl: './appointment-participation.component.html',
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppointmentParticipationComponent {
 	@Input()

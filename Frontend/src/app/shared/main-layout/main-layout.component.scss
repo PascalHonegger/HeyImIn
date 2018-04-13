@@ -52,6 +52,10 @@ a {
 	color: inherit;
 }
 
+.github-mark {
+	height: 24px;
+}
+
 // Main content wrapper
 $content-margin: 16px;
 $content-xs-margin: 6px;
@@ -62,4 +66,16 @@ $content-xs-margin: 6px;
 
 .content-wrapper-xs {
 	margin: $content-margin $content-xs-margin;
+}
+
+.footer-wrapper {
+	margin: 0 $content-margin $content-margin;
+}
+
+.footer-wrapper-xs {
+	margin: 0 $content-xs-margin $content-xs-margin;
+}
+
+.layout-wrapper {
+	min-height: 100vh;
 }
