@@ -122,7 +122,11 @@ namespace HeyImIn.WebApplication.Controllers
 			{
 				User currentUser = await ActionContext.Request.GetCurrentUserAsync(context);
 
-				List<Appointment> userAppointments = currentUser.AppointmentParticipations.Select(a => a.Appointment).ToList();
+				// Appointments the user participates, excluding his organized events
+				List<Appointment> userAppointments = currentUser.AppointmentParticipations
+					.Select(a => a.Appointment)
+					.Where(a => a.Event.OrganizerId != currentUser.Id)
+					.ToList();
 
 				List<EventNotificationInformation> notificationInformations = _deleteService.DeleteUserLocally(context, currentUser);
 

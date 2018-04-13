@@ -78,3 +78,7 @@ $warn:		mat-palette($mat-red);
 
 // Create the theme object (a Sass map containing all of the palettes).
 $theme:		mat-light-theme($primary, $accent, $warn);
+
+$response-accepted: map-get($mat-green, 500);
+$response-declined: map-get($warn, 500);
+$response-not-answered: map-get($primary, 500);

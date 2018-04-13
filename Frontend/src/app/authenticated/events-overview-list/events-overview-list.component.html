@@ -1,5 +1,5 @@
 <mat-accordion>
-	<mat-expansion-panel *ngFor="let event of events; let i = index" [expanded]="i === 0">
+	<mat-expansion-panel *ngFor="let event of events; index as i; trackBy: getEventId" [expanded]="i === 0">
 		<mat-expansion-panel-header>
 			<mat-panel-title fxFlex.xs="grow">
 				{{event.viewEventInformation.title}}

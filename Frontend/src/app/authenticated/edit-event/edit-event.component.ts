@@ -4,7 +4,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { AreYouSureDialogComponent } from '../../shared/are-you-sure-dialog/are-you-sure-dialog.component';
 import { OrganizeAppointmentClient } from '../../shared/backend-clients/organize-appointment.client';
 import { OrganizeEventClient } from '../../shared/backend-clients/organize-event.client';
-import { EditEventDetails } from '../../shared/server-model/event-edit-details.model';
+import { EditEventDetails, AppointmentDetails } from '../../shared/server-model/event-edit-details.model';
 import { GeneralEventInfo } from '../../shared/server-model/general-event-info.model';
 import { AddAppointmentsDialogComponent } from '../add-appointments-dialog/add-appointments-dialog.component';
 import { AddParticipantDialogComponent } from '../add-participant-dialog/add-participant-dialog.component';
@@ -38,6 +38,10 @@ export class EditEventComponent {
 				route: ActivatedRoute) {
 					route.params.subscribe(params => this.eventId = +params['id']);
 				}
+
+	public getAppointmentId(index: number, appointment: AppointmentDetails) {
+		return appointment.appointmentInformation.appointmentId;
+	}
 
 	public saveEvent(newEventInfo: GeneralEventInfo) {
 		this.organizeEventServer
