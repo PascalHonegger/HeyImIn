@@ -17,23 +17,20 @@
 		],
 		"baseUrl": "./src",
 		"paths": {
-			"@angular/*": ["node_modules/@angular/*"]
+			"@angular/*": ["../node_modules/@angular/*"]
 		},
 		"typeRoots": [
 			"node_modules/@types"
 		],
 		"types": [
 			"hammerjs",
-			"jasmine",
 			"node",
-			"source-map",
 			"uglify-js",
 			"webpack"
 		]
 	},
 	"exclude": [
-		"node_modules",
-		"dist"
+		"node_modules"
 	],
 	"awesomeTypescriptLoaderOptions": {
 		"forkChecker": true,
