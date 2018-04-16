@@ -113,11 +113,22 @@ namespace HeyImIn.WebApplication.Controllers
 
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
-				EventInvitation invitation = await context.EventInvitations.Include(e => e.Event).FirstOrDefaultAsync(e => e.Token == acceptInvitationDto.InviteToken);
+				EventInvitation invitation = await context.EventInvitations
+					.Include(e => e.Event)
+					.Include(e => e.Event.EventParticipations)
+					.FirstOrDefaultAsync(e => e.Token == acceptInvitationDto.InviteToken);
 
 				if (invitation == null)
 				{
 					return BadRequest(RequestStringMessages.InvitationInvalid);
+				}
+
+				int currentUserId = ActionContext.Request.GetUserId();
+
+				if (invitation.Event.EventParticipations.Select(ep => ep.ParticipantId).Contains(currentUserId))
+				{
+					// The invite link was used to access the event => Redirect to event
+					return Ok(invitation.EventId);
 				}
 
 				if (invitation.Event.IsPrivate)
@@ -138,12 +149,9 @@ namespace HeyImIn.WebApplication.Controllers
 				// Invitations to public events are theoretically pointless as the user could join without the invitation
 				// => These invitations are always considered as valid, even if already used
 
-
-				User currentUser = await HttpContext.GetCurrentUserAsync(context);
-
 				EventParticipation participation = context.EventParticipations.Create();
 				participation.Event = invitation.Event;
-				participation.Participant = currentUser;
+				participation.ParticipantId = currentUserId;
 
 				invitation.Event.EventParticipations.Add(participation);
 

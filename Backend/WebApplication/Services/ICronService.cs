@@ -11,5 +11,11 @@ namespace HeyImIn.WebApplication.Services
 		///     Runs the cron service
 		/// </summary>
 		Task RunAsync();
+
+		/// <summary>
+		///     A name describing this service
+		///     E.g. CleanupLogCron, SendNotificationsCron, ...
+		/// </summary>
+		string DescriptiveName { get; }
 	}
 }

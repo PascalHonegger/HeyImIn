@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
 using HeyImIn.WebApplication.Services;
@@ -20,26 +21,45 @@ namespace HeyImIn.WebApplication.Controllers
 		}
 
 		/// <summary>
-		///     Default / fallback route which redirects to index.html
+		///     Runs all cron-jobs
+		///     Catches and logs exceptions thrown by the <see cref="ICronService.RunAsync"/> method
 		/// </summary>
 		[HttpPost]
-		public async Task Run()
+		public async Task<IHttpActionResult> Run()
 		{
 			_log.DebugFormat("{0}(): Running Cron jobs", nameof(Run));
 
-			try
+			var cronStopwatch = new Stopwatch();
+			var hadError = false;
+
+			foreach (ICronService cronService in _cronRunners)
 			{
-				foreach (ICronService cronService in _cronRunners)
+				_log.DebugFormat("{0}(): Start running '{1}'", nameof(Run), cronService.DescriptiveName);
+				cronStopwatch.Restart();
+
+				try
 				{
 					await cronService.RunAsync();
 				}
+				catch (Exception e)
+				{
+					_log.ErrorFormat("{0}(): Error while running '{1}', error={2}", nameof(Run), cronService.DescriptiveName, e);
+
+					hadError = true;
+				}
+				finally
+				{
+					cronStopwatch.Stop();
+					_log.DebugFormat("{0}(): Finished running '{1}', duration = {2:g}", nameof(Run), cronService.DescriptiveName, cronStopwatch.Elapsed);
+				}
 			}
-			catch (Exception e)
+
+			if (hadError)
 			{
-				_log.ErrorFormat("{0}(): Failed to execute cron job, error={1}", nameof(Run), e);
-				
-				throw;
+				return InternalServerError();
 			}
+
+			return Ok();
 		}
 
 		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);

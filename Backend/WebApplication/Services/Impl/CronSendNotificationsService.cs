@@ -24,8 +24,6 @@ namespace HeyImIn.WebApplication.Services.Impl
 
 		public async Task RunAsync()
 		{
-			_log.DebugFormat("{0}(): Start running notification Cron", nameof(RunAsync));
-
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
 				List<Appointment> appointmentsWithPossibleReminders = await context.Appointments
@@ -49,9 +47,9 @@ namespace HeyImIn.WebApplication.Services.Impl
 				// Save sent reminders & summaries
 				await context.SaveChangesAsync();
 			}
-
-			_log.DebugFormat("{0}(): Finished running notification Cron", nameof(RunAsync));
 		}
+
+		public string DescriptiveName { get; } = "SendNotificationCron";
 
 		private readonly INotificationService _notificationService;
 		private readonly GetDatabaseContext _getDatabaseContext;

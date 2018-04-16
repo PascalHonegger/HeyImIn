@@ -23,6 +23,10 @@ export class EventsOverviewListComponent extends DetailOverviewBase {
 		super(eventServer, dialog, authService);
 	}
 
+	public getEventId(index: number, event: EventOverviewInformation) {
+		return event.eventId;
+	}
+
 	public async leaveEvent(eventId: number) {
 		await this.leaveEventAsync(eventId);
 		this.eventChanged.emit();
