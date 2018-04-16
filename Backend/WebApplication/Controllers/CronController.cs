@@ -25,12 +25,12 @@ namespace HeyImIn.WebApplication.Controllers
 		///     Catches and logs exceptions thrown by the <see cref="ICronService.RunAsync"/> method
 		/// </summary>
 		[HttpPost]
-		public async Task<IHttpActionResult> Run()
+		public async Task<IActionResult> Run()
 		{
 			_log.DebugFormat("{0}(): Running Cron jobs", nameof(Run));
 
 			var cronStopwatch = new Stopwatch();
-			var hadError = false;
+			var errors = new List<(string jobName, string errorMessage)>();
 
 			foreach (ICronService cronService in _cronRunners)
 			{
@@ -45,7 +45,7 @@ namespace HeyImIn.WebApplication.Controllers
 				{
 					_log.ErrorFormat("{0}(): Error while running '{1}', error={2}", nameof(Run), cronService.DescriptiveName, e);
 
-					hadError = true;
+					errors.Add((cronService.DescriptiveName, e.Message));
 				}
 				finally
 				{
@@ -54,9 +54,9 @@ namespace HeyImIn.WebApplication.Controllers
 				}
 			}
 
-			if (hadError)
+			if (errors.Count != 0)
 			{
-				return InternalServerError();
+				return StatusCode(500, errors);
 			}
 
 			return Ok();

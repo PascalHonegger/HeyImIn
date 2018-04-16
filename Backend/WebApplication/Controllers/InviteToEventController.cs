@@ -114,16 +114,16 @@ namespace HeyImIn.WebApplication.Controllers
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
 				EventInvitation invitation = await context.EventInvitations
-					.Include(e => e.Event)
-					.Include(e => e.Event.EventParticipations)
-					.FirstOrDefaultAsync(e => e.Token == acceptInvitationDto.InviteToken);
+					.Include(i => i.Event)
+						.ThenInclude(e => e.EventParticipations)
+					.FirstOrDefaultAsync(i => i.Token == acceptInvitationDto.InviteToken);
 
 				if (invitation == null)
 				{
 					return BadRequest(RequestStringMessages.InvitationInvalid);
 				}
 
-				int currentUserId = ActionContext.Request.GetUserId();
+				int currentUserId = HttpContext.GetUserId();
 
 				if (invitation.Event.EventParticipations.Select(ep => ep.ParticipantId).Contains(currentUserId))
 				{
