@@ -6,15 +6,15 @@
 
 .accepted {
 	@include number-style();
-	color: map-get($primary, 700)
+	color: $response-accepted;
 }
 
 .declined {
 	@include number-style();
-	color: map-get($warn, 700)
+	color: $response-declined;
 }
 
 .not-answered {
 	@include number-style();
-	color: map-get($accent, 700)
+	color: $response-not-answered;
 }
