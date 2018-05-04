@@ -34,7 +34,9 @@
 		"src/**/*.e2e.ts"
 	],
 	"angularCompilerOptions": {
-		"skipMetadataEmit": true
+		"skipMetadataEmit": true,
+		"strictInjectionParameters": true,
+		"fullTemplateTypeCheck": true
 	},
 	"compileOnSave": false,
 	"buildOnSave": false,
