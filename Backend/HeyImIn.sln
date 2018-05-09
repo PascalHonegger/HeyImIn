@@ -11,6 +11,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Database", "Database\Databa
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Authentication", "Authentication\Authentication.csproj", "{55D0D383-A76D-4FB3-BFE1-0ED702339F99}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Authentication.Tests", "Authentication.Tests\Authentication.Tests.csproj", "{39A57B44-DB88-42C7-964D-6E664F997B74}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Database.Tests", "Database.Tests\Database.Tests.csproj", "{C6F0A94A-A27B-4546-8558-2AA28DC400EE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{55D0D383-A76D-4FB3-BFE1-0ED702339F99}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{55D0D383-A76D-4FB3-BFE1-0ED702339F99}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{55D0D383-A76D-4FB3-BFE1-0ED702339F99}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39A57B44-DB88-42C7-964D-6E664F997B74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39A57B44-DB88-42C7-964D-6E664F997B74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39A57B44-DB88-42C7-964D-6E664F997B74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39A57B44-DB88-42C7-964D-6E664F997B74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C6F0A94A-A27B-4546-8558-2AA28DC400EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C6F0A94A-A27B-4546-8558-2AA28DC400EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C6F0A94A-A27B-4546-8558-2AA28DC400EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C6F0A94A-A27B-4546-8558-2AA28DC400EE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
