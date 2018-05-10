@@ -1,6 +1,5 @@
 ﻿using System;
 using HeyImIn.WebApplication.Helpers;
-using Microsoft.AspNetCore.Authorization;
 
 namespace HeyImIn.WebApplication.WebApiComponents
 {
