@@ -51,7 +51,7 @@ namespace HeyImIn.WebApplication.Controllers
 		/// </summary>
 		/// <param name="sessionToken">Unique session token</param>
 		/// <returns>The found <see cref="FrontendSession" /></returns>
-		[HttpGet(nameof(GetSession) + "/{sessionToken}")]
+		[HttpGet(nameof(GetSession))]
 		[ProducesResponseType(typeof(FrontendSession), 200)]
 		[AllowAnonymous]
 		public async Task<IActionResult> GetSession(Guid sessionToken)

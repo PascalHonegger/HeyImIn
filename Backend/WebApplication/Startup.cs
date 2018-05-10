@@ -90,10 +90,6 @@ namespace HeyImIn.WebApplication
 				.AddTransient<INotificationService>(c => new NotificationService(c.GetRequiredService<IMailSender>(), c.GetRequiredService<ISessionService>(), baseWebUrl, mailTimeZoneName))
 				.AddTransient<ICronService, CronSendNotificationsService>()
 				.AddTransient<GetDatabaseContext>(c => c.GetRequiredService<IDatabaseContext>);
-
-			// TODO Dafuq?
-			services.AddAuthentication(Microsoft.AspNetCore.Server.HttpSys.HttpSysDefaults.AuthenticationScheme);
-			services.AddAuthorization(options => options.AddPolicy("RequiresLogin", policy => policy.AddRequirements(new RequiresLoginRequirement())));
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -118,9 +114,15 @@ namespace HeyImIn.WebApplication
 			}
 
 			// Redirect all non-api-requests to frontend routing (angular)
-			app.UseStaticFiles();
 			app.UseResponseCompression();
-			app.UseMvc(routes => { routes.MapSpaFallbackRoute("angular", new { controller = "Home", action = "Index" }); });
+			app.UseMvc();
+
+			// Map Website-calls to the frontend routing
+			app.MapWhen(route => !route.Request.Path.Value.StartsWith("/api"), context =>
+			{
+				context.UseStaticFiles();
+				context.UseMvc(routes => routes.MapSpaFallbackRoute("angular", new { controller = "Home", action = "Index" }));
+			});
 		}
 
 		private static void ConfigureLog4Net(IHostingEnvironment env)

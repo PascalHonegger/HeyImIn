@@ -165,7 +165,7 @@ namespace HeyImIn.WebApplication.Controllers
 		/// <returns>
 		///     <see cref="EditEventDetails" />
 		/// </returns>
-		[HttpGet(nameof(GetEditDetails) + "/{eventId}")]
+		[HttpGet(nameof(GetEditDetails))]
 		[ProducesResponseType(typeof(EditEventDetails), 200)]
 		public async Task<IActionResult> GetEditDetails(int eventId)
 		{
