@@ -140,6 +140,7 @@ namespace HeyImIn.WebApplication.Controllers
 				Appointment appointment = await context.Appointments
 					.Include(a => a.Event)
 						.ThenInclude(e => e.Organizer)
+					.Include(a => a.Event)
 						.ThenInclude(e => e.EventParticipations)
 					.Include(a => a.AppointmentParticipations)
 					.FirstOrDefaultAsync(a => a.Id == setAppointmentResponseDto.AppointmentId);
@@ -160,7 +161,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				bool changingOtherUser = currentUser != userToSetResponseFor;
 
-				bool userIsPartOfEvent = appointment.Event.EventParticipations.Select(e => e.Participant).Contains(userToSetResponseFor);
+				bool userIsPartOfEvent = appointment.Event.EventParticipations.Select(e => e.ParticipantId).Contains(userToSetResponseFor.Id);
 
 				if (changingOtherUser)
 				{
@@ -206,7 +207,7 @@ namespace HeyImIn.WebApplication.Controllers
 					context.AppointmentParticipations.Remove(appointmentParticipation);
 				}
 
-				if (!appointment.Event.EventParticipations.Select(e => e.Participant).Contains(currentUser))
+				if (!appointment.Event.EventParticipations.Select(e => e.ParticipantId).Contains(currentUser.Id))
 				{
 					// Automatically add a user to an event if he's not yet part of it
 					EventParticipation eventParticipation = context.EventParticipations.Create();

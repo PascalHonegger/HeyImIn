@@ -95,7 +95,7 @@ namespace HeyImIn.WebApplication.Controllers
 		/// <returns>
 		///     <see cref="EventDetails" />
 		/// </returns>
-		[HttpGet]
+		[HttpGet(nameof(GetDetails))]
 		[ProducesResponseType(typeof(EventDetails), 200)]
 		public async Task<IActionResult> GetDetails(int eventId)
 		{
@@ -161,7 +161,7 @@ namespace HeyImIn.WebApplication.Controllers
 		/// <param name="joinEventDto">
 		///     <see cref="Event.Id" />
 		/// </param>
-		[HttpPost]
+		[HttpPost(nameof(JoinEvent))]
 		[ProducesResponseType(typeof(void), 200)]
 		public async Task<IActionResult> JoinEvent(JoinEventDto joinEventDto)
 		{
@@ -210,19 +210,12 @@ namespace HeyImIn.WebApplication.Controllers
 		///     <see cref="User.Id" />
 		///     <see cref="Event.Id" />
 		/// </param>
-		[HttpPost]
+		[HttpPost(nameof(RemoveFromEvent))]
 		[ProducesResponseType(typeof(void), 200)]
 		public async Task<IActionResult> RemoveFromEvent(RemoveFromEventDto removeFromEventDto)
 		{
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
-				Event @event = await context.Events.FindAsync(removeFromEventDto.EventId);
-
-				if (@event == null)
-				{
-					return BadRequest(RequestStringMessages.EventNotFound);
-				}
-
 				User userToRemove = await context.Users.FindAsync(removeFromEventDto.UserId);
 
 				if (userToRemove == null)
@@ -230,18 +223,28 @@ namespace HeyImIn.WebApplication.Controllers
 					return BadRequest(RequestStringMessages.UserNotFound);
 				}
 
-				User currentUser = await HttpContext.GetCurrentUserAsync(context);
+				Event @event = await context.Events
+					.Include(e => e.Organizer)
+					.Include(e => e.EventParticipations)
+					.FirstOrDefaultAsync(e => e.Id == removeFromEventDto.EventId);
 
-				bool changingOtherUser = currentUser != userToRemove;
+				if (@event == null)
+				{
+					return BadRequest(RequestStringMessages.EventNotFound);
+				}
 
-				if (changingOtherUser && (@event.Organizer != currentUser))
+				int currentUserId = HttpContext.GetUserId();
+
+				bool changingOtherUser = currentUserId != userToRemove.Id;
+
+				if (changingOtherUser && (@event.OrganizerId != currentUserId))
 				{
 					_log.InfoFormat("{0}(): Tried to remove user {1} from then event {2}, which he's not organizing", nameof(RemoveFromEvent), userToRemove.Id, @event.Id);
 
 					return BadRequest(RequestStringMessages.OrganizorRequired);
 				}
 
-				EventParticipation participation = @event.EventParticipations.FirstOrDefault(e => e.Participant == userToRemove);
+				EventParticipation participation = @event.EventParticipations.FirstOrDefault(e => e.ParticipantId == userToRemove.Id);
 
 				if (participation == null)
 				{
@@ -252,7 +255,11 @@ namespace HeyImIn.WebApplication.Controllers
 				context.EventParticipations.Remove(participation);
 
 				// Remove appointment participations within the event
-				List<AppointmentParticipation> appointmentParticipations = userToRemove.AppointmentParticipations.Where(a => a.Appointment.Event == @event).ToList();
+				List<AppointmentParticipation> appointmentParticipations = await context.AppointmentParticipations
+					.Where(a => (a.ParticipantId == removeFromEventDto.UserId) && (a.Appointment.EventId == removeFromEventDto.EventId))
+					.Include(ap => ap.Appointment)
+					.ToListAsync();
+
 				List<Appointment> appointments = appointmentParticipations.Select(a => a.Appointment).ToList();
 				context.AppointmentParticipations.RemoveRange(appointmentParticipations);
 
@@ -282,7 +289,7 @@ namespace HeyImIn.WebApplication.Controllers
 		/// <summary>
 		///     Configures the enabled notifications of the current user for the specified event
 		/// </summary>
-		[HttpPost]
+		[HttpPost(nameof(ConfigureNotifications))]
 		[ProducesResponseType(typeof(void), 200)]
 		public async Task<IActionResult> ConfigureNotifications(NotificationConfigurationDto notificationConfigurationDto)
 		{

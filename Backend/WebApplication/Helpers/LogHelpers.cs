@@ -18,6 +18,6 @@ namespace HeyImIn.WebApplication.Helpers
 		public const string UserIdLogKey = "UserId";
 		public const string SessionTokenLogKey = "SessionToken";
 		public const string LogFileDirectoryKey = "LogFileDirectory";
-		private const string AuditLoggerName = "AuditLogger";
+		// TODO private const string AuditLoggerName = "AuditLogger";
 	}
 }
