@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace HeyImIn.WebApplication.Controllers
 {
 	[AllowAnonymous]
-	public class HomeController : Controller
+	public class HomeController : ControllerBase
 	{
 		private readonly IHostingEnvironment _environment;
 
@@ -21,7 +21,7 @@ namespace HeyImIn.WebApplication.Controllers
 		[HttpGet]
 		[ProducesResponseType(200)]
 		[ProducesResponseType(404)]
-		public IActionResult Index()
+		public PhysicalFileResult Index()
 		{
 			return PhysicalFile(Path.Combine(_environment.WebRootPath, "index.html"), "text/html");
 		}

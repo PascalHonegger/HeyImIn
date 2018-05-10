@@ -11,7 +11,9 @@ using Microsoft.AspNetCore.Mvc;
 namespace HeyImIn.WebApplication.Controllers
 {
 	[AllowAnonymous]
-	public class CronController : Controller
+	[ApiController]
+	[Route("api/Cron")]
+	public class CronController : ControllerBase
 	{
 		private readonly IEnumerable<ICronService> _cronRunners;
 
@@ -24,7 +26,9 @@ namespace HeyImIn.WebApplication.Controllers
 		///     Runs all cron-jobs
 		///     Catches and logs exceptions thrown by the <see cref="ICronService.RunAsync"/> method
 		/// </summary>
-		[HttpPost]
+		[HttpPost(nameof(Run))]
+		[ProducesResponseType(typeof(void), 200)]
+		[ProducesResponseType(typeof(List<(string, string)>), 500)]
 		public async Task<IActionResult> Run()
 		{
 			_log.DebugFormat("{0}(): Running Cron jobs", nameof(Run));

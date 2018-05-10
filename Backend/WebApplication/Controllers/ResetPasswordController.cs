@@ -14,7 +14,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HeyImIn.WebApplication.Controllers
 {
-	public class ResetPasswordController : Controller
+	[AllowAnonymous]
+	[ApiController]
+	[Route("api/ResetPassword")]
+	public class ResetPasswordController : ControllerBase
 	{
 		public ResetPasswordController(IPasswordService passwordService, INotificationService notificationService, GetDatabaseContext getDatabaseContext)
 		{
@@ -26,17 +29,10 @@ namespace HeyImIn.WebApplication.Controllers
 		/// <summary>
 		///     Sends a password reset code to the provided email address, if a user with than email is registered
 		/// </summary>
-		[HttpPost]
+		[HttpPost(nameof(RequestPasswordReset))]
 		[ProducesResponseType(typeof(void), 200)]
-		[AllowAnonymous]
-		public async Task<IActionResult> RequestPasswordReset([FromBody] RequestPasswordResetDto requestPasswordResetDto)
+		public async Task<IActionResult> RequestPasswordReset(RequestPasswordResetDto requestPasswordResetDto)
 		{
-			// Validate parameters
-			if (!ModelState.IsValid || (requestPasswordResetDto == null))
-			{
-				return BadRequest();
-			}
-
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
 				User user = await context.Users.FirstOrDefaultAsync(u => u.Email == requestPasswordResetDto.Email);
@@ -63,17 +59,10 @@ namespace HeyImIn.WebApplication.Controllers
 		/// <summary>
 		///     Sets a new password for a password reset code
 		/// </summary>
-		[HttpPost]
+		[HttpPost(nameof(ResetPassword))]
 		[ProducesResponseType(typeof(void), 200)]
-		[AllowAnonymous]
-		public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto resetPasswordDto)
+		public async Task<IActionResult> ResetPassword(ResetPasswordDto resetPasswordDto)
 		{
-			// Validate parameters
-			if (!ModelState.IsValid || (resetPasswordDto == null))
-			{
-				return BadRequest();
-			}
-
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
 				PasswordReset passwordReset = await context.PasswordResets.FindAsync(resetPasswordDto.PasswordResetToken);

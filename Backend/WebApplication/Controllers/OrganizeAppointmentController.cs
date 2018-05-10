@@ -17,7 +17,9 @@ using Microsoft.EntityFrameworkCore;
 namespace HeyImIn.WebApplication.Controllers
 {
 	[AuthenticateUser]
-	public class OrganizeAppointmentController : Controller
+	[ApiController]
+	[Route("api/OrganizeAppointment")]
+	public class OrganizeAppointmentController : ControllerBase
 	{
 		public OrganizeAppointmentController(INotificationService notificationService, IDeleteService deleteService, GetDatabaseContext getDatabaseContext)
 		{
@@ -33,7 +35,7 @@ namespace HeyImIn.WebApplication.Controllers
 		/// <param name="appointmentId">
 		///     <see cref="Appointment.Id" />
 		/// </param>
-		[HttpDelete]
+		[HttpDelete(nameof(DeleteAppointment))]
 		[ProducesResponseType(typeof(void), 200)]
 		public async Task<IActionResult> DeleteAppointment(int appointmentId)
 		{
@@ -41,7 +43,7 @@ namespace HeyImIn.WebApplication.Controllers
 			{
 				Appointment appointment = await context.Appointments
 					.Include(a => a.Event)
-					.Include(a => a.Event.Organizer)
+						.ThenInclude(e => e.Organizer)
 					.Include(a => a.AppointmentParticipations)
 					.FirstOrDefaultAsync(e => e.Id == appointmentId);
 
@@ -76,16 +78,10 @@ namespace HeyImIn.WebApplication.Controllers
 		/// <summary>
 		///     Adds new appointsments to the event
 		/// </summary>
-		[HttpPost]
+		[HttpPost(nameof(AddAppointments))]
 		[ProducesResponseType(typeof(void), 200)]
-		public async Task<IActionResult> AddAppointments([FromBody] AddAppointsmentsDto addAppointsmentsDto)
+		public async Task<IActionResult> AddAppointments(AddAppointsmentsDto addAppointsmentsDto)
 		{
-			// Validate parameters
-			if (!ModelState.IsValid || (addAppointsmentsDto == null))
-			{
-				return BadRequest();
-			}
-
 			if (addAppointsmentsDto.StartTimes.Any(a => a < DateTime.UtcNow))
 			{
 				return BadRequest(RequestStringMessages.AppointmentsHaveToStartInTheFuture);
@@ -135,22 +131,16 @@ namespace HeyImIn.WebApplication.Controllers
 		///     <see cref="User.Id" />
 		///     <see cref="Appointment.Id" />
 		/// </param>
-		[HttpPost]
+		[HttpPost(nameof(SetAppointmentResponse))]
 		[ProducesResponseType(typeof(void), 200)]
-		public async Task<IActionResult> SetAppointmentResponse([FromBody] SetAppointmentResponseDto setAppointmentResponseDto)
+		public async Task<IActionResult> SetAppointmentResponse(SetAppointmentResponseDto setAppointmentResponseDto)
 		{
-			// Validate parameters
-			if (!ModelState.IsValid || (setAppointmentResponseDto == null))
-			{
-				return BadRequest();
-			}
-
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
 				Appointment appointment = await context.Appointments
 					.Include(a => a.Event)
-					.Include(a => a.Event.Organizer)
-					.Include(a => a.Event.EventParticipations)
+						.ThenInclude(e => e.Organizer)
+						.ThenInclude(e => e.EventParticipations)
 					.Include(a => a.AppointmentParticipations)
 					.FirstOrDefaultAsync(a => a.Id == setAppointmentResponseDto.AppointmentId);
 
