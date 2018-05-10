@@ -32,7 +32,7 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
 					if (event.status === 400) {
 						// Display a toast with the error message
 						// E.g. Email is already taken
-						if (event.error && event.error) {
+						if (event.error) {
 							this.snackBar.open(event.error, 'Ok');
 						} else {
 							this.snackBar.open('Unbekannter Validierungsfehler', 'Ok');
