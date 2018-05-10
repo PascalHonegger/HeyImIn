@@ -20,7 +20,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HeyImIn.WebApplication.Controllers
 {
-	public class UserController : Controller
+	[ApiController]
+	[Route("api/User")]
+	public class UserController : ControllerBase
 	{
 		public UserController(IPasswordService passwordService, ISessionService sessionService, INotificationService notificationService, IDeleteService deleteService, GetDatabaseContext getDatabaseContext)
 		{
@@ -36,17 +38,11 @@ namespace HeyImIn.WebApplication.Controllers
 		///     Doesn't invalidate any active sessions
 		/// </summary>
 		/// <param name="setUserDataDto">New user data</param>
-		[HttpPost]
+		[HttpPost(nameof(SetNewUserData))]
 		[ProducesResponseType(typeof(void), 200)]
 		[AuthenticateUser]
-		public async Task<IActionResult> SetNewUserData([FromBody] SetUserDataDto setUserDataDto)
+		public async Task<IActionResult> SetNewUserData(SetUserDataDto setUserDataDto)
 		{
-			// Validate parameters
-			if (!ModelState.IsValid || (setUserDataDto == null))
-			{
-				return BadRequest();
-			}
-
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
 				User currentUser = await HttpContext.GetCurrentUserAsync(context);
@@ -77,17 +73,11 @@ namespace HeyImIn.WebApplication.Controllers
 		///     Doesn't invalidate any active sessions
 		/// </summary>
 		/// <param name="setPasswordDto">Current and new password</param>
-		[HttpPost]
+		[HttpPost(nameof(SetNewPassword))]
 		[ProducesResponseType(typeof(void), 200)]
 		[AuthenticateUser]
-		public async Task<IActionResult> SetNewPassword([FromBody] SetPasswordDto setPasswordDto)
+		public async Task<IActionResult> SetNewPassword(SetPasswordDto setPasswordDto)
 		{
-			// Validate parameters
-			if (!ModelState.IsValid || (setPasswordDto == null))
-			{
-				return BadRequest();
-			}
-
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
 				User currentUser = await HttpContext.GetCurrentUserAsync(context);
@@ -113,7 +103,7 @@ namespace HeyImIn.WebApplication.Controllers
 		///     Deletes the current user's account and all connections
 		///     E.g. sends cancelation for organized and participating events
 		/// </summary>
-		[HttpDelete]
+		[HttpDelete(nameof(DeleteAccount))]
 		[ProducesResponseType(typeof(void), 200)]
 		[AuthenticateUser]
 		public async Task<IActionResult> DeleteAccount()
@@ -152,17 +142,11 @@ namespace HeyImIn.WebApplication.Controllers
 		///     Registeres a new user
 		/// </summary>
 		/// <returns>A newly created <see cref="FrontendSession" /> so the registering user doesn't have to log in manually</returns>
-		[HttpPost]
+		[HttpPost(nameof(Register))]
 		[ProducesResponseType(typeof(FrontendSession), 200)]
 		[AllowAnonymous]
-		public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
+		public async Task<IActionResult> Register(RegisterDto registerDto)
 		{
-			// Validate parameters
-			if (!ModelState.IsValid || (registerDto == null))
-			{
-				return BadRequest();
-			}
-
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
 				bool userWithSameMailExists = await context.Users.AnyAsync(u => u.Email == registerDto.Email);

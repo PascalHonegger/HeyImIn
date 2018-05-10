@@ -16,7 +16,9 @@ using Microsoft.EntityFrameworkCore;
 namespace HeyImIn.WebApplication.Controllers
 {
 	[AuthenticateUser]
-	public class InviteToEventController : Controller
+	[ApiController]
+	[Route("api/InviteToEvent")]
+	public class InviteToEventController : ControllerBase
 	{
 		public InviteToEventController(INotificationService notificationService, GetDatabaseContext getDatabaseContext)
 		{
@@ -27,16 +29,10 @@ namespace HeyImIn.WebApplication.Controllers
 		/// <summary>
 		///     Adds new appointments to the event
 		/// </summary>
-		[HttpPost]
+		[HttpPost(nameof(InviteParticipants))]
 		[ProducesResponseType(typeof(void), 200)]
-		public async Task<IActionResult> InviteParticipants([FromBody] InviteParticipantsDto inviteParticipantsDto)
+		public async Task<IActionResult> InviteParticipants(InviteParticipantsDto inviteParticipantsDto)
 		{
-			// Validate parameters
-			if (!ModelState.IsValid || (inviteParticipantsDto == null))
-			{
-				return BadRequest();
-			}
-
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
 				Event @event = await context.Events
@@ -101,16 +97,10 @@ namespace HeyImIn.WebApplication.Controllers
 		///     Accepts an invite to an event, as long as the invite is considered valid
 		/// </summary>
 		/// <returns><see cref="Event.Id" /> of the accepted invite</returns>
-		[HttpPost]
+		[HttpPost(nameof(AcceptInvitation))]
 		[ProducesResponseType(typeof(int), 200)]
-		public async Task<IActionResult> AcceptInvitation([FromBody] AcceptInvitationDto acceptInvitationDto)
+		public async Task<IActionResult> AcceptInvitation(AcceptInvitationDto acceptInvitationDto)
 		{
-			// Validate parameters
-			if (!ModelState.IsValid || (acceptInvitationDto == null))
-			{
-				return BadRequest();
-			}
-
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
 				EventInvitation invitation = await context.EventInvitations

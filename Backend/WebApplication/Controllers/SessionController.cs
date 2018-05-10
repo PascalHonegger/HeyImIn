@@ -13,7 +13,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HeyImIn.WebApplication.Controllers
 {
-	public class SessionController : Controller
+	[ApiController]
+	[Route("api/Session")]
+	public class SessionController : ControllerBase
 	{
 		public SessionController(IAuthenticationService authenticationService, ISessionService sessionService)
 		{
@@ -25,18 +27,12 @@ namespace HeyImIn.WebApplication.Controllers
 		///     Tries to start a new session for the provided credentials
 		/// </summary>
 		/// <returns>The created <see cref="FrontendSession" /> containing user information</returns>
-		[HttpPost]
+		[HttpPost(nameof(StartSession))]
 		[ProducesResponseType(typeof(FrontendSession), 200)]
 		[AllowAnonymous]
-		public async Task<IActionResult> StartSession([FromBody] StartSessionDto startSessionDto)
+		public async Task<IActionResult> StartSession(StartSessionDto startSessionDto)
 		{
-			// Validate parameters
-			if (!ModelState.IsValid || (startSessionDto == null))
-			{
-				return BadRequest();
-			}
-
-			var (authenticated, foundUser) = await _authenticationService.AuthenticateAsync(startSessionDto.Email, startSessionDto.Password);
+			(bool authenticated, User foundUser) = await _authenticationService.AuthenticateAsync(startSessionDto.Email, startSessionDto.Password);
 
 			if (!authenticated)
 			{
@@ -55,7 +51,7 @@ namespace HeyImIn.WebApplication.Controllers
 		/// </summary>
 		/// <param name="sessionToken">Unique session token</param>
 		/// <returns>The found <see cref="FrontendSession" /></returns>
-		[HttpGet]
+		[HttpGet(nameof(GetSession) + "/{sessionToken}")]
 		[ProducesResponseType(typeof(FrontendSession), 200)]
 		[AllowAnonymous]
 		public async Task<IActionResult> GetSession(Guid sessionToken)
@@ -73,7 +69,7 @@ namespace HeyImIn.WebApplication.Controllers
 		/// <summary>
 		///     Stops the active session => Log out and invalidate session
 		/// </summary>
-		[HttpPost]
+		[HttpPost(nameof(StopActiveSession))]
 		[ProducesResponseType(typeof(void), 200)]
 		[AuthenticateUser]
 		public async Task<IActionResult> StopActiveSession()

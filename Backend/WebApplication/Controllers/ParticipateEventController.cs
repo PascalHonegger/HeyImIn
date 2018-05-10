@@ -18,7 +18,9 @@ using Microsoft.EntityFrameworkCore;
 namespace HeyImIn.WebApplication.Controllers
 {
 	[AuthenticateUser]
-	public class ParticipateEventController : Controller
+	[ApiController]
+	[Route("api/ParticipateEvent")]
+	public class ParticipateEventController : ControllerBase
 	{
 		public ParticipateEventController(INotificationService notificationService, GetDatabaseContext getDatabaseContext)
 		{
@@ -33,7 +35,7 @@ namespace HeyImIn.WebApplication.Controllers
 		/// <returns>
 		///     <see cref="EventOverview" />
 		/// </returns>
-		[HttpGet]
+		[HttpGet(nameof(GetOverview))]
 		[ProducesResponseType(typeof(EventOverview), 200)]
 		public async Task<IActionResult> GetOverview()
 		{
@@ -41,33 +43,10 @@ namespace HeyImIn.WebApplication.Controllers
 			{
 				int currentUserId = HttpContext.GetUserId();
 
-				async Task<List<(Event @event, Appointment upcommingAppointment)>> GetAndFilterEvents(Expression<Func<Event, bool>> eventFilter)
-				{
-					List<Event> databaseResult = await context.Events
-						.Where(eventFilter)
-						.Include(e => e.EventParticipations)
-						.Include(e => e.Organizer)
-						.ToListAsync();
-
-					var result = new List<(Event @event, Appointment upcommingAppointment)>();
-
-					foreach (Event @event in databaseResult)
-					{
-						Appointment upcommingAppointment = await context.Entry(@event)
-							.Collection(e => e.Appointments)
-							.Query()
-							.Include(a => a.AppointmentParticipations)
-							.OrderBy(a => a.StartTime)
-							.FirstOrDefaultAsync(a => a.StartTime >= DateTime.UtcNow);
-
-						result.Add((@event, upcommingAppointment));
-					}
-
-					return result;
-				}
-
-				List<(Event @event, Appointment upcommingAppointment)> yourEvents = await GetAndFilterEvents(e => (e.OrganizerId == currentUserId) || e.EventParticipations.Select(ep => ep.ParticipantId).Contains(currentUserId));
-				List<(Event @event, Appointment upcommingAppointment)> publicEvents = await GetAndFilterEvents(e => !e.IsPrivate && (e.OrganizerId != currentUserId) && !e.EventParticipations.Select(ep => ep.ParticipantId).Contains(currentUserId));
+				List<(Event @event, Appointment upcommingAppointment)> yourEvents = await GetAndFilterEvents(context, 
+					e => (e.OrganizerId == currentUserId) || e.EventParticipations.Select(ep => ep.ParticipantId).Contains(currentUserId));
+				List<(Event @event, Appointment upcommingAppointment)> publicEvents = await GetAndFilterEvents(context, 
+					e => !e.IsPrivate && (e.OrganizerId != currentUserId) && !e.EventParticipations.Select(ep => ep.ParticipantId).Contains(currentUserId));
 
 				List<EventOverviewInformation> yourEventInformations = yourEvents
 					.Select(e => EventOverviewInformation.FromEvent(e.@event, e.upcommingAppointment, currentUserId))
@@ -79,6 +58,31 @@ namespace HeyImIn.WebApplication.Controllers
 					.ToList();
 
 				return Ok(new EventOverview(yourEventInformations, publicEventInformations));
+			}
+
+			async Task<List<(Event @event, Appointment upcommingAppointment)>> GetAndFilterEvents(IDatabaseContext context, Expression<Func<Event, bool>> eventFilter)
+			{
+				List<Event> databaseResult = await context.Events
+					.Where(eventFilter)
+					.Include(e => e.EventParticipations)
+					.Include(e => e.Organizer)
+					.ToListAsync();
+
+				var result = new List<(Event @event, Appointment upcommingAppointment)>();
+
+				foreach (Event @event in databaseResult)
+				{
+					Appointment upcommingAppointment = await context.Entry(@event)
+						.Collection(e => e.Appointments)
+						.Query()
+						.Include(a => a.AppointmentParticipations)
+						.OrderBy(a => a.StartTime)
+						.FirstOrDefaultAsync(a => a.StartTime >= DateTime.UtcNow);
+
+					result.Add((@event, upcommingAppointment));
+				}
+
+				return result;
 			}
 		}
 
@@ -159,14 +163,8 @@ namespace HeyImIn.WebApplication.Controllers
 		/// </param>
 		[HttpPost]
 		[ProducesResponseType(typeof(void), 200)]
-		public async Task<IActionResult> JoinEvent([FromBody] JoinEventDto joinEventDto)
+		public async Task<IActionResult> JoinEvent(JoinEventDto joinEventDto)
 		{
-			// Validate parameters
-			if (!ModelState.IsValid || (joinEventDto == null))
-			{
-				return BadRequest();
-			}
-
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
 				Event @event = await context.Events
@@ -214,14 +212,8 @@ namespace HeyImIn.WebApplication.Controllers
 		/// </param>
 		[HttpPost]
 		[ProducesResponseType(typeof(void), 200)]
-		public async Task<IActionResult> RemoveFromEvent([FromBody] RemoveFromEventDto removeFromEventDto)
+		public async Task<IActionResult> RemoveFromEvent(RemoveFromEventDto removeFromEventDto)
 		{
-			// Validate parameters
-			if (!ModelState.IsValid || (removeFromEventDto == null))
-			{
-				return BadRequest();
-			}
-
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
 				Event @event = await context.Events.FindAsync(removeFromEventDto.EventId);
@@ -292,14 +284,8 @@ namespace HeyImIn.WebApplication.Controllers
 		/// </summary>
 		[HttpPost]
 		[ProducesResponseType(typeof(void), 200)]
-		public async Task<IActionResult> ConfigureNotifications([FromBody] NotificationConfigurationDto notificationConfigurationDto)
+		public async Task<IActionResult> ConfigureNotifications(NotificationConfigurationDto notificationConfigurationDto)
 		{
-			// Validate parameters
-			if (!ModelState.IsValid || (notificationConfigurationDto == null))
-			{
-				return BadRequest();
-			}
-
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
 				Event @event = await context.Events.FindAsync(notificationConfigurationDto.EventId);

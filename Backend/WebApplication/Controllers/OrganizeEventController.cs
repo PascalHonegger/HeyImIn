@@ -20,7 +20,9 @@ using Microsoft.EntityFrameworkCore;
 namespace HeyImIn.WebApplication.Controllers
 {
 	[AuthenticateUser]
-	public class OrganizeEventController : Controller
+	[ApiController]
+	[Route("api/OrganizeEvent")]
+	public class OrganizeEventController : ControllerBase
 	{
 		public OrganizeEventController(INotificationService notificationService, IDeleteService deleteService, GetDatabaseContext getDatabaseContext)
 		{
@@ -36,7 +38,7 @@ namespace HeyImIn.WebApplication.Controllers
 		/// <param name="eventId">
 		///     <see cref="Event.Id" />
 		/// </param>
-		[HttpDelete]
+		[HttpDelete(nameof(DeleteEvent))]
 		[ProducesResponseType(typeof(void), 200)]
 		public async Task<IActionResult> DeleteEvent(int eventId)
 		{
@@ -80,16 +82,10 @@ namespace HeyImIn.WebApplication.Controllers
 		///     Updates general information about an event
 		///     Informs the users about the change
 		/// </summary>
-		[HttpPost]
+		[HttpPost(nameof(UpdateEventInfo))]
 		[ProducesResponseType(typeof(void), 200)]
-		public async Task<IActionResult> UpdateEventInfo([FromBody] UpdatedEventInfoDto updatedEventInfoDto)
+		public async Task<IActionResult> UpdateEventInfo(UpdatedEventInfoDto updatedEventInfoDto)
 		{
-			// Validate parameters
-			if (!ModelState.IsValid || (updatedEventInfoDto == null))
-			{
-				return BadRequest();
-			}
-
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
 				Event @event = await context.Events
@@ -134,16 +130,10 @@ namespace HeyImIn.WebApplication.Controllers
 		/// <returns>
 		///     <see cref="Event.Id" />
 		/// </returns>
-		[HttpPost]
+		[HttpPost(nameof(CreateEvent))]
 		[ProducesResponseType(typeof(int), 200)]
-		public async Task<IActionResult> CreateEvent([FromBody] GeneralEventInformation generalEventInformation)
+		public async Task<IActionResult> CreateEvent(GeneralEventInformation generalEventInformation)
 		{
-			// Validate parameters
-			if (!ModelState.IsValid || (generalEventInformation == null))
-			{
-				return BadRequest();
-			}
-
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
 				Event newEvent = context.Events.Create();
@@ -175,7 +165,7 @@ namespace HeyImIn.WebApplication.Controllers
 		/// <returns>
 		///     <see cref="EditEventDetails" />
 		/// </returns>
-		[HttpGet]
+		[HttpGet(nameof(GetEditDetails) + "/{eventId}")]
 		[ProducesResponseType(typeof(EditEventDetails), 200)]
 		public async Task<IActionResult> GetEditDetails(int eventId)
 		{

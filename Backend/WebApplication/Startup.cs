@@ -17,6 +17,7 @@ using log4net;
 using log4net.Util;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -45,6 +46,7 @@ namespace HeyImIn.WebApplication
 			// Add global filters / attributes
 			services
 				.AddMvc(options => { options.Filters.Add(new LogActionAttribute()); })
+				.SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
 				.AddJsonOptions(options =>
 				{
 					// Frontend expects property names to be camelCase and vice versa
@@ -115,13 +117,7 @@ namespace HeyImIn.WebApplication
 				app.UseCors(p => p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 			}
 
-			// Map API-calls to the backend routing
-			app.MapWhen(route => route.Request.Path.Value.StartsWith("/api"), context =>
-			{
-				context.UseMvc(routes => routes.MapRoute("default", "api/{controller}/{action}"));
-			});
-
-			// Redirect all other requests to frontend routing (angular)
+			// Redirect all non-api-requests to frontend routing (angular)
 			app.UseStaticFiles();
 			app.UseResponseCompression();
 			app.UseMvc(routes => { routes.MapSpaFallbackRoute("angular", new { controller = "Home", action = "Index" }); });
