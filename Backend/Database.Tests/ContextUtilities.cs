@@ -8,6 +8,9 @@ namespace HeyImIn.Database.Tests
 {
 	public static class ContextUtilities
 	{
+		/// <summary>
+		/// Created an in memory database which can be accessed using the returned function
+		/// </summary>
 		public static GetDatabaseContext CreateInMemoryContext()
 		{
 			string databaseName = Guid.NewGuid().ToString();
