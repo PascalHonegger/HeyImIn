@@ -107,10 +107,12 @@ namespace HeyImIn.WebApplication.Controllers
 
 				foreach (DateTime startTime in addAppointsmentsDto.StartTimes)
 				{
-					Appointment newAppointment = context.Appointments.Create();
+					var newAppointment = new Appointment
+					{
+						Event = @event,
+						StartTime = startTime
+					};
 
-					newAppointment.Event = @event;
-					newAppointment.StartTime = startTime;
 
 					context.Appointments.Add(newAppointment);
 				}
@@ -192,9 +194,12 @@ namespace HeyImIn.WebApplication.Controllers
 				if (appointmentParticipation == null)
 				{
 					// Create a new participation if there isn't an existing one
-					appointmentParticipation = context.AppointmentParticipations.Create();
-					appointmentParticipation.Participant = userToSetResponseFor;
-					appointmentParticipation.Appointment = appointment;
+					appointmentParticipation = new AppointmentParticipation
+					{
+						Participant = userToSetResponseFor,
+						Appointment = appointment
+					};
+
 					context.AppointmentParticipations.Add(appointmentParticipation);
 				}
 
@@ -210,9 +215,11 @@ namespace HeyImIn.WebApplication.Controllers
 				if (!appointment.Event.EventParticipations.Select(e => e.ParticipantId).Contains(currentUser.Id))
 				{
 					// Automatically add a user to an event if he's not yet part of it
-					EventParticipation eventParticipation = context.EventParticipations.Create();
-					eventParticipation.Event = appointment.Event;
-					eventParticipation.Participant = currentUser;
+					var eventParticipation = new EventParticipation
+					{
+						Event = appointment.Event,
+						Participant = currentUser
+					};
 
 					context.EventParticipations.Add(eventParticipation);
 

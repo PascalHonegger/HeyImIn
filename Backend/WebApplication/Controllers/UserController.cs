@@ -156,10 +156,12 @@ namespace HeyImIn.WebApplication.Controllers
 					return BadRequest(RequestStringMessages.EmailAlreadyInUse);
 				}
 
-				User newUser = context.Users.Create();
-				newUser.FullName = registerDto.FullName;
-				newUser.Email = registerDto.Email;
-				newUser.PasswordHash = _passwordService.HashPassword(registerDto.Password);
+				var newUser = new User
+				{
+					FullName = registerDto.FullName,
+					Email = registerDto.Email,
+					PasswordHash = _passwordService.HashPassword(registerDto.Password)
+				};
 
 				context.Users.Add(newUser);
 

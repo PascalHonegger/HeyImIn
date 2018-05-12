@@ -136,15 +136,17 @@ namespace HeyImIn.WebApplication.Controllers
 		{
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
-				Event newEvent = context.Events.Create();
+				var newEvent = new Event
+				{
+					Title = generalEventInformation.Title,
+					Description = generalEventInformation.Description,
+					MeetingPlace = generalEventInformation.MeetingPlace,
+					IsPrivate = generalEventInformation.IsPrivate,
+					ReminderTimeWindowInHours = generalEventInformation.ReminderTimeWindowInHours,
+					SummaryTimeWindowInHours = generalEventInformation.SummaryTimeWindowInHours,
+					OrganizerId = HttpContext.GetUserId()
+				};
 
-				newEvent.Title = generalEventInformation.Title;
-				newEvent.Description = generalEventInformation.Description;
-				newEvent.MeetingPlace = generalEventInformation.MeetingPlace;
-				newEvent.IsPrivate = generalEventInformation.IsPrivate;
-				newEvent.ReminderTimeWindowInHours = generalEventInformation.ReminderTimeWindowInHours;
-				newEvent.SummaryTimeWindowInHours = generalEventInformation.SummaryTimeWindowInHours;
-				newEvent.OrganizerId = HttpContext.GetUserId();
 
 				context.Events.Add(newEvent);
 

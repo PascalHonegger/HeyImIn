@@ -62,9 +62,12 @@ namespace HeyImIn.WebApplication.Controllers
 				foreach (string emailAddress in inviteParticipantsDto.EmailAddresses)
 				{
 					// Create new invite
-					EventInvitation invite = context.EventInvitations.Create();
-					invite.Requested = DateTime.UtcNow;
-					invite.Event = @event;
+					var invite = new EventInvitation
+					{
+						Requested = DateTime.UtcNow,
+						Event = @event
+					};
+
 					context.EventInvitations.Add(invite);
 
 					// Check if a profile with this email exists
@@ -141,9 +144,11 @@ namespace HeyImIn.WebApplication.Controllers
 				// Invitations to public events are theoretically pointless as the user could join without the invitation
 				// => These invitations are always considered as valid, even if already used
 
-				EventParticipation participation = context.EventParticipations.Create();
-				participation.Event = invitation.Event;
-				participation.ParticipantId = currentUserId;
+				var participation = new EventParticipation
+				{
+					Event = invitation.Event,
+					ParticipantId = currentUserId
+				};
 
 				invitation.Event.EventParticipations.Add(participation);
 

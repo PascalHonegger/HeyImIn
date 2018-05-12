@@ -40,10 +40,11 @@ namespace HeyImIn.Authentication.Impl
 		{
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
-				Session session = context.Sessions.Create();
-
-				session.UserId = userId;
-				session.Created = DateTime.UtcNow;
+				var session = new Session
+				{
+					UserId = userId,
+					Created = DateTime.UtcNow
+				};
 
 				if (active)
 				{
