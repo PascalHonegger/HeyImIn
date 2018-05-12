@@ -8,8 +8,6 @@ namespace HeyImIn.WebApplication.Controllers
 	[AllowAnonymous]
 	public class HomeController : ControllerBase
 	{
-		private readonly IHostingEnvironment _environment;
-
 		public HomeController(IHostingEnvironment environment)
 		{
 			_environment = environment;
@@ -25,5 +23,7 @@ namespace HeyImIn.WebApplication.Controllers
 		{
 			return PhysicalFile(Path.Combine(_environment.WebRootPath, "index.html"), "text/html");
 		}
+
+		private readonly IHostingEnvironment _environment;
 	}
 }

@@ -45,9 +45,9 @@ namespace HeyImIn.WebApplication.Controllers
 			{
 				int currentUserId = HttpContext.GetUserId();
 
-				List<(Event @event, Appointment upcommingAppointment)> yourEvents = await GetAndFilterEvents(context, 
+				List<(Event @event, Appointment upcommingAppointment)> yourEvents = await GetAndFilterEvents(context,
 					e => (e.OrganizerId == currentUserId) || e.EventParticipations.Select(ep => ep.ParticipantId).Contains(currentUserId));
-				List<(Event @event, Appointment upcommingAppointment)> publicEvents = await GetAndFilterEvents(context, 
+				List<(Event @event, Appointment upcommingAppointment)> publicEvents = await GetAndFilterEvents(context,
 					e => !e.IsPrivate && (e.OrganizerId != currentUserId) && !e.EventParticipations.Select(ep => ep.ParticipantId).Contains(currentUserId));
 
 				List<EventOverviewInformation> yourEventInformations = yourEvents
@@ -330,13 +330,13 @@ namespace HeyImIn.WebApplication.Controllers
 		private readonly INotificationService _notificationService;
 		private readonly GetDatabaseContext _getDatabaseContext;
 
+		private readonly ILogger<ParticipateEventController> _logger;
+		private readonly ILogger _auditLogger;
+
 		/// <summary>
 		///     The maximum amount of appointments to show in the overview for each event
 		///     In the edit view all events are shown
 		/// </summary>
 		private const int ShownAppointmentsPerEvent = 5;
-
-		private readonly ILogger<ParticipateEventController> _logger;
-		private readonly ILogger _auditLogger;
 	}
 }

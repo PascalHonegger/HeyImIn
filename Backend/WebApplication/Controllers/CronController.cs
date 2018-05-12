@@ -14,8 +14,6 @@ namespace HeyImIn.WebApplication.Controllers
 	[Route("api/Cron")]
 	public class CronController : ControllerBase
 	{
-		private readonly IEnumerable<ICronService> _cronRunners;
-
 		public CronController(IEnumerable<ICronService> cronRunners, ILogger<CronController> logger)
 		{
 			_cronRunners = cronRunners;
@@ -24,7 +22,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 		/// <summary>
 		///     Runs all cron-jobs
-		///     Catches and logs exceptions thrown by the <see cref="ICronService.RunAsync"/> method
+		///     Catches and logs exceptions thrown by the <see cref="ICronService.RunAsync" /> method
 		/// </summary>
 		[HttpPost(nameof(Run))]
 		[ProducesResponseType(typeof(void), 200)]
@@ -65,6 +63,8 @@ namespace HeyImIn.WebApplication.Controllers
 
 			return Ok();
 		}
+
+		private readonly IEnumerable<ICronService> _cronRunners;
 
 		private readonly ILogger<CronController> _logger;
 	}

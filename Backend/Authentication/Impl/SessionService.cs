@@ -89,7 +89,7 @@ namespace HeyImIn.Authentication.Impl
 
 		private bool IsValidSession(Session session)
 		{
-			return session.ValidUntil == null 
+			return session.ValidUntil == null
 				? DateTime.UtcNow - session.Created <= _unusedSessionExpirationTimeout
 				: session.ValidUntil >= DateTime.UtcNow;
 		}

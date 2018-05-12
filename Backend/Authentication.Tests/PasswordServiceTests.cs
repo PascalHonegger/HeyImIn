@@ -7,8 +7,6 @@ namespace HeyImIn.Authentication.Tests
 {
 	public class PasswordServiceTests : TestBase
 	{
-		private const string InputPassword = "Password to be hashed";
-
 		[Fact]
 		public void HashedPasswordCanBeVerified()
 		{
@@ -57,5 +55,7 @@ namespace HeyImIn.Authentication.Tests
 			bool needsRehash = passwordService2.NeedsRehash(hash);
 			Assert.True(needsRehash);
 		}
+
+		private const string InputPassword = "Password to be hashed";
 	}
 }

@@ -12,7 +12,9 @@ namespace HeyImIn.MailNotifier.Models
 		}
 
 		public int Id { get; }
+
 		public string Title { get; }
+
 		public List<UserNotificationInformation> Participations { get; }
 	}
 }

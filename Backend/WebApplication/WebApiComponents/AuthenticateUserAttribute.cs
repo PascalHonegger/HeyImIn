@@ -19,7 +19,6 @@ namespace HeyImIn.WebApplication.WebApiComponents
 	{
 		public AuthenticateUserAttribute()
 		{
-			
 		}
 
 		public AuthenticateUserAttribute(ISessionService sessionService)
@@ -49,10 +48,6 @@ namespace HeyImIn.WebApplication.WebApiComponents
 			context.Result = new UnauthorizedResult();
 		}
 
-		private ISessionService SessionService { get; }
-
-		private const string SessionToken = "SessionToken";
-
 		public IFilterMetadata CreateInstance(IServiceProvider serviceProvider)
 		{
 			var sessionService = serviceProvider.GetService<ISessionService>();
@@ -60,5 +55,9 @@ namespace HeyImIn.WebApplication.WebApiComponents
 		}
 
 		public bool IsReusable { get; } = false;
+
+		private ISessionService SessionService { get; }
+
+		private const string SessionToken = "SessionToken";
 	}
 }

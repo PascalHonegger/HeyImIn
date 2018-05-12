@@ -33,9 +33,13 @@ namespace HeyImIn.Database.Models
 		public string PasswordHash { get; set; }
 
 		public virtual ICollection<Session> Sessions { get; set; }
+
 		public virtual ICollection<PasswordReset> PasswordResets { get; set; }
+
 		public virtual ICollection<Event> OrganizedEvents { get; set; }
+
 		public virtual ICollection<EventParticipation> EventParticipations { get; set; }
+
 		public virtual ICollection<AppointmentParticipation> AppointmentParticipations { get; set; }
 	}
 }
