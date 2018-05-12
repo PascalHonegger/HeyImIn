@@ -21,6 +21,8 @@ namespace HeyImIn.Shared
 		{
 			public TimeSpan InactiveSessionTimeout { get; set; } = TimeSpan.FromHours(2);
 
+			public TimeSpan UnusedSessionExpirationTimeout { get; set; } = TimeSpan.FromDays(2);
+
 			public TimeSpan PasswordResetTimeout { get; set; } = TimeSpan.FromHours(2);
 
 			public TimeSpan InviteTimeout { get; set; } = TimeSpan.FromDays(7);
