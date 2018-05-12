@@ -7,6 +7,7 @@ using HeyImIn.Shared.Tests;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Moq;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace HeyImIn.Authentication.Tests
 {
@@ -51,5 +52,9 @@ namespace HeyImIn.Authentication.Tests
 		private const string PasswordHash = "PasswordHash";
 		private const string Password = "password";
 		private const string Email = "user@email.com";
+
+		public AuthenticationServiceTests(ITestOutputHelper output) : base(output)
+		{
+		}
 	}
 }

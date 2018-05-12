@@ -11,6 +11,7 @@
     <Product>Hey, I'm in</Product>
     <PackageProjectUrl></PackageProjectUrl>
     <RepositoryUrl>https://github.com/PascalHonegger/HeyImIn</RepositoryUrl>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
