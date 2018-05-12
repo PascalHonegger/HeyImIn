@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
+using HeyImIn.Shared;
 using log4net;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,8 +11,9 @@ namespace HeyImIn.Authentication.Impl
 {
 	public class SessionService : ISessionService
 	{
-		public SessionService(GetDatabaseContext getDatabaseContext)
+		public SessionService(HeyImInConfiguration configuration, GetDatabaseContext getDatabaseContext)
 		{
+			_inactiveSessionTimeout = configuration.Timeouts.InactiveSessionTimeout;
 			_getDatabaseContext = getDatabaseContext;
 		}
 
@@ -77,7 +79,7 @@ namespace HeyImIn.Authentication.Impl
 			}
 		}
 
-		private static void ActivateOrExtendSession(Session session)
+		private void ActivateOrExtendSession(Session session)
 		{
 			// Set new valid until date as the session has been used
 			session.ValidUntil = DateTime.UtcNow + _inactiveSessionTimeout;
@@ -96,7 +98,7 @@ namespace HeyImIn.Authentication.Impl
 		/// <summary>
 		///     A session gets invalidated after this time period passed without any access to the session
 		/// </summary>
-		private static readonly TimeSpan _inactiveSessionTimeout = TimeSpan.FromHours(24);
+		private readonly TimeSpan _inactiveSessionTimeout;
 
 		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 	}

@@ -5,6 +5,7 @@ using HeyImIn.Authentication;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
 using HeyImIn.MailNotifier;
+using HeyImIn.Shared;
 using HeyImIn.WebApplication.FrontendModels.ParameterTypes;
 using HeyImIn.WebApplication.Helpers;
 using log4net;
@@ -19,10 +20,11 @@ namespace HeyImIn.WebApplication.Controllers
 	[Route("api/ResetPassword")]
 	public class ResetPasswordController : ControllerBase
 	{
-		public ResetPasswordController(IPasswordService passwordService, INotificationService notificationService, GetDatabaseContext getDatabaseContext)
+		public ResetPasswordController(IPasswordService passwordService, INotificationService notificationService, HeyImInConfiguration configuration, GetDatabaseContext getDatabaseContext)
 		{
 			_passwordService = passwordService;
 			_notificationService = notificationService;
+			_resetTokenValidTimeSpan = configuration.Timeouts.PasswordResetTimeout;
 			_getDatabaseContext = getDatabaseContext;
 		}
 
@@ -96,7 +98,7 @@ namespace HeyImIn.WebApplication.Controllers
 		private readonly INotificationService _notificationService;
 		private readonly GetDatabaseContext _getDatabaseContext;
 
+		private readonly TimeSpan _resetTokenValidTimeSpan;
 		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-		private static readonly TimeSpan _resetTokenValidTimeSpan = TimeSpan.FromHours(2);
 	}
 }

@@ -32,6 +32,7 @@
     <ProjectReference Include="..\Authentication\Authentication.csproj" />
     <ProjectReference Include="..\Database\Database.csproj" />
     <ProjectReference Include="..\MailNotifier\MailNotifier.csproj" />
+    <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JSONSchema="MailTimeZoneName" /></VisualStudio></ProjectExtensions>

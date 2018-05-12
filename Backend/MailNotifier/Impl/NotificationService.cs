@@ -6,25 +6,26 @@ using System.Threading.Tasks;
 using HeyImIn.Authentication;
 using HeyImIn.Database.Models;
 using HeyImIn.MailNotifier.Models;
+using HeyImIn.Shared;
 using log4net;
 
 namespace HeyImIn.MailNotifier.Impl
 {
 	public class NotificationService : INotificationService
 	{
-		public NotificationService(IMailSender mailSender, ISessionService sessionService, string baseWebUrl, string mailTimeZoneName)
+		public NotificationService(IMailSender mailSender, ISessionService sessionService, HeyImInConfiguration configuration)
 		{
 			_mailSender = mailSender;
 			_sessionService = sessionService;
-			_baseWebUrl = baseWebUrl;
+			_baseWebUrl = configuration.FrontendBaseUrl;
 
 			try
 			{
-				_mailTimeZone = TimeZoneInfo.FindSystemTimeZoneById(mailTimeZoneName);
+				_mailTimeZone = TimeZoneInfo.FindSystemTimeZoneById(configuration.MailTimeZoneName);
 			}
 			catch (Exception e)
 			{
-				_log.ErrorFormat("{0}(): Configured time zone '{1}' was not valid, error={2}", nameof(NotificationService), mailTimeZoneName, e);
+				_log.ErrorFormat("{0}(): Configured time zone '{1}' was not valid, error={2}", nameof(NotificationService), configuration.MailTimeZoneName, e);
 
 				_mailTimeZone = TimeZoneInfo.Utc;
 			}
