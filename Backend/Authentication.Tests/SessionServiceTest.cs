@@ -12,10 +12,12 @@ namespace HeyImIn.Authentication.Tests
 {
 	public class SessionServiceTests
 	{
+		private static readonly HeyImInConfiguration _configuration = new HeyImInConfiguration();
+
 		private static (GetDatabaseContext, SessionService) SetupSessionService()
 		{
 			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext();
-			var sessionService = new SessionService(new HeyImInConfiguration(), getContext);
+			var sessionService = new SessionService(_configuration, getContext);
 			return (getContext, sessionService);
 		}
 
@@ -164,6 +166,41 @@ namespace HeyImIn.Authentication.Tests
 				Session newlyLoadedSession = await context.Sessions.FindAsync(invalidUserSession.Token);
 				Assert.NotNull(newlyLoadedSession);
 				Assert.Equal(invalidUserSession.ValidUntil, newlyLoadedSession.ValidUntil);
+			}
+		}
+
+		[Fact]
+		public async Task GetSession_GivenExpiredUnusedSession_SessionUnchanged()
+		{
+			(GetDatabaseContext getContext, SessionService sessionService) = SetupSessionService();
+			Session invalidUserSession;
+
+			// Arrange
+			using (IDatabaseContext context = getContext())
+			{
+				EntityEntry<User> userEntry = context.Users.Add(ContextUtilities.JohnDoe);
+
+				invalidUserSession = new Session
+				{
+					Created = DateTime.UtcNow - _configuration.Timeouts.UnusedSessionExpirationTimeout,
+					ValidUntil = null,
+					User = userEntry.Entity
+				};
+				context.Sessions.Add(invalidUserSession);
+				await context.SaveChangesAsync();
+			}
+
+			// Act
+			Session loadedSession = await sessionService.GetAndExtendSessionAsync(invalidUserSession.Token);
+
+			// Assert
+			using (IDatabaseContext context = getContext())
+			{
+				Assert.Null(loadedSession);
+
+				Session newlyLoadedSession = await context.Sessions.FindAsync(invalidUserSession.Token);
+				Assert.NotNull(newlyLoadedSession);
+				Assert.Null(newlyLoadedSession.ValidUntil);
 			}
 		}
 
