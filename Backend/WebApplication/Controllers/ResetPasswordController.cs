@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using System.Threading.Tasks;
 using HeyImIn.Authentication;
 using HeyImIn.Database.Context;
@@ -8,10 +7,10 @@ using HeyImIn.MailNotifier;
 using HeyImIn.Shared;
 using HeyImIn.WebApplication.FrontendModels.ParameterTypes;
 using HeyImIn.WebApplication.Helpers;
-using log4net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace HeyImIn.WebApplication.Controllers
 {
@@ -20,12 +19,13 @@ namespace HeyImIn.WebApplication.Controllers
 	[Route("api/ResetPassword")]
 	public class ResetPasswordController : ControllerBase
 	{
-		public ResetPasswordController(IPasswordService passwordService, INotificationService notificationService, HeyImInConfiguration configuration, GetDatabaseContext getDatabaseContext)
+		public ResetPasswordController(IPasswordService passwordService, INotificationService notificationService, HeyImInConfiguration configuration, GetDatabaseContext getDatabaseContext, ILogger<ResetPasswordController> logger)
 		{
 			_passwordService = passwordService;
 			_notificationService = notificationService;
 			_resetTokenValidTimeSpan = configuration.Timeouts.PasswordResetTimeout;
 			_getDatabaseContext = getDatabaseContext;
+			_logger = logger;
 		}
 
 		/// <summary>
@@ -73,14 +73,14 @@ namespace HeyImIn.WebApplication.Controllers
 
 				if (passwordReset == null)
 				{
-					_log.DebugFormat("{0}(resetToken={1}): Couldn't find the password reset token", nameof(ResetPassword), resetPasswordDto.PasswordResetToken);
+					_logger.LogDebug("{0}(resetToken={1}): Couldn't find the password reset token", nameof(ResetPassword), resetPasswordDto.PasswordResetToken);
 
 					return BadRequest(RequestStringMessages.ResetCodeInvalid);
 				}
 
 				if (passwordReset.Used || (passwordReset.Requested - DateTime.UtcNow > _resetTokenValidTimeSpan))
 				{
-					_log.InfoFormat("{0}(resetToken={1}): Tried to reset password for user {2} with an expired or used token", nameof(ResetPassword), resetPasswordDto.PasswordResetToken, passwordReset.UserId);
+					_logger.LogInformation("{0}(resetToken={1}): Tried to reset password for user {2} with an expired or used token", nameof(ResetPassword), resetPasswordDto.PasswordResetToken, passwordReset.UserId);
 
 					return BadRequest(RequestStringMessages.ResetCodeAlreadyUsed);
 				}
@@ -90,7 +90,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				await context.SaveChangesAsync();
 
-				_log.InfoFormat("{0}(resetToken={1}): Reset password for user {2}", nameof(ResetPassword), resetPasswordDto.PasswordResetToken, passwordReset.UserId);
+				_logger.LogInformation("{0}(resetToken={1}): Reset password for user {2}", nameof(ResetPassword), resetPasswordDto.PasswordResetToken, passwordReset.UserId);
 
 				return Ok();
 			}
@@ -101,6 +101,6 @@ namespace HeyImIn.WebApplication.Controllers
 		private readonly GetDatabaseContext _getDatabaseContext;
 
 		private readonly TimeSpan _resetTokenValidTimeSpan;
-		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+		private readonly ILogger<ResetPasswordController> _logger;
 	}
 }

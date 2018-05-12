@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
 using HeyImIn.MailNotifier;
 using HeyImIn.MailNotifier.Models;
+using HeyImIn.Shared;
 using HeyImIn.WebApplication.FrontendModels;
 using HeyImIn.WebApplication.FrontendModels.ParameterTypes;
 using HeyImIn.WebApplication.FrontendModels.ResponseTypes;
 using HeyImIn.WebApplication.Helpers;
 using HeyImIn.WebApplication.Services;
 using HeyImIn.WebApplication.WebApiComponents;
-using log4net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace HeyImIn.WebApplication.Controllers
 {
@@ -24,11 +24,13 @@ namespace HeyImIn.WebApplication.Controllers
 	[Route("api/OrganizeEvent")]
 	public class OrganizeEventController : ControllerBase
 	{
-		public OrganizeEventController(INotificationService notificationService, IDeleteService deleteService, GetDatabaseContext getDatabaseContext)
+		public OrganizeEventController(INotificationService notificationService, IDeleteService deleteService, GetDatabaseContext getDatabaseContext, ILogger<OrganizeEventController> logger, ILoggerFactory loggerFactory)
 		{
 			_notificationService = notificationService;
 			_deleteService = deleteService;
 			_getDatabaseContext = getDatabaseContext;
+			_logger = logger;
+			_auditLogger = loggerFactory.CreateAuditLogger();
 		}
 
 		/// <summary>
@@ -61,7 +63,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				if (@event.Organizer != currentUser)
 				{
-					_log.InfoFormat("{0}(): Tried to delete event {1}, which he's not organizing", nameof(DeleteEvent), @event.Id);
+					_logger.LogInformation("{0}(): Tried to delete event {1}, which he's not organizing", nameof(DeleteEvent), @event.Id);
 
 					return BadRequest(RequestStringMessages.OrganizorRequired);
 				}
@@ -70,7 +72,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				await context.SaveChangesAsync();
 
-				_auditLog.InfoFormat("{0}(): Deleted event {1}", nameof(DeleteEvent), @event.Id);
+				_auditLogger.LogInformation("{0}(): Deleted event {1}", nameof(DeleteEvent), @event.Id);
 
 				await _notificationService.NotifyEventDeletedAsync(notificationInformation);
 
@@ -102,7 +104,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				if (@event.Organizer != currentUser)
 				{
-					_log.InfoFormat("{0}(): Tried to update event {1}, which he's not organizing", nameof(UpdateEventInfo), @event.Id);
+					_logger.LogInformation("{0}(): Tried to update event {1}, which he's not organizing", nameof(UpdateEventInfo), @event.Id);
 
 					return BadRequest(RequestStringMessages.OrganizorRequired);
 				}
@@ -116,7 +118,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				await context.SaveChangesAsync();
 
-				_auditLog.InfoFormat("{0}(): Updated event {1}", nameof(UpdateEventInfo), @event.Id);
+				_auditLogger.LogInformation("{0}(): Updated event {1}", nameof(UpdateEventInfo), @event.Id);
 
 				await _notificationService.NotifyEventUpdatedAsync(@event);
 
@@ -152,7 +154,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				await context.SaveChangesAsync();
 
-				_auditLog.InfoFormat("{0}(): Created event {1} ({2})", nameof(CreateEvent), newEvent.Id, newEvent.Title);
+				_auditLogger.LogInformation("{0}(): Created event {1} ({2})", nameof(CreateEvent), newEvent.Id, newEvent.Title);
 
 				return Ok(newEvent.Id);
 			}
@@ -190,7 +192,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				if (@event.OrganizerId != currentUserId)
 				{
-					_log.InfoFormat("{0}(): Tried to edit event {1}, which he's not organizing", nameof(GetEditDetails), @event.Id);
+					_logger.LogInformation("{0}(): Tried to edit event {1}, which he's not organizing", nameof(GetEditDetails), @event.Id);
 
 					return BadRequest(RequestStringMessages.OrganizorRequired);
 				}
@@ -215,7 +217,7 @@ namespace HeyImIn.WebApplication.Controllers
 		private readonly IDeleteService _deleteService;
 		private readonly GetDatabaseContext _getDatabaseContext;
 
-		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-		private static readonly ILog _auditLog = LogHelpers.GetAuditLog(MethodBase.GetCurrentMethod().DeclaringType);
+		private readonly ILogger<OrganizeEventController> _logger;
+		private readonly ILogger _auditLogger;
 	}
 }

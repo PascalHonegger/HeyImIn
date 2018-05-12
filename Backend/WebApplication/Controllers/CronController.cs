@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Reflection;
 using System.Threading.Tasks;
 using HeyImIn.WebApplication.Services;
-using log4net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace HeyImIn.WebApplication.Controllers
 {
@@ -17,9 +16,10 @@ namespace HeyImIn.WebApplication.Controllers
 	{
 		private readonly IEnumerable<ICronService> _cronRunners;
 
-		public CronController(IEnumerable<ICronService> cronRunners)
+		public CronController(IEnumerable<ICronService> cronRunners, ILogger<CronController> logger)
 		{
 			_cronRunners = cronRunners;
+			_logger = logger;
 		}
 
 		/// <summary>
@@ -31,14 +31,14 @@ namespace HeyImIn.WebApplication.Controllers
 		[ProducesResponseType(typeof(List<(string, string)>), 500)]
 		public async Task<IActionResult> Run()
 		{
-			_log.DebugFormat("{0}(): Running Cron jobs", nameof(Run));
+			_logger.LogDebug("{0}(): Running Cron jobs", nameof(Run));
 
 			var cronStopwatch = new Stopwatch();
 			var errors = new List<(string jobName, string errorMessage)>();
 
 			foreach (ICronService cronService in _cronRunners)
 			{
-				_log.DebugFormat("{0}(): Start running '{1}'", nameof(Run), cronService.DescriptiveName);
+				_logger.LogDebug("{0}(): Start running '{1}'", nameof(Run), cronService.DescriptiveName);
 				cronStopwatch.Restart();
 
 				try
@@ -47,14 +47,14 @@ namespace HeyImIn.WebApplication.Controllers
 				}
 				catch (Exception e)
 				{
-					_log.ErrorFormat("{0}(): Error while running '{1}', error={2}", nameof(Run), cronService.DescriptiveName, e);
+					_logger.LogError("{0}(): Error while running '{1}', error={2}", nameof(Run), cronService.DescriptiveName, e);
 
 					errors.Add((cronService.DescriptiveName, e.Message));
 				}
 				finally
 				{
 					cronStopwatch.Stop();
-					_log.DebugFormat("{0}(): Finished running '{1}', duration = {2:g}", nameof(Run), cronService.DescriptiveName, cronStopwatch.Elapsed);
+					_logger.LogDebug("{0}(): Finished running '{1}', duration = {2:g}", nameof(Run), cronService.DescriptiveName, cronStopwatch.Elapsed);
 				}
 			}
 
@@ -66,6 +66,6 @@ namespace HeyImIn.WebApplication.Controllers
 			return Ok();
 		}
 
-		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+		private readonly ILogger<CronController> _logger;
 	}
 }

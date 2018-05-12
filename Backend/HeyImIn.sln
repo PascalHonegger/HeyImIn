@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Authentication.Tests", "Aut
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Database.Tests", "Database.Tests\Database.Tests.csproj", "{C6F0A94A-A27B-4546-8558-2AA28DC400EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared", "Shared\Shared.csproj", "{00BE4242-152D-420C-9FA2-29F234EFE97A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared", "Shared\Shared.csproj", "{00BE4242-152D-420C-9FA2-29F234EFE97A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shared.Tests", "Shared.Tests\Shared.Tests.csproj", "{771697AB-5943-4714-969C-8BEB45E3E389}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{00BE4242-152D-420C-9FA2-29F234EFE97A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{00BE4242-152D-420C-9FA2-29F234EFE97A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{00BE4242-152D-420C-9FA2-29F234EFE97A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{771697AB-5943-4714-969C-8BEB45E3E389}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{771697AB-5943-4714-969C-8BEB45E3E389}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{771697AB-5943-4714-969C-8BEB45E3E389}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{771697AB-5943-4714-969C-8BEB45E3E389}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

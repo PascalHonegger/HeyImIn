@@ -2,18 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using System.Threading.Tasks;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
 using HeyImIn.MailNotifier;
+using HeyImIn.Shared;
 using HeyImIn.WebApplication.FrontendModels.ParameterTypes;
 using HeyImIn.WebApplication.FrontendModels.ResponseTypes;
 using HeyImIn.WebApplication.Helpers;
 using HeyImIn.WebApplication.WebApiComponents;
-using log4net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace HeyImIn.WebApplication.Controllers
 {
@@ -22,10 +22,12 @@ namespace HeyImIn.WebApplication.Controllers
 	[Route("api/ParticipateEvent")]
 	public class ParticipateEventController : ControllerBase
 	{
-		public ParticipateEventController(INotificationService notificationService, GetDatabaseContext getDatabaseContext)
+		public ParticipateEventController(INotificationService notificationService, GetDatabaseContext getDatabaseContext, ILogger<ParticipateEventController> logger, ILoggerFactory loggerFactory)
 		{
 			_notificationService = notificationService;
 			_getDatabaseContext = getDatabaseContext;
+			_logger = logger;
+			_auditLogger = loggerFactory.CreateAuditLogger();
 		}
 
 		/// <summary>
@@ -198,7 +200,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				await context.SaveChangesAsync();
 
-				_auditLog.InfoFormat("{0}(): Joined event {1}", nameof(JoinEvent), @event.Id);
+				_auditLogger.LogInformation("{0}(): Joined event {1}", nameof(JoinEvent), @event.Id);
 
 				return Ok();
 			}
@@ -241,7 +243,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				if (changingOtherUser && (@event.OrganizerId != currentUserId))
 				{
-					_log.InfoFormat("{0}(): Tried to remove user {1} from then event {2}, which he's not organizing", nameof(RemoveFromEvent), userToRemove.Id, @event.Id);
+					_logger.LogInformation("{0}(): Tried to remove user {1} from then event {2}, which he's not organizing", nameof(RemoveFromEvent), userToRemove.Id, @event.Id);
 
 					return BadRequest(RequestStringMessages.OrganizorRequired);
 				}
@@ -270,13 +272,13 @@ namespace HeyImIn.WebApplication.Controllers
 				// Handle notifications
 				if (changingOtherUser)
 				{
-					_auditLog.InfoFormat("{0}(): The organizer removed the user {1} from the event {2}", nameof(RemoveFromEvent), userToRemove.Id, @event.Id);
+					_auditLogger.LogInformation("{0}(): The organizer removed the user {1} from the event {2}", nameof(RemoveFromEvent), userToRemove.Id, @event.Id);
 
 					await _notificationService.NotifyOrganizerUpdatedUserInfoAsync(@event, userToRemove, "Der Organisator hat Sie vom Event entfernt.");
 				}
 				else
 				{
-					_auditLog.InfoFormat("{0}(): Left the event {1}", nameof(RemoveFromEvent), @event.Id);
+					_auditLogger.LogInformation("{0}(): Left the event {1}", nameof(RemoveFromEvent), @event.Id);
 				}
 
 				foreach (Appointment appointment in appointments)
@@ -319,7 +321,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				await context.SaveChangesAsync();
 
-				_log.InfoFormat("{0}(): Updated notification settings", nameof(ConfigureNotifications));
+				_logger.LogInformation("{0}(): Updated notification settings", nameof(ConfigureNotifications));
 
 				return Ok();
 			}
@@ -334,7 +336,7 @@ namespace HeyImIn.WebApplication.Controllers
 		/// </summary>
 		private const int ShownAppointmentsPerEvent = 5;
 
-		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-		private static readonly ILog _auditLog = LogHelpers.GetAuditLog(MethodBase.GetCurrentMethod().DeclaringType);
+		private readonly ILogger<ParticipateEventController> _logger;
+		private readonly ILogger _auditLogger;
 	}
 }

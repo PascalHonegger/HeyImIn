@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
 using HeyImIn.MailNotifier;
 using HeyImIn.MailNotifier.Models;
+using HeyImIn.Shared;
 using HeyImIn.WebApplication.FrontendModels.ParameterTypes;
 using HeyImIn.WebApplication.Helpers;
 using HeyImIn.WebApplication.Services;
 using HeyImIn.WebApplication.WebApiComponents;
-using log4net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace HeyImIn.WebApplication.Controllers
 {
@@ -21,11 +21,13 @@ namespace HeyImIn.WebApplication.Controllers
 	[Route("api/OrganizeAppointment")]
 	public class OrganizeAppointmentController : ControllerBase
 	{
-		public OrganizeAppointmentController(INotificationService notificationService, IDeleteService deleteService, GetDatabaseContext getDatabaseContext)
+		public OrganizeAppointmentController(INotificationService notificationService, IDeleteService deleteService, GetDatabaseContext getDatabaseContext, ILogger<OrganizeAppointmentController> logger, ILoggerFactory loggerFactory)
 		{
 			_notificationService = notificationService;
 			_deleteService = deleteService;
 			_getDatabaseContext = getDatabaseContext;
+			_logger = logger;
+			_auditLogger = loggerFactory.CreateAuditLogger();
 		}
 
 		/// <summary>
@@ -58,7 +60,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				if (@event.Organizer != currentUser)
 				{
-					_log.InfoFormat("{0}(): Tried to delete appointment {1}, which he's not organizing", nameof(DeleteAppointment), appointment.Id);
+					_logger.LogInformation("{0}(): Tried to delete appointment {1}, which he's not organizing", nameof(DeleteAppointment), appointment.Id);
 
 					return BadRequest(RequestStringMessages.OrganizorRequired);
 				}
@@ -67,7 +69,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				await context.SaveChangesAsync();
 
-				_auditLog.InfoFormat("{0}(): Canceled appointment {1}", nameof(DeleteAppointment), appointment.Id);
+				_auditLogger.LogInformation("{0}(): Canceled appointment {1}", nameof(DeleteAppointment), appointment.Id);
 
 				await _notificationService.NotifyAppointmentExplicitlyCanceledAsync(notificationInformation, @event);
 
@@ -100,7 +102,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				if (@event.Organizer != currentUser)
 				{
-					_log.InfoFormat("{0}(): Tried to add appointments to the event {1}, which he's not organizing", nameof(AddAppointments), @event.Id);
+					_logger.LogInformation("{0}(): Tried to add appointments to the event {1}, which he's not organizing", nameof(AddAppointments), @event.Id);
 
 					return BadRequest(RequestStringMessages.OrganizorRequired);
 				}
@@ -119,7 +121,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				await context.SaveChangesAsync();
 
-				_auditLog.InfoFormat("{0}(): Added {1} appointments to event {2}", nameof(AddAppointments), addAppointsmentsDto.StartTimes.Length, @event.Id);
+				_auditLogger.LogInformation("{0}(): Added {1} appointments to event {2}", nameof(AddAppointments), addAppointsmentsDto.StartTimes.Length, @event.Id);
 
 				return Ok();
 			}
@@ -170,7 +172,7 @@ namespace HeyImIn.WebApplication.Controllers
 					if (appointment.Event.Organizer != currentUser)
 					{
 						// Only the organizer is allowed to change another user
-						_log.InfoFormat("{0}(): Tried to set response for user {1} for the appointment {2}, which he's not organizing", nameof(SetAppointmentResponse), userToSetResponseFor.Id, appointment.Id);
+						_logger.LogInformation("{0}(): Tried to set response for user {1} for the appointment {2}, which he's not organizing", nameof(SetAppointmentResponse), userToSetResponseFor.Id, appointment.Id);
 
 						return BadRequest(RequestStringMessages.OrganizorRequired);
 					}
@@ -223,7 +225,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 					context.EventParticipations.Add(eventParticipation);
 
-					_auditLog.InfoFormat("{0}(): Joined event {1} automatically after joining appointment {2}", nameof(SetAppointmentResponse), appointment.Event.Id, appointment.Id);
+					_auditLogger.LogInformation("{0}(): Joined event {1} automatically after joining appointment {2}", nameof(SetAppointmentResponse), appointment.Event.Id, appointment.Id);
 				}
 
 				await context.SaveChangesAsync();
@@ -231,13 +233,13 @@ namespace HeyImIn.WebApplication.Controllers
 				// Handle notifications
 				if (changingOtherUser)
 				{
-					_auditLog.InfoFormat("{0}(response={1}): The organizer set the response to the appointment {2} for user {3}", nameof(SetAppointmentResponse), setAppointmentResponseDto.Response, appointment.Id, userToSetResponseFor.Id);
+					_auditLogger.LogInformation("{0}(response={1}): The organizer set the response to the appointment {2} for user {3}", nameof(SetAppointmentResponse), setAppointmentResponseDto.Response, appointment.Id, userToSetResponseFor.Id);
 
 					await _notificationService.NotifyOrganizerUpdatedUserInfoAsync(appointment.Event, userToSetResponseFor, "Der Organisator hat Ihre Zusage an einem Termin editiert.");
 				}
 				else
 				{
-					_log.DebugFormat("{0}(response={1}): Set own response for appointment {2}", nameof(SetAppointmentResponse), setAppointmentResponseDto.Response, appointment.Id);
+					_logger.LogDebug("{0}(response={1}): Set own response for appointment {2}", nameof(SetAppointmentResponse), setAppointmentResponseDto.Response, appointment.Id);
 				}
 
 				await _notificationService.SendLastMinuteChangeIfRequiredAsync(appointment);
@@ -249,8 +251,7 @@ namespace HeyImIn.WebApplication.Controllers
 		private readonly INotificationService _notificationService;
 		private readonly IDeleteService _deleteService;
 		private readonly GetDatabaseContext _getDatabaseContext;
-
-		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-		private static readonly ILog _auditLog = LogHelpers.GetAuditLog(MethodBase.GetCurrentMethod().DeclaringType);
+		private readonly ILogger<OrganizeAppointmentController> _logger;
+		private readonly ILogger _auditLogger;
 	}
 }

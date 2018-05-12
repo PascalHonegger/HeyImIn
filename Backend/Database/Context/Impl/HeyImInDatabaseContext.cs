@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Reflection;
 using HeyImIn.Database.Models;
-using log4net;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 
@@ -17,15 +16,17 @@ namespace HeyImIn.Database.Context.Impl
 		}
 
 		// Main tables
-		public void Migrate()
+		public void Migrate(ILoggerFactory loggerFactory)
 		{
+			ILogger<HeyImInDatabaseContext> logger = loggerFactory.CreateLogger<HeyImInDatabaseContext>();
+
 			IEnumerable<string> pendingMigrations = Database.GetPendingMigrations();
 
-			_log.InfoFormat("{0}(): Trying to apply migrations ({1})", nameof(Migrate), string.Join(',', pendingMigrations));
+			logger.LogInformation("{0}(): Trying to apply migrations ({1})", nameof(Migrate), string.Join(',', pendingMigrations));
 
 			Database.Migrate();
 
-			_log.InfoFormat("{0}(): Applied migrations", nameof(Migrate));
+			logger.LogInformation("{0}(): Applied migrations", nameof(Migrate));
 		}
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -68,7 +69,5 @@ namespace HeyImIn.Database.Context.Impl
 		public virtual DbSet<PasswordReset> PasswordResets { get; set; }
 
 		public virtual DbSet<EventInvitation> EventInvitations { get; set; }
-
-		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 	}
 }

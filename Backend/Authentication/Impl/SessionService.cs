@@ -1,21 +1,21 @@
 ﻿using System;
-using System.Reflection;
 using System.Threading.Tasks;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
 using HeyImIn.Shared;
-using log4net;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace HeyImIn.Authentication.Impl
 {
 	public class SessionService : ISessionService
 	{
-		public SessionService(HeyImInConfiguration configuration, GetDatabaseContext getDatabaseContext)
+		public SessionService(HeyImInConfiguration configuration, GetDatabaseContext getDatabaseContext, ILogger<SessionService> logger)
 		{
 			_inactiveSessionTimeout = configuration.Timeouts.InactiveSessionTimeout;
 			_unusedSessionExpirationTimeout = configuration.Timeouts.UnusedSessionExpirationTimeout;
 			_getDatabaseContext = getDatabaseContext;
+			_logger = logger;
 		}
 
 		public async Task<Session> GetAndExtendSessionAsync(Guid token)
@@ -56,7 +56,7 @@ namespace HeyImIn.Authentication.Impl
 
 				await context.SaveChangesAsync();
 
-				_log.DebugFormat("{0}(userId={1}, active={2}): Added new session", nameof(CreateSessionAsync), userId, active);
+				_logger.LogDebug("{0}(userId={1}, active={2}): Added new session", nameof(CreateSessionAsync), userId, active);
 
 				return session.Token;
 			}
@@ -77,7 +77,7 @@ namespace HeyImIn.Authentication.Impl
 
 				await context.SaveChangesAsync();
 
-				_log.DebugFormat("{0}(token={1}): Invalidated session", nameof(InvalidateSessionAsync), token);
+				_logger.LogDebug("{0}(token={1}): Invalidated session", nameof(InvalidateSessionAsync), token);
 			}
 		}
 
@@ -107,6 +107,6 @@ namespace HeyImIn.Authentication.Impl
 		/// </summary>
 		private readonly TimeSpan _unusedSessionExpirationTimeout;
 
-		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+		private readonly ILogger<SessionService> _logger;
 	}
 }
