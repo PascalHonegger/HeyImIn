@@ -4,6 +4,7 @@ using HeyImIn.Authentication.Impl;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
 using HeyImIn.Database.Tests;
+using HeyImIn.Shared;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Xunit;
 
@@ -11,12 +12,19 @@ namespace HeyImIn.Authentication.Tests
 {
 	public class SessionServiceTests
 	{
+		private static (GetDatabaseContext, SessionService) SetupSessionService()
+		{
+			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext();
+			var sessionService = new SessionService(new HeyImInConfiguration(), getContext);
+			return (getContext, sessionService);
+		}
+
 		#region CreateSession
 
 		[Fact]
 		public async Task CreateSession_GivenIsActiveTrue_SessionIsActivated()
 		{
-			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext();
+			(GetDatabaseContext getContext, SessionService sessionService) = SetupSessionService();
 			int johnDoeId;
 
 			// Arrange
@@ -28,7 +36,6 @@ namespace HeyImIn.Authentication.Tests
 			}
 
 			// Act
-			var sessionService = new SessionService(getContext);
 			Guid sessionId = await sessionService.CreateSessionAsync(johnDoeId, true);
 
 			// Assert
@@ -45,7 +52,7 @@ namespace HeyImIn.Authentication.Tests
 		[Fact]
 		public async Task CreateSession_GivenIsActiveFalse_SessionIsNotActivated()
 		{
-			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext();
+			(GetDatabaseContext getContext, SessionService sessionService) = SetupSessionService();
 			int johnDoeId;
 
 			// Arrange
@@ -57,7 +64,6 @@ namespace HeyImIn.Authentication.Tests
 			}
 
 			// Act
-			var sessionService = new SessionService(getContext);
 			Guid sessionId = await sessionService.CreateSessionAsync(johnDoeId, false);
 
 			// Assert
@@ -77,10 +83,9 @@ namespace HeyImIn.Authentication.Tests
 		[Fact]
 		public async Task GetSession_GivenInexistantSession_NullReturned()
 		{
-			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext();
+			(_, SessionService sessionService) = SetupSessionService();
 
 			// Act
-			var sessionService = new SessionService(getContext);
 			Session loadedSession = await sessionService.GetAndExtendSessionAsync(Guid.NewGuid());
 
 			// Assert
@@ -90,7 +95,7 @@ namespace HeyImIn.Authentication.Tests
 		[Fact]
 		public async Task GetSession_GivenValidSession_ExtendsSession()
 		{
-			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext();
+			(GetDatabaseContext getContext, SessionService sessionService) = SetupSessionService();
 			Guid sessionToken;
 
 			// Arrange
@@ -111,7 +116,6 @@ namespace HeyImIn.Authentication.Tests
 			}
 
 			// Act
-			var sessionService = new SessionService(getContext);
 			Session loadedSession = await sessionService.GetAndExtendSessionAsync(sessionToken);
 
 			// Assert
@@ -131,7 +135,7 @@ namespace HeyImIn.Authentication.Tests
 		[Fact]
 		public async Task GetSession_GivenInvalidSession_SessionUnchanged()
 		{
-			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext();
+			(GetDatabaseContext getContext, SessionService sessionService) = SetupSessionService();
 			Session invalidUserSession;
 
 			// Arrange
@@ -150,7 +154,6 @@ namespace HeyImIn.Authentication.Tests
 			}
 
 			// Act
-			var sessionService = new SessionService(getContext);
 			Session loadedSession = await sessionService.GetAndExtendSessionAsync(invalidUserSession.Token);
 
 			// Assert
@@ -171,10 +174,9 @@ namespace HeyImIn.Authentication.Tests
 		[Fact]
 		public async Task InvalidateSession_GivenInexistantSession_NoErrorThrown()
 		{
-			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext();
+			(_, SessionService sessionService) = SetupSessionService();
 
 			// Act
-			var sessionService = new SessionService(getContext);
 			await sessionService.InvalidateSessionAsync(Guid.NewGuid());
 
 			// If no exception was thrown, this test was a success
@@ -183,7 +185,7 @@ namespace HeyImIn.Authentication.Tests
 		[Fact]
 		public async Task InvalidateSession_GivenValidSession_SessionIsInvalidated()
 		{
-			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext();
+			(GetDatabaseContext getContext, SessionService sessionService) = SetupSessionService();
 			Session validUserSession;
 
 			// Arrange
@@ -202,7 +204,6 @@ namespace HeyImIn.Authentication.Tests
 			}
 
 			// Act
-			var sessionService = new SessionService(getContext);
 			await sessionService.InvalidateSessionAsync(validUserSession.Token);
 
 			// Assert
@@ -218,7 +219,7 @@ namespace HeyImIn.Authentication.Tests
 		[Fact]
 		public async Task InvalidateSession_GivenInvalidSession_SessionUnchanged()
 		{
-			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext();
+			(GetDatabaseContext getContext, SessionService sessionService) = SetupSessionService();
 			Session invalidUserSession;
 
 			// Arrange
@@ -237,7 +238,6 @@ namespace HeyImIn.Authentication.Tests
 			}
 
 			// Act
-			var sessionService = new SessionService(getContext);
 			await sessionService.InvalidateSessionAsync(invalidUserSession.Token);
 
 			// Assert
