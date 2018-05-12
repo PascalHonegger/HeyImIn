@@ -188,9 +188,11 @@ namespace HeyImIn.WebApplication.Controllers
 					return BadRequest(RequestStringMessages.InvitationRequired);
 				}
 
-				EventParticipation eventParticipation = context.EventParticipations.Create();
-				eventParticipation.Event = @event;
-				eventParticipation.Participant = currentUser;
+				var eventParticipation = new EventParticipation
+				{
+					Event = @event,
+					Participant = currentUser
+				};
 
 				context.EventParticipations.Add(eventParticipation);
 

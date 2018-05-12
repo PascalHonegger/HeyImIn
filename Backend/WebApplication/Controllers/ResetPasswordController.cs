@@ -44,9 +44,11 @@ namespace HeyImIn.WebApplication.Controllers
 					return BadRequest(RequestStringMessages.NoProfileWithEmailFound);
 				}
 
-				PasswordReset passwordReset = context.PasswordResets.Create();
-				passwordReset.User = user;
-				passwordReset.Requested = DateTime.UtcNow;
+				var passwordReset = new PasswordReset
+				{
+					User = user,
+					Requested = DateTime.UtcNow
+				};
 
 				context.PasswordResets.Add(passwordReset);
 

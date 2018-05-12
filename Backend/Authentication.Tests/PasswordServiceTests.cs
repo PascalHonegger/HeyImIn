@@ -29,7 +29,7 @@ namespace HeyImIn.Authentication.Tests
 		[Fact]
 		public void SameWorkFactorDoesNotNeedRehash()
 		{
-			HeyImInConfiguration config = new HeyImInConfiguration();
+			var config = new HeyImInConfiguration();
 			var passwordService = new PasswordService(config);
 			var passwordService2 = new PasswordService(config);
 			string hash = passwordService.HashPassword(InputPassword);
