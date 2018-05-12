@@ -1,14 +1,12 @@
-﻿namespace HeyImIn.Authentication.Impl
+﻿using HeyImIn.Shared;
+
+namespace HeyImIn.Authentication.Impl
 {
 	public class PasswordService : IPasswordService
 	{
-		/// <summary>
-		///     Constructor for <see cref="IPasswordService" />
-		/// </summary>
-		/// <param name="workFactor">Defines how long the hashing for a password takes => Adjust as computing power increases</param>
-		public PasswordService(int workFactor)
+		public PasswordService(HeyImInConfiguration configuration)
 		{
-			_workFactor = workFactor;
+			_workFactor = configuration.PasswordHashWorkFactor;
 		}
 
 		public string HashPassword(string password)

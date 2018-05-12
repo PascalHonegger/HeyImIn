@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
 using HeyImIn.MailNotifier;
+using HeyImIn.Shared;
 using HeyImIn.WebApplication.FrontendModels.ParameterTypes;
 using HeyImIn.WebApplication.Helpers;
 using HeyImIn.WebApplication.WebApiComponents;
@@ -20,9 +21,10 @@ namespace HeyImIn.WebApplication.Controllers
 	[Route("api/InviteToEvent")]
 	public class InviteToEventController : ControllerBase
 	{
-		public InviteToEventController(INotificationService notificationService, GetDatabaseContext getDatabaseContext)
+		public InviteToEventController(INotificationService notificationService, HeyImInConfiguration configuration, GetDatabaseContext getDatabaseContext)
 		{
 			_notificationService = notificationService;
+			_inviteTimeout = configuration.Timeouts.InviteTimeout;
 			_getDatabaseContext = getDatabaseContext;
 		}
 
@@ -159,7 +161,7 @@ namespace HeyImIn.WebApplication.Controllers
 		/// <summary>
 		///     A invite for a private event gets invalidated after this time period passed
 		/// </summary>
-		private static readonly TimeSpan _inviteTimeout = TimeSpan.FromDays(7);
+		private readonly TimeSpan _inviteTimeout;
 
 		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 	}

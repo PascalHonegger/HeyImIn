@@ -3,11 +3,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using HeyImIn.Authentication;
-using HeyImIn.Authentication.Impl;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Context.Impl;
 using HeyImIn.MailNotifier;
-using HeyImIn.MailNotifier.Impl;
+using HeyImIn.Shared;
 using HeyImIn.WebApplication.Controllers;
 using HeyImIn.WebApplication.Helpers;
 using HeyImIn.WebApplication.Services;
@@ -77,17 +76,14 @@ namespace HeyImIn.WebApplication
 			var sendGridApiKey = _configuration.GetValue<string>("SENDGRID_API_KEY");
 
 			// Other configuration values
-			var baseWebUrl = _configuration.GetValue<string>("FrontendBaseUrl");
-			var mailTimeZoneName = _configuration.GetValue<string>("MailTimeZoneName");
-
-			int workFactor = _configuration.GetValue("PasswordHashWorkFactor", 10);
+			var configuration = new HeyImInConfiguration();
+			_configuration.Bind("HeyImInConfiguration", configuration);
 
 			// Register custom types
 			services
+				.AddSingleton(c => configuration)
 				.AddTransient<IDatabaseContext, HeyImInDatabaseContext>() // Redirect interface to class
 				.AddTransient<ISendGridClient>(c => new SendGridClient(sendGridApiKey))
-				.AddTransient<IPasswordService>(c => new PasswordService(workFactor))
-				.AddTransient<INotificationService>(c => new NotificationService(c.GetRequiredService<IMailSender>(), c.GetRequiredService<ISessionService>(), baseWebUrl, mailTimeZoneName))
 				.AddTransient<ICronService, CronSendNotificationsService>()
 				.AddTransient<GetDatabaseContext>(c => c.GetRequiredService<IDatabaseContext>);
 		}
