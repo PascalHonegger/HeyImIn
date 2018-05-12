@@ -14,6 +14,7 @@ namespace HeyImIn.Authentication.Impl
 		public SessionService(HeyImInConfiguration configuration, GetDatabaseContext getDatabaseContext)
 		{
 			_inactiveSessionTimeout = configuration.Timeouts.InactiveSessionTimeout;
+			_unusedSessionExpirationTimeout = configuration.Timeouts.UnusedSessionExpirationTimeout;
 			_getDatabaseContext = getDatabaseContext;
 		}
 
@@ -86,10 +87,10 @@ namespace HeyImIn.Authentication.Impl
 			session.ValidUntil = DateTime.UtcNow + _inactiveSessionTimeout;
 		}
 
-		private static bool IsValidSession(Session session)
+		private bool IsValidSession(Session session)
 		{
 			return session.ValidUntil == null 
-				? DateTime.UtcNow - session.Created <= TimeSpan.FromDays(2)
+				? DateTime.UtcNow - session.Created <= _unusedSessionExpirationTimeout
 				: session.ValidUntil >= DateTime.UtcNow;
 		}
 
@@ -100,6 +101,11 @@ namespace HeyImIn.Authentication.Impl
 		///     A session gets invalidated after this time period passed without any access to the session
 		/// </summary>
 		private readonly TimeSpan _inactiveSessionTimeout;
+
+		/// <summary>
+		///     If a session is not accessed after this time, it expires and turns invalid
+		/// </summary>
+		private readonly TimeSpan _unusedSessionExpirationTimeout;
 
 		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 	}
