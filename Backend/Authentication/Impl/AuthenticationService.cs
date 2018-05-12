@@ -8,9 +8,6 @@ namespace HeyImIn.Authentication.Impl
 {
 	public class AuthenticationService : IAuthenticationService
 	{
-		private readonly IPasswordService _passwordService;
-		private readonly GetDatabaseContext _getDatabaseContext;
-
 		public AuthenticationService(IPasswordService passwordService, GetDatabaseContext getDatabaseContext, ILogger<AuthenticationService> logger)
 		{
 			_passwordService = passwordService;
@@ -52,7 +49,9 @@ namespace HeyImIn.Authentication.Impl
 			}
 		}
 
-		private readonly ILogger<AuthenticationService> _logger;
+		private readonly IPasswordService _passwordService;
+		private readonly GetDatabaseContext _getDatabaseContext;
 
+		private readonly ILogger<AuthenticationService> _logger;
 	}
 }

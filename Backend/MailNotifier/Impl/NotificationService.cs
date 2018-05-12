@@ -32,6 +32,83 @@ namespace HeyImIn.MailNotifier.Impl
 			}
 		}
 
+		/// <summary>
+		///     Returns all participations which pass the provided filters and were accepted
+		/// </summary>
+		private static List<AppointmentParticipation> FilterAcceptedParticipations(IEnumerable<AppointmentParticipation> participations,
+																				   Func<AppointmentParticipation, bool> participationFilter,
+																				   Func<EventParticipation, bool> eventFilter)
+		{
+			return participations
+				.Where(p => p.AppointmentParticipationAnswer == AppointmentParticipationAnswer.Accepted)
+				.Where(participationFilter)
+				.Where(p => eventFilter(p.Appointment.Event.EventParticipations.First(e => e.Participant == p.Participant)))
+				.ToList();
+		}
+
+		/// <summary>
+		///     Returns all participations which pass the provided filters
+		///     If no answer exists, Automatically adds appointment participations with the answer null
+		/// </summary>
+		private static List<AppointmentParticipation> FilterAndAppendAllParticipations(Appointment appointment,
+																					   Func<AppointmentParticipation, bool> participationFilter,
+																					   Func<EventParticipation, bool> eventFilter)
+		{
+			// First create the appointment participations for users which have no participation yet
+			// A appointment participation is required to track the sent emails
+			List<int> participantIds = appointment.AppointmentParticipations.Select(p => p.ParticipantId).ToList();
+
+			foreach (EventParticipation eventParticipationWithoutAppointmentParticipation in appointment.Event.EventParticipations.Where(e => !participantIds.Contains(e.ParticipantId)))
+			{
+				var newAppointmentParticipation = new AppointmentParticipation
+				{
+					Appointment = appointment,
+					Participant = eventParticipationWithoutAppointmentParticipation.Participant,
+					AppointmentParticipationAnswer = null,
+					SentReminder = false,
+					SentSummary = false
+				};
+
+				appointment.AppointmentParticipations.Add(newAppointmentParticipation);
+			}
+
+			return appointment.AppointmentParticipations
+				.Where(participationFilter)
+				.Where(p => eventFilter(p.Appointment.Event.EventParticipations.First(e => e.Participant == p.Participant)))
+				.ToList();
+		}
+
+		private async Task<string> CreateAuthTokenSuffixAsync(int userId)
+		{
+			Guid createdSessionToken = await _sessionService.CreateSessionAsync(userId, false);
+
+			return $"?authToken={createdSessionToken}";
+		}
+
+		private DateTime TargetTimeZone(DateTime utcDateTime)
+		{
+			return TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, _mailTimeZone);
+		}
+
+		private static string ParticipationsList(IEnumerable<AppointmentParticipation> allParticipations)
+		{
+			return string.Join(Environment.NewLine, allParticipations
+				.Where(a => a.AppointmentParticipationAnswer == AppointmentParticipationAnswer.Accepted)
+				.Select(a => $"- {a.Participant.FullName}"));
+		}
+
+		private readonly IMailSender _mailSender;
+
+		/// <summary>
+		///     The url being referd to within emails
+		/// </summary>
+		private readonly string _baseWebUrl;
+
+		private readonly ISessionService _sessionService;
+		private readonly TimeZoneInfo _mailTimeZone;
+
+		private readonly ILogger<NotificationService> _logger;
+
 		#region No data deleted
 
 		public async Task SendPasswordResetTokenAsync(Guid token, User recipient)
@@ -128,6 +205,7 @@ Sie können den betroffenen Event unter {_baseWebUrl}ViewEvent/{@event.Id}{authT
 					default:
 						throw new ArgumentOutOfRangeException();
 				}
+
 				string message = await ComposeMessageAsync(appointmentParticipation.Participant, state);
 
 				await _mailSender.SendMailAsync(appointmentParticipation.Participant.Email, reminderSubject, message);
@@ -293,82 +371,5 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{@event.Id}{a
 		}
 
 		#endregion
-
-		/// <summary>
-		///     Returns all participations which pass the provided filters and were accepted
-		/// </summary>
-		private static List<AppointmentParticipation> FilterAcceptedParticipations(IEnumerable<AppointmentParticipation> participations,
-																		   Func<AppointmentParticipation, bool> participationFilter,
-																		   Func<EventParticipation, bool> eventFilter)
-		{
-			return participations
-				.Where(p => p.AppointmentParticipationAnswer == AppointmentParticipationAnswer.Accepted)
-				.Where(participationFilter)
-				.Where(p => eventFilter(p.Appointment.Event.EventParticipations.First(e => e.Participant == p.Participant)))
-				.ToList();
-		}
-
-		/// <summary>
-		///     Returns all participations which pass the provided filters
-		///     If no answer exists, Automatically adds appointment participations with the answer null
-		/// </summary>
-		private static List<AppointmentParticipation> FilterAndAppendAllParticipations(Appointment appointment,
-																		   Func<AppointmentParticipation, bool> participationFilter,
-																		   Func<EventParticipation, bool> eventFilter)
-		{
-			// First create the appointment participations for users which have no participation yet
-			// A appointment participation is required to track the sent emails
-			List<int> participantIds = appointment.AppointmentParticipations.Select(p => p.ParticipantId).ToList();
-
-			foreach (EventParticipation eventParticipationWithoutAppointmentParticipation in appointment.Event.EventParticipations.Where(e => !participantIds.Contains(e.ParticipantId)))
-			{
-				var newAppointmentParticipation = new AppointmentParticipation
-				{
-					Appointment = appointment,
-					Participant = eventParticipationWithoutAppointmentParticipation.Participant,
-					AppointmentParticipationAnswer = null,
-					SentReminder = false,
-					SentSummary = false
-				};
-
-				appointment.AppointmentParticipations.Add(newAppointmentParticipation);
-			}
-
-			return appointment.AppointmentParticipations
-				.Where(participationFilter)
-				.Where(p => eventFilter(p.Appointment.Event.EventParticipations.First(e => e.Participant == p.Participant)))
-				.ToList();
-		}
-
-		private async Task<string> CreateAuthTokenSuffixAsync(int userId)
-		{
-			Guid createdSessionToken = await _sessionService.CreateSessionAsync(userId, false);
-
-			return $"?authToken={createdSessionToken}";
-		}
-
-		private DateTime TargetTimeZone(DateTime utcDateTime)
-		{
-			return TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, _mailTimeZone);
-		}
-
-		private static string ParticipationsList(IEnumerable<AppointmentParticipation> allParticipations)
-		{
-			return string.Join(Environment.NewLine, allParticipations
-				.Where(a => a.AppointmentParticipationAnswer == AppointmentParticipationAnswer.Accepted)
-				.Select(a => $"- {a.Participant.FullName}"));
-		}
-
-		private readonly IMailSender _mailSender;
-
-		/// <summary>
-		///     The url being referd to within emails
-		/// </summary>
-		private readonly string _baseWebUrl;
-
-		private readonly ISessionService _sessionService;
-		private readonly TimeZoneInfo _mailTimeZone;
-
-		private readonly ILogger<NotificationService> _logger;
 	}
 }

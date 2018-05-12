@@ -16,7 +16,7 @@ namespace HeyImIn.Database.Context
 	public interface IDatabaseContext : IDisposable
 	{
 		// DbContext methods we want to provide
-		Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken));
+		Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 
 		EntityEntry<TEntity> Entry<TEntity>(TEntity entity) where TEntity : class;
 

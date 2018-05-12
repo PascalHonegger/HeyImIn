@@ -10,9 +10,6 @@ namespace HeyImIn.WebApplication.Helpers
 {
 	public static class HttpActionExtensions
 	{
-		private const string UserIdPropertiesKey = "UserId";
-		private const string SessionTokenPropertiesKey = "SessionToken";
-
 		// Wrapper for SessionToken property
 		public static Guid? TryGetSessionToken(this HttpContext requestMessage)
 		{
@@ -23,10 +20,12 @@ namespace HeyImIn.WebApplication.Helpers
 
 			return null;
 		}
+
 		public static Guid GetSessionToken(this HttpContext requestMessage)
 		{
 			return (Guid)requestMessage.Items[SessionTokenPropertiesKey];
 		}
+
 		public static void SetSessionToken(this HttpContext requestMessage, Guid sessionToken)
 		{
 			requestMessage.Items[SessionTokenPropertiesKey] = sessionToken;
@@ -42,10 +41,12 @@ namespace HeyImIn.WebApplication.Helpers
 
 			return null;
 		}
+
 		public static int GetUserId(this HttpContext requestMessage)
 		{
 			return (int)requestMessage.Items[UserIdPropertiesKey];
 		}
+
 		public static void SetUserId(this HttpContext requestMessage, int userId)
 		{
 			requestMessage.Items[UserIdPropertiesKey] = userId;
@@ -71,6 +72,9 @@ namespace HeyImIn.WebApplication.Helpers
 
 			return currentUser;
 		}
+
+		private const string UserIdPropertiesKey = "UserId";
+		private const string SessionTokenPropertiesKey = "SessionToken";
 
 		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 	}

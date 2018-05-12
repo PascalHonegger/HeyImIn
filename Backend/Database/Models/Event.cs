@@ -64,7 +64,9 @@ namespace HeyImIn.Database.Models
 		public int SummaryTimeWindowInHours { get; set; }
 
 		public virtual ICollection<Appointment> Appointments { get; set; }
+
 		public virtual ICollection<EventParticipation> EventParticipations { get; set; }
+
 		public virtual ICollection<EventInvitation> EventInvitations { get; set; }
 	}
 }

@@ -8,27 +8,6 @@ namespace HeyImIn.WebApplication.Services.Impl
 {
 	public class DeleteService : IDeleteService
 	{
-		private static EventNotificationInformation ExtractNotificationInformation(Event @event)
-		{
-			return new EventNotificationInformation(@event.Id, @event.Title, @event.EventParticipations
-				.Select(p => ExtractNotificationInformation(p.Participant))
-				.ToList());
-		}
-
-		private static UserNotificationInformation ExtractNotificationInformation(User user)
-		{
-			return new UserNotificationInformation(user.Id, user.FullName, user.Email);
-		}
-
-		private static AppointmentParticipationNotificationInformation ExtractNotificationInformation(AppointmentParticipation participation)
-		{
-			return new AppointmentParticipationNotificationInformation(
-				ExtractNotificationInformation(participation.Participant),
-				participation.AppointmentParticipationAnswer,
-				participation.SentSummary,
-				participation.SentReminder);
-		}
-
 		public List<EventNotificationInformation> DeleteUserLocally(IDatabaseContext context, User user)
 		{
 			// Backup data relevant for sending notifications
@@ -93,6 +72,27 @@ namespace HeyImIn.WebApplication.Services.Impl
 			context.Appointments.Remove(appointment);
 
 			return notificationInformation;
+		}
+
+		private static EventNotificationInformation ExtractNotificationInformation(Event @event)
+		{
+			return new EventNotificationInformation(@event.Id, @event.Title, @event.EventParticipations
+				.Select(p => ExtractNotificationInformation(p.Participant))
+				.ToList());
+		}
+
+		private static UserNotificationInformation ExtractNotificationInformation(User user)
+		{
+			return new UserNotificationInformation(user.Id, user.FullName, user.Email);
+		}
+
+		private static AppointmentParticipationNotificationInformation ExtractNotificationInformation(AppointmentParticipation participation)
+		{
+			return new AppointmentParticipationNotificationInformation(
+				ExtractNotificationInformation(participation.Participant),
+				participation.AppointmentParticipationAnswer,
+				participation.SentSummary,
+				participation.SentReminder);
 		}
 	}
 }

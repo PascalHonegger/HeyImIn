@@ -13,14 +13,14 @@ namespace HeyImIn.Authentication.Tests
 {
 	public class SessionServiceTests : TestBase
 	{
-		private static readonly HeyImInConfiguration _configuration = new HeyImInConfiguration();
-
 		private static (GetDatabaseContext, SessionService) SetupSessionService()
 		{
 			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext();
 			var sessionService = new SessionService(_configuration, getContext, DummyLogger<SessionService>());
 			return (getContext, sessionService);
 		}
+
+		private static readonly HeyImInConfiguration _configuration = new HeyImInConfiguration();
 
 		#region CreateSession
 

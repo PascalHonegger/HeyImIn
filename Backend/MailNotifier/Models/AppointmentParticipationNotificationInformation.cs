@@ -13,8 +13,11 @@ namespace HeyImIn.MailNotifier.Models
 		}
 
 		public UserNotificationInformation Participant { get; }
+
 		public AppointmentParticipationAnswer? Answer { get; }
+
 		public bool SentSummary { get; }
+
 		public bool SentReminder { get; }
 	}
 }

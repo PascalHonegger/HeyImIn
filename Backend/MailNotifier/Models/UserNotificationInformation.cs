@@ -10,7 +10,9 @@
 		}
 
 		public int Id { get; }
+
 		public string FullName { get; }
+
 		public string Email { get; }
 	}
 }
