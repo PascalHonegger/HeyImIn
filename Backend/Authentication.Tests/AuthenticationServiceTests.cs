@@ -3,13 +3,14 @@ using HeyImIn.Authentication.Impl;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
 using HeyImIn.Database.Tests;
+using HeyImIn.Shared.Tests;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Moq;
 using Xunit;
 
 namespace HeyImIn.Authentication.Tests
 {
-	public class AuthenticationServiceTests
+	public class AuthenticationServiceTests : TestBase
 	{
 		private const string PasswordHash = "PasswordHash";
 		private const string Password = "password";
@@ -42,7 +43,7 @@ namespace HeyImIn.Authentication.Tests
 			passwordServiceMock.Setup(p => p.VerifyPassword(Password, PasswordHash)).Returns(true);
 			passwordServiceMock.Setup(p => p.HashPassword(Password)).Returns(PasswordHash);
 
-			var authenticationService = new AuthenticationService(passwordServiceMock.Object, getContext);
+			var authenticationService = new AuthenticationService(passwordServiceMock.Object, getContext, DummyLogger<AuthenticationService>());
 			(bool isAuthenticated, _) = await authenticationService.AuthenticateAsync(email, password);
 
 			// Assert

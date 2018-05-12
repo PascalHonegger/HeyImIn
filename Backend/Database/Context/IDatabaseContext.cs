@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using HeyImIn.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.Extensions.Logging;
 
 namespace HeyImIn.Database.Context
 {
@@ -19,7 +20,7 @@ namespace HeyImIn.Database.Context
 
 		EntityEntry<TEntity> Entry<TEntity>(TEntity entity) where TEntity : class;
 
-		void Migrate();
+		void Migrate(ILoggerFactory loggerFactory);
 
 		// Main tables
 		DbSet<User> Users { get; }

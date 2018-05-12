@@ -1,7 +1,6 @@
-﻿using System;
-using log4net;
+﻿using Microsoft.Extensions.Logging;
 
-namespace HeyImIn.WebApplication.Helpers
+namespace HeyImIn.Shared
 {
 	public static class LogHelpers
 	{
@@ -9,15 +8,15 @@ namespace HeyImIn.WebApplication.Helpers
 		///     Returns the unique audit log to be used for important messages
 		/// </summary>
 		/// <returns></returns>
-		public static ILog GetAuditLog(Type type)
+		public static ILogger CreateAuditLogger(this ILoggerFactory loggerFactory)
 		{
-			return LogManager.GetLogger(type); // TODO
+			return loggerFactory.CreateLogger(AuditLoggerName);
 		}
 
 		// Have to be in sync with log4net.config
 		public const string UserIdLogKey = "UserId";
 		public const string SessionTokenLogKey = "SessionToken";
 		public const string LogFileDirectoryKey = "LogFileDirectory";
-		// TODO private const string AuditLoggerName = "AuditLogger";
+		public const string AuditLoggerName = "AuditLogger";
 	}
 }

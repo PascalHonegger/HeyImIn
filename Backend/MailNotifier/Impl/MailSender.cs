@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
-using System.Reflection;
 using System.Threading.Tasks;
-using log4net;
+using Microsoft.Extensions.Logging;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 
@@ -10,9 +9,10 @@ namespace HeyImIn.MailNotifier.Impl
 {
 	public class MailSender : IMailSender
 	{
-		public MailSender(ISendGridClient sendGridClient)
+		public MailSender(ISendGridClient sendGridClient, ILogger<MailSender> logger)
 		{
 			_sendGridClient = sendGridClient;
+			_logger = logger;
 		}
 
 		public Task SendMailAsync(string recipientEmail, string subject, string bodyText)
@@ -41,11 +41,11 @@ namespace HeyImIn.MailNotifier.Impl
 			if (!new HttpResponseMessage(sendGridResponse.StatusCode).IsSuccessStatusCode)
 			{
 				string responseBody = await sendGridResponse.Body.ReadAsStringAsync();
-				_log.ErrorFormat("{0}(subject={1}): Failed to send mail to recipients ({2}), statusCode={3}, errorBody={4}", nameof(SendMailAsync), subject, string.Join(";", recipientEmails), sendGridResponse.StatusCode, responseBody);
+				_logger.LogError("{0}(subject={1}): Failed to send mail to recipients ({2}), statusCode={3}, errorBody={4}", nameof(SendMailAsync), subject, string.Join(";", recipientEmails), sendGridResponse.StatusCode, responseBody);
 			}
 		}
 
 		private readonly ISendGridClient _sendGridClient;
-		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+		private readonly ILogger<MailSender> _logger;
 	}
 }

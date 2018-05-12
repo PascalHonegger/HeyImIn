@@ -1,22 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using HeyImIn.Authentication;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
 using HeyImIn.MailNotifier;
 using HeyImIn.MailNotifier.Models;
+using HeyImIn.Shared;
 using HeyImIn.WebApplication.FrontendModels.ParameterTypes;
 using HeyImIn.WebApplication.FrontendModels.ResponseTypes;
 using HeyImIn.WebApplication.Helpers;
 using HeyImIn.WebApplication.Services;
 using HeyImIn.WebApplication.WebApiComponents;
-using log4net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace HeyImIn.WebApplication.Controllers
 {
@@ -24,13 +24,15 @@ namespace HeyImIn.WebApplication.Controllers
 	[Route("api/User")]
 	public class UserController : ControllerBase
 	{
-		public UserController(IPasswordService passwordService, ISessionService sessionService, INotificationService notificationService, IDeleteService deleteService, GetDatabaseContext getDatabaseContext)
+		public UserController(IPasswordService passwordService, ISessionService sessionService, INotificationService notificationService, IDeleteService deleteService, GetDatabaseContext getDatabaseContext, ILogger<UserController> logger, ILoggerFactory loggerFactory)
 		{
 			_passwordService = passwordService;
 			_sessionService = sessionService;
 			_notificationService = notificationService;
 			_deleteService = deleteService;
 			_getDatabaseContext = getDatabaseContext;
+			_logger = logger;
+			_auditLogger = loggerFactory.CreateAuditLogger();
 		}
 
 		/// <summary>
@@ -62,7 +64,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				await context.SaveChangesAsync();
 
-				_log.InfoFormat("{0}(): Updated user data", nameof(SetNewUserData));
+				_logger.LogInformation("{0}(): Updated user data", nameof(SetNewUserData));
 
 				return Ok();
 			}
@@ -93,7 +95,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				await context.SaveChangesAsync();
 
-				_log.InfoFormat("{0}(): User changed his password", nameof(SetNewPassword));
+				_logger.LogInformation("{0}(): User changed his password", nameof(SetNewPassword));
 
 				return Ok();
 			}
@@ -122,7 +124,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				await context.SaveChangesAsync();
 
-				_auditLog.InfoFormat("{0}(): Deleted user {1} ({2}) and all of his events", nameof(DeleteAccount), currentUser.Id, currentUser.FullName);
+				_auditLogger.LogInformation("{0}(): Deleted user {1} ({2}) and all of his events", nameof(DeleteAccount), currentUser.Id, currentUser.FullName);
 
 				foreach (EventNotificationInformation notificationInformation in notificationInformations)
 				{
@@ -167,7 +169,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				await context.SaveChangesAsync();
 
-				_auditLog.InfoFormat("{0}(): Registered user {1} ({2})", nameof(Register), newUser.Id, newUser.FullName);
+				_auditLogger.LogInformation("{0}(): Registered user {1} ({2})", nameof(Register), newUser.Id, newUser.FullName);
 
 				Guid createdSessionToken = await _sessionService.CreateSessionAsync(newUser.Id, true);
 
@@ -181,7 +183,7 @@ namespace HeyImIn.WebApplication.Controllers
 		private readonly IDeleteService _deleteService;
 		private readonly GetDatabaseContext _getDatabaseContext;
 
-		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
-		private static readonly ILog _auditLog = LogHelpers.GetAuditLog(MethodBase.GetCurrentMethod().DeclaringType);
+		private readonly ILogger<UserController> _logger;
+		private readonly ILogger _auditLogger;
 	}
 }

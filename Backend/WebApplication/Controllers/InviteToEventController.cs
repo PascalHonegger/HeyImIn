@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
@@ -10,9 +9,9 @@ using HeyImIn.Shared;
 using HeyImIn.WebApplication.FrontendModels.ParameterTypes;
 using HeyImIn.WebApplication.Helpers;
 using HeyImIn.WebApplication.WebApiComponents;
-using log4net;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace HeyImIn.WebApplication.Controllers
 {
@@ -21,11 +20,12 @@ namespace HeyImIn.WebApplication.Controllers
 	[Route("api/InviteToEvent")]
 	public class InviteToEventController : ControllerBase
 	{
-		public InviteToEventController(INotificationService notificationService, HeyImInConfiguration configuration, GetDatabaseContext getDatabaseContext)
+		public InviteToEventController(INotificationService notificationService, HeyImInConfiguration configuration, GetDatabaseContext getDatabaseContext, ILogger<InviteToEventController> logger)
 		{
 			_notificationService = notificationService;
 			_inviteTimeout = configuration.Timeouts.InviteTimeout;
 			_getDatabaseContext = getDatabaseContext;
+			_logger = logger;
 		}
 
 		/// <summary>
@@ -51,7 +51,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				if (@event.Organizer != currentUser)
 				{
-					_log.InfoFormat("{0}(): Tried to add appointments to the event {1}, which he's not organizing", nameof(InviteParticipants), @event.Id);
+					_logger.LogInformation("{0}(): Tried to add appointments to the event {1}, which he's not organizing", nameof(InviteParticipants), @event.Id);
 
 					return BadRequest(RequestStringMessages.OrganizorRequired);
 				}
@@ -162,12 +162,11 @@ namespace HeyImIn.WebApplication.Controllers
 
 		private readonly INotificationService _notificationService;
 		private readonly GetDatabaseContext _getDatabaseContext;
+		private readonly ILogger<InviteToEventController> _logger;
 
 		/// <summary>
 		///     A invite for a private event gets invalidated after this time period passed
 		/// </summary>
 		private readonly TimeSpan _inviteTimeout;
-
-		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 	}
 }

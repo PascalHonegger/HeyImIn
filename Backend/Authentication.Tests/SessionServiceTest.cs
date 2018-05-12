@@ -5,19 +5,20 @@ using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
 using HeyImIn.Database.Tests;
 using HeyImIn.Shared;
+using HeyImIn.Shared.Tests;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Xunit;
 
 namespace HeyImIn.Authentication.Tests
 {
-	public class SessionServiceTests
+	public class SessionServiceTests : TestBase
 	{
 		private static readonly HeyImInConfiguration _configuration = new HeyImInConfiguration();
 
 		private static (GetDatabaseContext, SessionService) SetupSessionService()
 		{
 			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext();
-			var sessionService = new SessionService(_configuration, getContext);
+			var sessionService = new SessionService(_configuration, getContext, DummyLogger<SessionService>());
 			return (getContext, sessionService);
 		}
 

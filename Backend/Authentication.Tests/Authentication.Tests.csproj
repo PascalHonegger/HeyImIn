@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Authentication\Authentication.csproj" />
     <ProjectReference Include="..\Database.Tests\Database.Tests.csproj" />
+    <ProjectReference Include="..\Shared.Tests\Shared.Tests.csproj" />
   </ItemGroup>
 
 </Project>

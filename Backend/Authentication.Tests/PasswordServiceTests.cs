@@ -1,10 +1,11 @@
 using HeyImIn.Authentication.Impl;
 using HeyImIn.Shared;
+using HeyImIn.Shared.Tests;
 using Xunit;
 
 namespace HeyImIn.Authentication.Tests
 {
-	public class PasswordServiceTests
+	public class PasswordServiceTests : TestBase
 	{
 		private const string InputPassword = "Password to be hashed";
 

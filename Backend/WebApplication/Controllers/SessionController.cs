@@ -1,15 +1,15 @@
 ﻿using System;
-using System.Reflection;
 using System.Threading.Tasks;
 using HeyImIn.Authentication;
 using HeyImIn.Database.Models;
+using HeyImIn.Shared;
 using HeyImIn.WebApplication.FrontendModels.ParameterTypes;
 using HeyImIn.WebApplication.FrontendModels.ResponseTypes;
 using HeyImIn.WebApplication.Helpers;
 using HeyImIn.WebApplication.WebApiComponents;
-using log4net;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace HeyImIn.WebApplication.Controllers
 {
@@ -17,10 +17,11 @@ namespace HeyImIn.WebApplication.Controllers
 	[Route("api/Session")]
 	public class SessionController : ControllerBase
 	{
-		public SessionController(IAuthenticationService authenticationService, ISessionService sessionService)
+		public SessionController(IAuthenticationService authenticationService, ISessionService sessionService, ILoggerFactory loggerFactory)
 		{
 			_authenticationService = authenticationService;
 			_sessionService = sessionService;
+			_auditLogger = loggerFactory.CreateAuditLogger();
 		}
 
 		/// <summary>
@@ -41,7 +42,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 			Guid sessionToken = await _sessionService.CreateSessionAsync(foundUser.Id, true);
 
-			_auditLog.InfoFormat("{0}(userId={1}): User logged in", nameof(StartSession), foundUser.Id);
+			_auditLogger.LogInformation("{0}(userId={1}): User logged in", nameof(StartSession), foundUser.Id);
 
 			return Ok(new FrontendSession(sessionToken, foundUser.Id, foundUser.FullName, foundUser.Email));
 		}
@@ -78,13 +79,13 @@ namespace HeyImIn.WebApplication.Controllers
 
 			await _sessionService.InvalidateSessionAsync(token);
 
-			_auditLog.InfoFormat("{0}(): User logged out", nameof(StopActiveSession));
+			_auditLogger.LogInformation("{0}(): User logged out", nameof(StopActiveSession));
 
 			return Ok();
 		}
 
 		private readonly IAuthenticationService _authenticationService;
 		private readonly ISessionService _sessionService;
-		private static readonly ILog _auditLog = LogHelpers.GetAuditLog(MethodBase.GetCurrentMethod().DeclaringType);
+		private readonly ILogger _auditLogger;
 	}
 }

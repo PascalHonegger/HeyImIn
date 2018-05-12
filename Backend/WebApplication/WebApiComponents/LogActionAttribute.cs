@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Reflection;
+using HeyImIn.Shared;
 using HeyImIn.WebApplication.Helpers;
 using log4net;
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -14,9 +13,6 @@ namespace HeyImIn.WebApplication.WebApiComponents
 	{
 		public override void OnActionExecuting(ActionExecutingContext actionContext)
 		{
-			// Save a stopwatch to measure the time it took to execute the request
-			actionContext.HttpContext.Items[StopwatchName] = Stopwatch.StartNew();
-
 			int? userId = actionContext.HttpContext.TryGetUserId();
 			if (userId.HasValue)
 			{
@@ -31,26 +27,12 @@ namespace HeyImIn.WebApplication.WebApiComponents
 				string semiUniqueId = sessionToken.Value.ToString("D").Substring(0, 8);
 				LogicalThreadContext.Properties[LogHelpers.SessionTokenLogKey] = semiUniqueId;
 			}
-
-			base.OnActionExecuting(actionContext);
 		}
 
 		public override void OnActionExecuted(ActionExecutedContext actionExecutedContext)
 		{
-			base.OnActionExecuted(actionExecutedContext);
-			var stopwatch = actionExecutedContext.HttpContext.Items[StopwatchName] as Stopwatch;
-
-			string duration = stopwatch?.Elapsed.ToString("g") ?? "Unknown";
-			string method = actionExecutedContext.HttpContext.Request.Method;
-			string path = actionExecutedContext.HttpContext.Request.Path;
-
-			_log.DebugFormat("{0}(): Finished {1} {2} in {3}", nameof(OnActionExecuted), method, path, duration);
-
 			LogicalThreadContext.Properties.Remove(LogHelpers.UserIdLogKey);
 			LogicalThreadContext.Properties.Remove(LogHelpers.SessionTokenLogKey);
 		}
-
-		private const string StopwatchName = "RequestDurationStopwatch";
-		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 	}
 }

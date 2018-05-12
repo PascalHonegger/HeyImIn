@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
+using System.Threading.Tasks;
 using HeyImIn.Authentication;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Context.Impl;
 using HeyImIn.MailNotifier;
 using HeyImIn.Shared;
 using HeyImIn.WebApplication.Controllers;
-using HeyImIn.WebApplication.Helpers;
 using HeyImIn.WebApplication.Services;
 using HeyImIn.WebApplication.Services.Impl;
 using HeyImIn.WebApplication.WebApiComponents;
@@ -91,23 +90,26 @@ namespace HeyImIn.WebApplication
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IApplicationLifetime lifetime, IHostingEnvironment env, ILoggerFactory loggerFactory, GetDatabaseContext contextFunc)
 		{
-			ConfigureLog4Net(env);
-			loggerFactory.AddLog4Net();
-
-			using (IDatabaseContext context = contextFunc())
-			{
-				context.Migrate();
-			}
-
-			lifetime.ApplicationStarted.Register(LogStarted);
-			lifetime.ApplicationStopping.Register(LogStopping);
-			lifetime.ApplicationStopped.Register(LogStopped);
-
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();
 				app.UseCors(p => p.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 			}
+			else
+			{
+				app.UseExceptionHandler(new ExceptionHandlerOptions { ExceptionHandler = c => Task.CompletedTask });
+			}
+
+			ConfigureLog4Net(env, loggerFactory);
+
+			using (IDatabaseContext context = contextFunc())
+			{
+				context.Migrate(loggerFactory);
+			}
+
+			lifetime.ApplicationStarted.Register(LogStarted);
+			lifetime.ApplicationStopping.Register(LogStopping);
+			lifetime.ApplicationStopped.Register(LogStopped);
 
 			// Redirect all non-api-requests to frontend routing (angular)
 			app.UseResponseCompression();
@@ -121,16 +123,13 @@ namespace HeyImIn.WebApplication
 			});
 		}
 
-		private static void ConfigureLog4Net(IHostingEnvironment env)
+		private static void ConfigureLog4Net(IHostingEnvironment env, ILoggerFactory loggerFactory)
 		{
 			// The mapping to the log4net.conf file is done through the AssemblyInfo.cs
 
-			string logFileDirectory =
-#if DEBUG
-				Path.Combine(env.ContentRootPath, "App_Data");
-#else
-				"D:\\home\\LogFiles\\HeyImIn";
-#endif
+			string logFileDirectory = env.IsDevelopment()
+				? Path.Combine(env.ContentRootPath, "App_Data")
+				: "D:\\home\\LogFiles\\HeyImIn";
 
 			if (!Directory.Exists(logFileDirectory))
 			{
@@ -143,45 +142,47 @@ namespace HeyImIn.WebApplication
 			// Hide (null) from logs => https://stackoverflow.com/a/22344774
 			SystemInfo.NullText = string.Empty;
 
-			_log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+			loggerFactory.AddLog4Net();
+
+			_logger = loggerFactory.CreateLogger<Startup>();
 		}
 
 		private static void LogStarted()
 		{
 			Version currentVersion = typeof(Startup).Assembly.GetName().Version;
-			_log.InfoFormat("{0}(): {1}", nameof(LogStarted), StartEndPrefix);
-			_log.InfoFormat("{0}(): {1} Started at version {2}", nameof(LogStarted), StartEndPrefix, currentVersion);
-			_log.InfoFormat("{0}(): {1}", nameof(LogStarted), StartEndPrefix);
+			_logger.LogInformation("{0}(): {1}", nameof(LogStarted), StartEndPrefix);
+			_logger.LogInformation("{0}(): {1} Started at version {2}", nameof(LogStarted), StartEndPrefix, currentVersion);
+			_logger.LogInformation("{0}(): {1}", nameof(LogStarted), StartEndPrefix);
 		}
 
 		private static void LogStopping()
 		{
-			if (_log == null)
+			if (_logger == null)
 			{
 				return;
 			}
 
-			_log.InfoFormat("{0}(): {1}", nameof(LogStopping), StartEndPrefix);
-			_log.InfoFormat("{0}(): {1} Stopping...", nameof(LogStopping), StartEndPrefix);
-			_log.InfoFormat("{0}(): {1}", nameof(LogStopping), StartEndPrefix);
+			_logger.LogInformation("{0}(): {1}", nameof(LogStopping), StartEndPrefix);
+			_logger.LogInformation("{0}(): {1} Stopping...", nameof(LogStopping), StartEndPrefix);
+			_logger.LogInformation("{0}(): {1}", nameof(LogStopping), StartEndPrefix);
 		}
 
 		private static void LogStopped()
 		{
-			if (_log == null)
+			if (_logger == null)
 			{
-				Trace.TraceError("No _log configured -> Startup probably failed");
+				Trace.TraceError("No _logger configured -> Startup probably failed");
 				return;
 			}
 
-			_log.InfoFormat("{0}(): {1}", nameof(LogStopped), StartEndPrefix);
-			_log.InfoFormat("{0}(): {1} Stopped", nameof(LogStopped), StartEndPrefix);
-			_log.InfoFormat("{0}(): {1}", nameof(LogStopped), StartEndPrefix);
+			_logger.LogInformation("{0}(): {1}", nameof(LogStopped), StartEndPrefix);
+			_logger.LogInformation("{0}(): {1} Stopped", nameof(LogStopped), StartEndPrefix);
+			_logger.LogInformation("{0}(): {1}", nameof(LogStopped), StartEndPrefix);
 		}
 
 		private readonly IConfiguration _configuration;
 
 		private const string StartEndPrefix = ">>>>>>>>";
-		private static ILog _log;
+		private static ILogger<Startup> _logger;
 	}
 }

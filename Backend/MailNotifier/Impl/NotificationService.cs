@@ -1,22 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using HeyImIn.Authentication;
 using HeyImIn.Database.Models;
 using HeyImIn.MailNotifier.Models;
 using HeyImIn.Shared;
-using log4net;
+using Microsoft.Extensions.Logging;
 
 namespace HeyImIn.MailNotifier.Impl
 {
 	public class NotificationService : INotificationService
 	{
-		public NotificationService(IMailSender mailSender, ISessionService sessionService, HeyImInConfiguration configuration)
+		public NotificationService(IMailSender mailSender, ISessionService sessionService, HeyImInConfiguration configuration, ILogger<NotificationService> logger)
 		{
 			_mailSender = mailSender;
 			_sessionService = sessionService;
+			_logger = logger;
+
 			_baseWebUrl = configuration.FrontendBaseUrl;
 
 			try
@@ -25,7 +26,7 @@ namespace HeyImIn.MailNotifier.Impl
 			}
 			catch (Exception e)
 			{
-				_log.ErrorFormat("{0}(): Configured time zone '{1}' was not valid, error={2}", nameof(NotificationService), configuration.MailTimeZoneName, e);
+				_logger.LogError("{0}(): Configured time zone '{1}' was not valid, error={2}", nameof(NotificationService), configuration.MailTimeZoneName, e);
 
 				_mailTimeZone = TimeZoneInfo.Utc;
 			}
@@ -46,7 +47,7 @@ Sie können diesen Code unter {_baseWebUrl}ResetPassword eingeben und Ihr Passwo
 
 			await _mailSender.SendMailAsync(recipient.Email, PasswordResetSubject, message);
 
-			_log.InfoFormat("{0}(userId={1}, userEmail={2}): Sent password reset token", nameof(SendPasswordResetTokenAsync), recipient.Id, recipient.Email);
+			_logger.LogInformation("{0}(userId={1}, userEmail={2}): Sent password reset token", nameof(SendPasswordResetTokenAsync), recipient.Id, recipient.Email);
 		}
 
 		public async Task SendInvitationLinkAsync(List<(User user, EventInvitation invite)> userInvitations, List<(string email, EventInvitation invite)> newInvitations)
@@ -79,7 +80,7 @@ Sie können diese Einladung unter {_baseWebUrl}AcceptInvitation/{invite.Token} a
 				await _mailSender.SendMailAsync(email, EventInviteSubject, generalizedMessage);
 			}
 
-			_log.InfoFormat("{0}(): Sent {1} invites", nameof(SendInvitationLinkAsync), userInvitations.Count + newInvitations.Count);
+			_logger.LogInformation("{0}(): Sent {1} invites", nameof(SendInvitationLinkAsync), userInvitations.Count + newInvitations.Count);
 		}
 
 		public async Task NotifyOrganizerUpdatedUserInfoAsync(Event @event, User affectedUser, string change)
@@ -99,7 +100,7 @@ Sie können den betroffenen Event unter {_baseWebUrl}ViewEvent/{@event.Id}{authT
 
 			await _mailSender.SendMailAsync(affectedUser.Email, OrganizerUpdatedUserSubject, message);
 
-			_log.InfoFormat("{0}(): Sent notification as a organizer of event {1} changed something about the user {2}", nameof(NotifyOrganizerUpdatedUserInfoAsync), @event.Id, affectedUser.Id);
+			_logger.LogInformation("{0}(): Sent notification as a organizer of event {1} changed something about the user {2}", nameof(NotifyOrganizerUpdatedUserInfoAsync), @event.Id, affectedUser.Id);
 		}
 
 		public async Task SendAndUpdateRemindersAsync(Appointment appointment)
@@ -134,7 +135,7 @@ Sie können den betroffenen Event unter {_baseWebUrl}ViewEvent/{@event.Id}{authT
 				appointmentParticipation.SentReminder = true;
 			}
 
-			_log.InfoFormat("{0}(): Sent {1} reminders for appointment {2}", nameof(SendAndUpdateRemindersAsync), participationsAwaitingReminder.Count, appointment.Id);
+			_logger.LogInformation("{0}(): Sent {1} reminders for appointment {2}", nameof(SendAndUpdateRemindersAsync), participationsAwaitingReminder.Count, appointment.Id);
 
 			async Task<string> ComposeMessageAsync(User participant, string state)
 			{
@@ -179,7 +180,7 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{appointment.
 				participation.SentSummary = true;
 			}
 
-			_log.InfoFormat("{0}(): Sent {1} summaries for appointment {2}", nameof(SendAndUpdateSummariesAsync), participationsAwaitingSummary.Count, appointment.Id);
+			_logger.LogInformation("{0}(): Sent {1} summaries for appointment {2}", nameof(SendAndUpdateSummariesAsync), participationsAwaitingSummary.Count, appointment.Id);
 		}
 
 		public async Task NotifyEventUpdatedAsync(Event @event)
@@ -202,7 +203,7 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{@event.Id}{a
 				await _mailSender.SendMailAsync(participation.Participant.Email, updatedSubject, message);
 			}
 
-			_log.InfoFormat("{0}(): Sent {1} notifications about a change of the event {2}", nameof(NotifyEventUpdatedAsync), @event.EventParticipations.Count, @event.Id);
+			_logger.LogInformation("{0}(): Sent {1} notifications about a change of the event {2}", nameof(NotifyEventUpdatedAsync), @event.EventParticipations.Count, @event.Id);
 		}
 
 		public async Task SendLastMinuteChangeIfRequiredAsync(Appointment appointment)
@@ -238,7 +239,7 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{appointment.
 				await _mailSender.SendMailAsync(participation.Participant.Email, lastMinuteChangeSubject, message);
 			}
 
-			_log.InfoFormat("{0}(): Sent {1} updated summaries for appointment {2}", nameof(SendLastMinuteChangeIfRequiredAsync), participationsAlreadyGotSummary.Count, appointment.Id);
+			_logger.LogInformation("{0}(): Sent {1} updated summaries for appointment {2}", nameof(SendLastMinuteChangeIfRequiredAsync), participationsAlreadyGotSummary.Count, appointment.Id);
 		}
 
 		#endregion
@@ -269,7 +270,7 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{@event.Id}{a
 				await _mailSender.SendMailAsync(participation.Participant.Email, summarySubject, message);
 			}
 
-			_log.InfoFormat("{0}(): Sent {1} notifications about cancelation of appointment {2}", nameof(NotifyAppointmentExplicitlyCanceledAsync), acceptedParticipations.Count, appointment.Id);
+			_logger.LogInformation("{0}(): Sent {1} notifications about cancelation of appointment {2}", nameof(NotifyAppointmentExplicitlyCanceledAsync), acceptedParticipations.Count, appointment.Id);
 		}
 
 		public async Task NotifyEventDeletedAsync(EventNotificationInformation @event)
@@ -288,7 +289,7 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{@event.Id}{a
 				await _mailSender.SendMailAsync(participant.Email, deletedSubject, message);
 			}
 
-			_log.InfoFormat("{0}(): Sent {1} notifications about the deletion of event {2} with the title '{3}'", nameof(NotifyEventDeletedAsync), @event.Participations.Count, @event.Id, @event.Title);
+			_logger.LogInformation("{0}(): Sent {1} notifications about the deletion of event {2} with the title '{3}'", nameof(NotifyEventDeletedAsync), @event.Participations.Count, @event.Id, @event.Title);
 		}
 
 		#endregion
@@ -368,6 +369,6 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{@event.Id}{a
 		private readonly ISessionService _sessionService;
 		private readonly TimeZoneInfo _mailTimeZone;
 
-		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+		private readonly ILogger<NotificationService> _logger;
 	}
 }
