@@ -2,6 +2,7 @@ using HeyImIn.Authentication.Impl;
 using HeyImIn.Shared;
 using HeyImIn.Shared.Tests;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace HeyImIn.Authentication.Tests
 {
@@ -57,5 +58,9 @@ namespace HeyImIn.Authentication.Tests
 		}
 
 		private const string InputPassword = "Password to be hashed";
+
+		public PasswordServiceTests(ITestOutputHelper output) : base(output)
+		{
+		}
 	}
 }

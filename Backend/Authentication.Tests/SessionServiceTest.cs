@@ -8,12 +8,13 @@ using HeyImIn.Shared;
 using HeyImIn.Shared.Tests;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Xunit;
+using Xunit.Abstractions;
 
 namespace HeyImIn.Authentication.Tests
 {
 	public class SessionServiceTests : TestBase
 	{
-		private static (GetDatabaseContext, SessionService) SetupSessionService()
+		private (GetDatabaseContext, SessionService) SetupSessionService()
 		{
 			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext();
 			var sessionService = new SessionService(_configuration, getContext, DummyLogger<SessionService>());
@@ -288,5 +289,9 @@ namespace HeyImIn.Authentication.Tests
 		}
 
 		#endregion
+
+		public SessionServiceTests(ITestOutputHelper output) : base(output)
+		{
+		}
 	}
 }
