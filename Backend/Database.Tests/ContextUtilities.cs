@@ -25,10 +25,25 @@ namespace HeyImIn.Database.Tests
 			return () => new HeyImInDatabaseContext(builder.Options);
 		}
 
+		/// <summary>
+		/// The main dummy user who is used within tests
+		/// Usually the user which perfoms an action
+		/// E.g. join an event
+		/// </summary>
 		public static User JohnDoe => new User
 		{
 			FullName = "John Doe",
 			Email = "john.doe@email.com"
+		};
+
+		/// <summary>
+		/// A second dummy user used to accommodate <see cref="JohnDoe"/> in his goal
+		/// E.g. organizes an event someone else joins
+		/// </summary>
+		public static User RichardRoe => new User
+		{
+			FullName = "Richard Roe",
+			Email = "richard.roe@email.com"
 		};
 	}
 }

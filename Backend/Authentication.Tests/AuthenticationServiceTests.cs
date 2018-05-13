@@ -46,7 +46,7 @@ namespace HeyImIn.Authentication.Tests
 			// Assert
 			passwordServiceMock.Verify(p => p.VerifyPassword(password, PasswordHash), Times.AtMostOnce);
 
-			Assert.Equal(isAuthenticated, shouldWork);
+			Assert.Equal(shouldWork, isAuthenticated);
 		}
 
 		private const string PasswordHash = "PasswordHash";

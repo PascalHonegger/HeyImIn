@@ -6,16 +6,16 @@ namespace HeyImIn.Shared.Tests
 {
 	public abstract class TestBase
 	{
-		protected ITestOutputHelper Output { get; }
+		private readonly ITestOutputHelper _output;
 
-		public TestBase(ITestOutputHelper output)
+		protected TestBase(ITestOutputHelper output)
 		{
-			Output = output;
+			_output = output;
 		}
 
 		protected ILogger<T> DummyLogger<T>()
 		{
-			return new XUnitLogger<T>(Output);
+			return new XUnitLogger<T>(_output);
 		}
 
 		protected ILoggerFactory DummyLoggerFactory()
