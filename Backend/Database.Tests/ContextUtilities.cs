@@ -26,24 +26,43 @@ namespace HeyImIn.Database.Tests
 		}
 
 		/// <summary>
-		/// The main dummy user who is used within tests
-		/// Usually the user which perfoms an action
-		/// E.g. join an event
+		///     The main dummy user who is used within tests
+		///     Usually the user which perfoms an action
+		///     E.g. join an event
 		/// </summary>
-		public static User JohnDoe => new User
+		public static User CreateJohnDoe()
 		{
-			FullName = "John Doe",
-			Email = "john.doe@email.com"
-		};
+			return new User
+			{
+				FullName = "John Doe",
+				Email = "john.doe@email.com"
+			};
+		}
 
 		/// <summary>
-		/// A second dummy user used to accommodate <see cref="JohnDoe"/> in his goal
-		/// E.g. organizes an event someone else joins
+		///     A second dummy user used to accommodate <see cref="CreateJohnDoe" /> in his goal
+		///     E.g. organizes an event someone else joins
 		/// </summary>
-		public static User RichardRoe => new User
+		public static User CreateRichardRoe()
 		{
-			FullName = "Richard Roe",
-			Email = "richard.roe@email.com"
-		};
+			return new User
+			{
+				FullName = "Richard Roe",
+				Email = "richard.roe@email.com"
+			};
+		}
+
+		/// <summary>
+		///     Creates a completely random user
+		/// </summary>
+		public static User CreateRandomUser()
+		{
+			string randomName = Guid.NewGuid().ToString("N").Substring(0, 10);
+			return new User
+			{
+				FullName = randomName,
+				Email = $"{randomName}@email.com"
+			};
+		}
 	}
 }
