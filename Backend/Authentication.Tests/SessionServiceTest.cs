@@ -34,7 +34,7 @@ namespace HeyImIn.Authentication.Tests
 			// Arrange
 			using (IDatabaseContext context = getContext())
 			{
-				EntityEntry<User> userEntry = context.Users.Add(ContextUtilities.JohnDoe);
+				EntityEntry<User> userEntry = context.Users.Add(ContextUtilities.CreateJohnDoe());
 				await context.SaveChangesAsync();
 				johnDoeId = userEntry.Entity.Id;
 			}
@@ -62,7 +62,7 @@ namespace HeyImIn.Authentication.Tests
 			// Arrange
 			using (IDatabaseContext context = getContext())
 			{
-				EntityEntry<User> userEntry = context.Users.Add(ContextUtilities.JohnDoe);
+				EntityEntry<User> userEntry = context.Users.Add(ContextUtilities.CreateJohnDoe());
 				await context.SaveChangesAsync();
 				johnDoeId = userEntry.Entity.Id;
 			}
@@ -105,7 +105,7 @@ namespace HeyImIn.Authentication.Tests
 			// Arrange
 			using (IDatabaseContext context = getContext())
 			{
-				EntityEntry<User> userEntry = context.Users.Add(ContextUtilities.JohnDoe);
+				EntityEntry<User> userEntry = context.Users.Add(ContextUtilities.CreateJohnDoe());
 
 				var validUserSession = new Session
 				{
@@ -145,7 +145,7 @@ namespace HeyImIn.Authentication.Tests
 			// Arrange
 			using (IDatabaseContext context = getContext())
 			{
-				EntityEntry<User> userEntry = context.Users.Add(ContextUtilities.JohnDoe);
+				EntityEntry<User> userEntry = context.Users.Add(ContextUtilities.CreateJohnDoe());
 
 				invalidUserSession = new Session
 				{
@@ -180,7 +180,7 @@ namespace HeyImIn.Authentication.Tests
 			// Arrange
 			using (IDatabaseContext context = getContext())
 			{
-				EntityEntry<User> userEntry = context.Users.Add(ContextUtilities.JohnDoe);
+				EntityEntry<User> userEntry = context.Users.Add(ContextUtilities.CreateJohnDoe());
 
 				invalidUserSession = new Session
 				{
@@ -230,7 +230,7 @@ namespace HeyImIn.Authentication.Tests
 			// Arrange
 			using (IDatabaseContext context = getContext())
 			{
-				EntityEntry<User> userEntry = context.Users.Add(ContextUtilities.JohnDoe);
+				EntityEntry<User> userEntry = context.Users.Add(ContextUtilities.CreateJohnDoe());
 
 				validUserSession = new Session
 				{
@@ -264,7 +264,7 @@ namespace HeyImIn.Authentication.Tests
 			// Arrange
 			using (IDatabaseContext context = getContext())
 			{
-				EntityEntry<User> userEntry = context.Users.Add(ContextUtilities.JohnDoe);
+				EntityEntry<User> userEntry = context.Users.Add(ContextUtilities.CreateJohnDoe());
 
 				invalidUserSession = new Session
 				{

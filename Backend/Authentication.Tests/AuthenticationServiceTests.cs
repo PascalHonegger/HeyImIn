@@ -26,7 +26,7 @@ namespace HeyImIn.Authentication.Tests
 			// Arrange
 			using (IDatabaseContext context = getContext())
 			{
-				EntityEntry<User> userEntry = context.Users.Add(ContextUtilities.JohnDoe);
+				EntityEntry<User> userEntry = context.Users.Add(ContextUtilities.CreateJohnDoe());
 
 				userEntry.Entity.Email = Email;
 				userEntry.Entity.PasswordHash = PasswordHash;
