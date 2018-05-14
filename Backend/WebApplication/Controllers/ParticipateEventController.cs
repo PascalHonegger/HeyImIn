@@ -22,9 +22,10 @@ namespace HeyImIn.WebApplication.Controllers
 	[Route("api/ParticipateEvent")]
 	public class ParticipateEventController : ControllerBase
 	{
-		public ParticipateEventController(INotificationService notificationService, GetDatabaseContext getDatabaseContext, ILogger<ParticipateEventController> logger, ILoggerFactory loggerFactory)
+		public ParticipateEventController(INotificationService notificationService, HeyImInConfiguration configuration, GetDatabaseContext getDatabaseContext, ILogger<ParticipateEventController> logger, ILoggerFactory loggerFactory)
 		{
 			_notificationService = notificationService;
+			_maxShownAppointmentsPerEvent = configuration.MaxAmountOfAppointmentsPerDetailPage;
 			_getDatabaseContext = getDatabaseContext;
 			_logger = logger;
 			_auditLogger = loggerFactory.CreateAuditLogger();
@@ -99,6 +100,7 @@ namespace HeyImIn.WebApplication.Controllers
 		/// </returns>
 		[HttpGet(nameof(GetDetails))]
 		[ProducesResponseType(typeof(EventDetails), 200)]
+		[ProducesResponseType(typeof(void), 404)]
 		public async Task<IActionResult> GetDetails(int eventId)
 		{
 			using (IDatabaseContext context = _getDatabaseContext())
@@ -116,7 +118,7 @@ namespace HeyImIn.WebApplication.Controllers
 							appointments = e.Appointments
 								.Where(a => a.StartTime >= DateTime.UtcNow)
 								.OrderBy(a => a.StartTime)
-								.Take(ShownAppointmentsPerEvent)
+								.Take(_maxShownAppointmentsPerEvent)
 								.AsQueryable()
 						})
 					.FirstOrDefaultAsync(e => e.@event.Id == eventId);
@@ -333,10 +335,6 @@ namespace HeyImIn.WebApplication.Controllers
 		private readonly ILogger<ParticipateEventController> _logger;
 		private readonly ILogger _auditLogger;
 
-		/// <summary>
-		///     The maximum amount of appointments to show in the overview for each event
-		///     In the edit view all events are shown
-		/// </summary>
-		private const int ShownAppointmentsPerEvent = 5;
+		private readonly int _maxShownAppointmentsPerEvent;
 	}
 }

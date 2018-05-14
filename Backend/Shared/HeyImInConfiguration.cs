@@ -15,6 +15,8 @@ namespace HeyImIn.Shared
 
 		public int PasswordHashWorkFactor { get; set; } = 10;
 
+		public int MaxAmountOfAppointmentsPerDetailPage { get; set; } = 5;
+
 		public HeyImInTimeouts Timeouts { get; } = new HeyImInTimeouts();
 
 		public class HeyImInTimeouts
