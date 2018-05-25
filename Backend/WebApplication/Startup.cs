@@ -111,7 +111,6 @@ namespace HeyImIn.WebApplication
 			lifetime.ApplicationStopping.Register(LogStopping);
 			lifetime.ApplicationStopped.Register(LogStopped);
 
-			// Redirect all non-api-requests to frontend routing (angular)
 			app.UseResponseCompression();
 			app.UseMvc();
 
