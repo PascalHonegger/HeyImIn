@@ -2,7 +2,9 @@
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Context.Impl;
 using HeyImIn.Database.Models;
+using HeyImIn.Shared.Tests;
 using Microsoft.EntityFrameworkCore;
+using Xunit.Abstractions;
 
 namespace HeyImIn.Database.Tests
 {
@@ -11,12 +13,15 @@ namespace HeyImIn.Database.Tests
 		/// <summary>
 		///     Created an in memory database which can be accessed using the returned function
 		/// </summary>
-		public static GetDatabaseContext CreateInMemoryContext()
+		public static GetDatabaseContext CreateInMemoryContext(ITestOutputHelper output)
 		{
 			string databaseName = Guid.NewGuid().ToString();
 
 			var builder = new DbContextOptionsBuilder<HeyImInDatabaseContext>();
-			builder.UseInMemoryDatabase(databaseName);
+			builder
+				.UseInMemoryDatabase(databaseName)
+				.EnableSensitiveDataLogging()
+				.UseLoggerFactory(new XUnitLoggerFactory(output));
 
 			var heyImInDatabaseContext = new HeyImInDatabaseContext(builder.Options);
 			heyImInDatabaseContext.Database.EnsureDeleted();

@@ -21,7 +21,7 @@ namespace HeyImIn.Authentication.Tests
 		[InlineData(Email, "PASSWORD", false)] // Password casing
 		public async Task Authenticate_GivenCredentails_VerifiesPasswordAndEmail(string email, string password, bool shouldWork)
 		{
-			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext();
+			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext(_output);
 
 			// Arrange
 			using (IDatabaseContext context = getContext())

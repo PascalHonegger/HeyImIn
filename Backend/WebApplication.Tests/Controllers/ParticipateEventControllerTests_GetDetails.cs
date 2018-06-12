@@ -15,7 +15,7 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 		[Fact]
 		public async Task GetDetails_GivenNonexistentEvent_NotFoundReturned()
 		{
-			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext();
+			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext(_output);
 			int johnId;
 
 			// Arrange
@@ -40,7 +40,7 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 		[Fact]
 		public async Task GetDetails_GivenPublicEvent_DetailsReturned()
 		{
-			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext();
+			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext(_output);
 			int publicEventId;
 			int johnId;
 
@@ -70,7 +70,7 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 		[Fact]
 		public async Task GetDetails_GivenPrivateEvent_InvitationRequiredReturned()
 		{
-			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext();
+			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext(_output);
 			int privateEventId;
 			int johnId;
 
@@ -102,7 +102,7 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 		[Fact]
 		public async Task GetDetails_GivenPrivateEventAsOrganizer_DetailsReturned()
 		{
-			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext();
+			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext(_output);
 			int privateEventId;
 			int johnId;
 
@@ -133,7 +133,7 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 		[Fact]
 		public async Task GetDetails_GivenPrivateEventAsParticipator_DetailsReturned()
 		{
-			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext();
+			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext(_output);
 			int privateEventId;
 			int johnId;
 

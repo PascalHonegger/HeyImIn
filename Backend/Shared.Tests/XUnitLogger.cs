@@ -18,7 +18,7 @@ namespace HeyImIn.Shared.Tests
 
 		public bool IsEnabled(LogLevel logLevel)
 		{
-			return true;
+			return logLevel >= LogLevel.Information;
 		}
 
 		public IDisposable BeginScope<TState>(TState state)

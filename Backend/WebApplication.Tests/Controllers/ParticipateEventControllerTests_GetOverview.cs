@@ -18,7 +18,7 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 		[Fact]
 		public async Task GetOverview_GivenSomeEvents_OnlyShowsPublicEvents()
 		{
-			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext();
+			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext(_output);
 			int publicEventId1;
 			int publicEventId2;
 			int privateEventId;
@@ -64,7 +64,7 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 		[Fact]
 		public async Task GetOverview_GivenOrganizedEvents_ShowsYourEvents()
 		{
-			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext();
+			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext(_output);
 			int yourPublicEventId;
 			int yourPrivateEventId;
 			int johnId;
@@ -104,7 +104,7 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 		[Fact]
 		public async Task GetOverview_GivenParticipatingEvents_ShowsYourAndPublicEvents()
 		{
-			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext();
+			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext(_output);
 			int richardsPublicEventId;
 			int richardsPrivateEventId;
 			int richardsPublicEventParticipatingId;
@@ -162,7 +162,7 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 		[Fact]
 		public async Task GetOverview_GivenSomeEvents_EventsSortedByDateOfUpcommingAppointment()
 		{
-			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext();
+			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext(_output);
 
 			(Event eventWithoutAppointments, Event eventWithSoonerAppointment, Event eventWithLaterAppointment) yourEvents;
 			(Event eventWithoutAppointments, Event eventWithSoonerAppointment, Event eventWithLaterAppointment) publicEvents;
@@ -224,7 +224,7 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 		[Fact]
 		public async Task GetOverview_GivenEventWithAppointments_AppointmentDetailsCorrect()
 		{
-			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext();
+			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext(_output);
 
 			DateTime expectedDateTime = DateTime.UtcNow + TimeSpan.FromDays(1);
 			Event yourEvent;
@@ -283,7 +283,7 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 		[Fact]
 		public async Task GetOverview_GivenAppointmentWithParticipation_SummaryCountsCorrect()
 		{
-			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext();
+			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext(_output);
 
 			Event yourEvent;
 			int johnId;
