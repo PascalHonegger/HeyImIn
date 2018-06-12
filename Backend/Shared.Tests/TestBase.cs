@@ -6,7 +6,7 @@ namespace HeyImIn.Shared.Tests
 {
 	public abstract class TestBase
 	{
-		private readonly ITestOutputHelper _output;
+		protected readonly ITestOutputHelper _output;
 
 		protected TestBase(ITestOutputHelper output)
 		{

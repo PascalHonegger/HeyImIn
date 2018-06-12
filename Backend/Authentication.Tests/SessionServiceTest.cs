@@ -16,7 +16,7 @@ namespace HeyImIn.Authentication.Tests
 	{
 		private (GetDatabaseContext, SessionService) SetupSessionService()
 		{
-			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext();
+			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext(_output);
 			var sessionService = new SessionService(_configuration, getContext, DummyLogger<SessionService>());
 			return (getContext, sessionService);
 		}

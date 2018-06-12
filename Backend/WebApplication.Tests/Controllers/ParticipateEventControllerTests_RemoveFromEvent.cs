@@ -22,7 +22,7 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 		[Fact]
 		public async Task RemoveFromEvent_GivenParticipatingUser_UserLeavesEventAndAppointments()
 		{
-			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext();
+			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext(_output);
 			int johnDoeId;
 			int eventId;
 			int appointmentId;
@@ -82,7 +82,7 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 		[Fact]
 		public async Task RemoveFromEvent_GivenOrganizerUser_CanRemoveOthersFromEvent()
 		{
-			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext();
+			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext(_output);
 			int johnDoeId;
 			int richardId;
 			int eventId;
@@ -150,7 +150,7 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 		[Fact]
 		public async Task RemoveFromEvent_GivenParticipatingUser_CanNotRemoveOthersFromEvent()
 		{
-			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext();
+			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext(_output);
 			int johnDoeId;
 			int richardId;
 			int eventId;

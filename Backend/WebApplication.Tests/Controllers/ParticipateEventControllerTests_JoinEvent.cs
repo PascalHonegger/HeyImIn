@@ -18,7 +18,7 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 		[Fact]
 		public async Task JoinEvent_GivenNonParticipatingUser_UserCanJoin()
 		{
-			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext();
+			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext(_output);
 			int johnDoeId;
 			int eventId;
 
@@ -57,7 +57,7 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 		[Fact]
 		public async Task JoinEvent_GivenAlreadyParticipatingUser_UserCanNotJoin()
 		{
-			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext();
+			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext(_output);
 			int johnDoeId;
 			int eventId;
 
@@ -94,7 +94,7 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 		[Fact]
 		public async Task JoinEvent_GivenPrivateEvent_UserCanNotJoin()
 		{
-			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext();
+			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext(_output);
 			int johnDoeId;
 			int eventId;
 
@@ -129,7 +129,7 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 		[Fact]
 		public async Task JoinEvent_GivenPrivateEvent_OrganizerCanJoin()
 		{
-			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext();
+			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext(_output);
 			int organizerId;
 			int eventId;
 
