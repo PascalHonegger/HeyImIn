@@ -18,7 +18,7 @@ import { ErrorDialogComponent } from '../error-dialog/error-dialog.component';
 /**
  * Displays a generic error message whenever something regarding a HTTP request goes wrong
  */
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ErrorHandlerInterceptor implements HttpInterceptor {
 	private currentlyOpenedDialog: MatDialogRef<ErrorDialogComponent>;
 

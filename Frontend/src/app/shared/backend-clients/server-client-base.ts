@@ -1,10 +1,10 @@
 import { isDevMode } from '@angular/core';
 
-const baseUrlDebug: string = 'http://localhost:51203/api/';
+const baseUrlDebug = 'http://localhost:51203/api/';
 
 // Used for testing
 // const baseUrlProd: string = 'http://hey-im-in.azurewebsites.net/api/';
-const baseUrlProd: string = '../api/';
+const baseUrlProd = '../api/';
 
 export abstract class ServerClientBase {
 	protected readonly baseUrl: string;

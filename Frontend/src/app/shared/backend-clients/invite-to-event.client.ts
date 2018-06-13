@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { ServerClientBase } from './server-client-base';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class InviteToEventClient extends ServerClientBase {
 	constructor(private httpClient: HttpClient) {
 		super('InviteToEvent');

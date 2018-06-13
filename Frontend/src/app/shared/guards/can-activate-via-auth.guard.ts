@@ -3,7 +3,7 @@ import { Router, RouterStateSnapshot, ActivatedRouteSnapshot, CanActivateChild, 
 
 import { AuthService } from '../services/auth.service';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class CanActivateViaAuthGuard implements CanActivate, CanActivateChild {
 	constructor(private authService: AuthService, private router: Router) {
 	}

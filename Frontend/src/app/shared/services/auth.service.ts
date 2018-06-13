@@ -4,13 +4,13 @@ import { SessionClient } from '../backend-clients/session.client';
 
 const sessionTokenStorageKey = 'sessionToken';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class AuthService {
 	/**
 	 * The route to navigate to after login / registration
 	 * Will be set and used externally
 	 */
-	public urlAfterLogin: string = '/';
+	public urlAfterLogin = '/';
 
 	private _sessionToken: string;
 	private _session: FrontendSession = null;

@@ -4,7 +4,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { ServerClientBase } from './server-client-base';
 import { AppointmentParticipationAnswer } from '../server-model/appointment-participation-answer.model';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class OrganizeAppointmentClient extends ServerClientBase {
 	constructor(private httpClient: HttpClient) {
 		super('OrganizeAppointment');
