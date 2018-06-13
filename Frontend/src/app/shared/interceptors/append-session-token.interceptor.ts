@@ -12,7 +12,7 @@ import { Observable } from 'rxjs';
 /**
  * Appends the current session token to each request to authorize it
  */
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class AppendSessionTokenInterceptor implements HttpInterceptor {
 
 	constructor(private auth: AuthService) {}

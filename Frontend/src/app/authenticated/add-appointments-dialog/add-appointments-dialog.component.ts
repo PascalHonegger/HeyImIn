@@ -14,7 +14,7 @@ export class AddAppointmentsDialogComponent {
 
 	private static readonly dateFormat = 'DD.MM.YYYY HH:mm';
 
-	public inputDates: string = '';
+	public inputDates = '';
 	public exampleDate: string;
 	public datesCtrl = new FormControl('', [Validators.required, Validators.pattern(AddAppointmentsDialogComponent.multiLineRegexPattern)]);
 

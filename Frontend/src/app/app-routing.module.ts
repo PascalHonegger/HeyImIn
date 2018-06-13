@@ -1,5 +1,5 @@
-import { Routes } from '@angular/router';
-
+import { NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
 import { AcceptInviteComponent } from './authenticated/accept-invite/accept-invite.component';
 import { NoContentComponent } from './shared/no-content/no-content.component';
 import { CanActivateViaAuthGuard } from './shared/guards/can-activate-via-auth.guard';
@@ -14,8 +14,8 @@ import { CreateEventComponent } from './authenticated/create-event/create-event.
 import { ViewEventComponent } from './authenticated/view-event/view-event.component';
 import { EventsOverviewComponent } from './authenticated/events-overview/events-overview.component';
 
-export const ROUTES: Routes = [
-	{
+const routes: Routes = [
+{
 		path: '',
 		component: AuthenticatedLayoutComponent,
 		canActivateChild: [ CanActivateViaAuthGuard ],
@@ -40,3 +40,9 @@ export const ROUTES: Routes = [
 	},
 	{ path: '**', component: NoContentComponent }
 ];
+
+@NgModule({
+	imports: [RouterModule.forRoot(routes)],
+	exports: [RouterModule]
+})
+export class AppRoutingModule { }

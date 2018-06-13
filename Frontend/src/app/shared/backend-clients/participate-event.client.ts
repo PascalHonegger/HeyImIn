@@ -6,7 +6,7 @@ import { EventOverview } from '../server-model/event-overview.model';
 import { EventDetails } from '../server-model/event-details.model';
 import { NotificationConfiguration } from '../server-model/notification-configuration.model';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ParticipateEventClient extends ServerClientBase {
 	constructor(private httpClient: HttpClient) {
 		super('ParticipateEvent');

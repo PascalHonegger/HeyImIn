@@ -51,8 +51,10 @@ export class EditGeneralEventInfoComponent {
 						meetingPlaceCtrl: ['', [Validators.required, Validators.maxLength(Constants.meetingPlaceMaxLength)]],
 						descriptionCtrl: ['', [Validators.required, Validators.maxLength(Constants.descriptionMaxLength)]],
 						isPrivateCtrl: [false],
-						reminderCtrl: [0, [Validators.required, Validators.min(Constants.realisticMinimumHours), Validators.max(Constants.realisticMaximumHours)]],
-						summaryCtrl: [0, [Validators.required, Validators.min(Constants.realisticMinimumHours), Validators.max(Constants.realisticMaximumHours)]]
+						reminderCtrl: [0,
+							[Validators.required, Validators.min(Constants.realisticMinimumHours), Validators.max(Constants.realisticMaximumHours)]],
+						summaryCtrl: [0,
+							[Validators.required, Validators.min(Constants.realisticMinimumHours), Validators.max(Constants.realisticMaximumHours)]]
 					});
 				}
 }

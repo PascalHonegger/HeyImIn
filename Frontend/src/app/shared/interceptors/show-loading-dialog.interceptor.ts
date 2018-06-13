@@ -14,13 +14,13 @@ import { LoadingDialogComponent } from '../loading-dialog/loading-dialog.compone
 /**
  * Displays a global loading dialog while a server request is running
  */
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ShowLoadingDialogInterceptor implements HttpInterceptor {
 	private currentlyOpenedDialog: MatDialogRef<LoadingDialogComponent>;
 
 	private runningRequestsSource: Subject<number> = new Subject<number>();
 
-	private _runningRequests: number = 0;
+	private _runningRequests = 0;
 	private get runningRequests(): number {
 		return this._runningRequests;
 	}
