@@ -38,7 +38,7 @@ namespace HeyImIn.WebApplication
 		{
 			// Add ASP.NET services
 			string connectionString = _configuration.GetConnectionString("HeyImIn");
-			services.AddDbContext<HeyImInDatabaseContext>(options => options.UseSqlServer(connectionString));
+			services.AddDbContextPool<HeyImInDatabaseContext>(options => options.UseSqlServer(connectionString));
 			services.AddResponseCompression();
 
 			// Add global filters / attributes

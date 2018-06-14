@@ -14,6 +14,7 @@ namespace HeyImIn.Authentication.Impl
 		{
 			_inactiveSessionTimeout = configuration.Timeouts.InactiveSessionTimeout;
 			_unusedSessionExpirationTimeout = configuration.Timeouts.UnusedSessionExpirationTimeout;
+			_updateValidUntilTimeSpan = configuration.UpdateValidUntilTimeSpan;
 			_getDatabaseContext = getDatabaseContext;
 			_logger = logger;
 		}
@@ -29,7 +30,11 @@ namespace HeyImIn.Authentication.Impl
 					return null;
 				}
 
-				ActivateOrExtendSession(session);
+				if (!session.ValidUntil.HasValue || (DateTime.UtcNow - (session.ValidUntil.Value - _inactiveSessionTimeout) >= _updateValidUntilTimeSpan))
+				{
+					// Set new valid until date as the session has been used & not updated for some time
+					SetValidUntilDate(session);
+				}
 
 				await context.SaveChangesAsync();
 
@@ -49,7 +54,7 @@ namespace HeyImIn.Authentication.Impl
 
 				if (active)
 				{
-					ActivateOrExtendSession(session);
+					SetValidUntilDate(session);
 				}
 
 				context.Sessions.Add(session);
@@ -81,9 +86,11 @@ namespace HeyImIn.Authentication.Impl
 			}
 		}
 
-		private void ActivateOrExtendSession(Session session)
+		/// <summary>
+		/// This methods sets the <see cref="Session.ValidUntil"/> property, activating or extending it
+		/// </summary>
+		private void SetValidUntilDate(Session session)
 		{
-			// Set new valid until date as the session has been used
 			session.ValidUntil = DateTime.UtcNow + _inactiveSessionTimeout;
 		}
 
@@ -101,6 +108,11 @@ namespace HeyImIn.Authentication.Impl
 		///     A session gets invalidated after this time period passed without any access to the session
 		/// </summary>
 		private readonly TimeSpan _inactiveSessionTimeout;
+
+		/// <summary>
+		///     A session gets invalidated after this time period passed without any access to the session
+		/// </summary>
+		private readonly TimeSpan _updateValidUntilTimeSpan;
 
 		/// <summary>
 		///     If a session is not accessed after this time, it expires and turns invalid
