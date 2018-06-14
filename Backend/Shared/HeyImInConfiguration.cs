@@ -15,6 +15,8 @@ namespace HeyImIn.Shared
 
 		public int PasswordHashWorkFactor { get; set; } = 10;
 
+		public TimeSpan UpdateValidUntilTimeSpan { get; set; } = TimeSpan.FromMinutes(5);
+
 		public int MaxAmountOfAppointmentsPerDetailPage { get; set; } = 5;
 
 		public HeyImInTimeouts Timeouts { get; } = new HeyImInTimeouts();
