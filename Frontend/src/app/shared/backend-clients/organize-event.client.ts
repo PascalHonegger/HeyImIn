@@ -5,7 +5,7 @@ import { ServerClientBase } from './server-client-base';
 import { GeneralEventInfo } from '../server-model/general-event-info.model';
 import { EditEventDetails } from '../server-model/event-edit-details.model';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class OrganizeEventClient extends ServerClientBase {
 	constructor(private httpClient: HttpClient) {
 		super('OrganizeEvent');

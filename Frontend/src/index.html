@@ -1,35 +1,16 @@
-<!DOCTYPE html>
-<html lang="de-CH">
+<!doctype html>
+<html lang="de-ch">
 <head>
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
 	<meta charset="utf-8">
-	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<meta name="theme-color" content="#0066a1">
+	<title>Hey, I'm in</title>
+	<base href="/">
+
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title><%= htmlWebpackPlugin.options.title %></title>
-	<!-- base url -->
-	<base href="<%= htmlWebpackPlugin.options.metadata.baseUrl %>">
-	<% if (webpackConfig.htmlElements.headTags) { %>
-	<!-- Configured Head Tags -->
-	<%= webpackConfig.htmlElements.headTags %>
-	<% } %>
-
-
-	<%= htmlWebpackPlugin.files.webpackManifest %>
-
-	<% if (htmlWebpackPlugin.options.metadata.isDevServer && htmlWebpackPlugin.options.metadata.HMR !== true) { %>
-	<!-- Webpack Dev Server reload -->
-	<script src="/webpack-dev-server.js"></script>
-	<% } %>
-
-	<!-- CSS will be injected by webpack here -->
-	<!-- Preload link tags will be injected by webpack here -->
-
 </head>
-
 <body class="mat-typography mat-app-background">
-	<app>
-		Lade...
-	</app>
-
-	<!-- Scripts will be injected by webpack here -->
+	<app></app>
 </body>
 </html>
