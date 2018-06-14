@@ -12,5 +12,5 @@ export class AppointmentParticipationSummaryComponent {
 	public appointment: AppointmentInformation;
 
 	@Input()
-	public orientation: string = 'column';
+	public orientation = 'column';
 }

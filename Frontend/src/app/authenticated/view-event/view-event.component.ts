@@ -58,7 +58,7 @@ export class ViewEventComponent extends DetailOverviewBase {
 		);
 	}
 
-	private loadEventDetails() {
+	public loadEventDetails() {
 		this.eventServer.getDetails(this.eventId).subscribe(
 			detail => {
 				this.eventDetails = detail;

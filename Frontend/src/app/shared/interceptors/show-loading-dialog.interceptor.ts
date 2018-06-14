@@ -6,22 +6,21 @@ import {
 	HttpInterceptor
 } from '@angular/common/http';
 
-import { Observable } from 'rxjs/Observable';
+import { Observable, Subject } from 'rxjs';
 import { finalize, map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { LoadingDialogComponent } from '../loading-dialog/loading-dialog.component';
-import { Subject } from 'rxjs/Subject';
 
 /**
  * Displays a global loading dialog while a server request is running
  */
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ShowLoadingDialogInterceptor implements HttpInterceptor {
 	private currentlyOpenedDialog: MatDialogRef<LoadingDialogComponent>;
 
 	private runningRequestsSource: Subject<number> = new Subject<number>();
 
-	private _runningRequests: number = 0;
+	private _runningRequests = 0;
 	private get runningRequests(): number {
 		return this._runningRequests;
 	}
