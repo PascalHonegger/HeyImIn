@@ -113,7 +113,7 @@ export class EditEventComponent {
 				this.organizeAppointmentServer.deleteAppointment(appointmentId).subscribe(
 					() => {
 						// Remove appointment from local list
-						this.eventDetails.upcomingAppointments = 
+						this.eventDetails.upcomingAppointments =
 							this.eventDetails.upcomingAppointments.filter(u => u.appointmentInformation.appointmentId !== appointmentId);
 					}
 				);

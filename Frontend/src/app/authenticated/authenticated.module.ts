@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 
 // Dialogs
-import { AddAppointmentsDialogComponent } from 'app/authenticated/add-appointments-dialog/add-appointments-dialog.component';
+import { AddAppointmentsDialogComponent } from './add-appointments-dialog/add-appointments-dialog.component';
 import { AddParticipantDialogComponent } from './add-participant-dialog/add-participant-dialog.component';
 
 // Profile
