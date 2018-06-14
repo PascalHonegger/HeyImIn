@@ -8,10 +8,16 @@ import { AnonymousModule } from './anonymous/anonymous.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+// Ensure swiss german language for angular pipes
+import { registerLocaleData } from '@angular/common';
+import localeDeCh from '@angular/common/locales/de-ch';
+registerLocaleData(localeDeCh);
+
+// Ensure swiss german language for moment / dates
 import * as moment from 'moment';
 import 'moment/locale/de-ch';
 
-moment.locale('de-CH');
+moment.locale('de-ch');
 
 @NgModule({
 	declarations: [
