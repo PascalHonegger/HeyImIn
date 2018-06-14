@@ -69,7 +69,7 @@ namespace HeyImIn.WebApplication.Controllers
 		{
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
-				PasswordReset passwordReset = await context.PasswordResets.FindAsync(resetPasswordDto.PasswordResetToken);
+				PasswordReset passwordReset = await context.PasswordResets.Include(p => p.User).FirstOrDefaultAsync(r => r.Token == resetPasswordDto.PasswordResetToken);
 
 				if (passwordReset == null)
 				{

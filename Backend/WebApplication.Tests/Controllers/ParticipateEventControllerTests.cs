@@ -17,12 +17,14 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 		{
 			var notificationServiceMock = new Mock<INotificationService>(MockBehavior.Strict);
 
-			var controller = new ParticipateEventController(notificationServiceMock.Object, new HeyImInConfiguration(), getContext, DummyLogger<ParticipateEventController>(), DummyLoggerFactory())
+			var controller = new ParticipateEventController(notificationServiceMock.Object, new HeyImInConfiguration { MaxAmountOfAppointmentsPerDetailPage = MaxAmountOfAppointments }, getContext, DummyLogger<ParticipateEventController>(), DummyLoggerFactory())
 			{
 				ControllerContext = CurrentUserContext(currentUserId)
 			};
 
 			return (controller, notificationServiceMock);
 		}
+
+		private const int MaxAmountOfAppointments = 10;
 	}
 }
