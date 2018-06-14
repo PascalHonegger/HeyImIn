@@ -72,7 +72,7 @@ export class EditEventComponent {
 			.open(AddAppointmentsDialogComponent, {
 				closeOnNavigation: true,
 				width: '400px',
-				minHeight: '400px'
+				minHeight: '0'
 			}).afterClosed().toPromise();
 
 		if (newAppointments) {
@@ -90,7 +90,7 @@ export class EditEventComponent {
 			.open(AddParticipantDialogComponent, {
 				closeOnNavigation: true,
 				width: '400px',
-				minHeight: '400px'
+				minHeight: '0'
 			}).afterClosed().toPromise();
 
 		if (emailsToInvite) {
