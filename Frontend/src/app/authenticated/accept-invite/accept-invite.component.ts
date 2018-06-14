@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs/Subscription';
 import { InviteToEventClient } from '../../shared/backend-clients/invite-to-event.client';
 
 @Component({
@@ -9,9 +8,7 @@ import { InviteToEventClient } from '../../shared/backend-clients/invite-to-even
 	templateUrl: './accept-invite.component.html'
 })
 export class AcceptInviteComponent {
-	public messageToDisplay: string = 'Ungültiger Link';
-
-	private subscription: Subscription;
+	public messageToDisplay = 'Ungültiger Link';
 
 	constructor(server: InviteToEventClient, route: ActivatedRoute, router: Router) {
 		route.params.subscribe(params => {

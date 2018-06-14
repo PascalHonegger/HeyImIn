@@ -9,7 +9,7 @@ import {
 import { Router } from '@angular/router';
 import { MatDialog, MatDialogRef, MatSnackBar } from '@angular/material';
 
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 import { AuthService } from './../services/auth.service';
@@ -18,7 +18,7 @@ import { ErrorDialogComponent } from '../error-dialog/error-dialog.component';
 /**
  * Displays a generic error message whenever something regarding a HTTP request goes wrong
  */
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class ErrorHandlerInterceptor implements HttpInterceptor {
 	private currentlyOpenedDialog: MatDialogRef<ErrorDialogComponent>;
 

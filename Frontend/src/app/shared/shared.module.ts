@@ -23,18 +23,6 @@ import {
 } from '@angular/material';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
-// Services
-import { AuthService } from './services/auth.service';
-
-// Clients
-import { InviteToEventClient } from './backend-clients/invite-to-event.client';
-import { OrganizeAppointmentClient } from './backend-clients/organize-appointment.client';
-import { OrganizeEventClient } from './backend-clients/organize-event.client';
-import { ParticipateEventClient } from './backend-clients/participate-event.client';
-import { SessionClient } from './backend-clients/session.client';
-import { ResetPasswordClient } from './backend-clients/reset-password.client';
-import { UserClient } from './backend-clients/user.client';
-
 // Interceptors
 import { AppendSessionTokenInterceptor } from './interceptors/append-session-token.interceptor';
 import { ShowLoadingDialogInterceptor } from './interceptors/show-loading-dialog.interceptor';
@@ -49,7 +37,6 @@ import { AreYouSureDialogComponent } from './are-you-sure-dialog/are-you-sure-di
 import { MainLayoutComponent } from './main-layout/main-layout.component';
 import { MainTitleComponent } from './main-title/main-title.component';
 import { NoContentComponent } from './no-content/no-content.component';
-import { CanActivateViaAuthGuard } from './guards/can-activate-via-auth.guard';
 
 const dialogs = [
 	ErrorDialogComponent,
@@ -83,21 +70,6 @@ const modules = [
 		FlexLayoutModule
 ];
 
-const injectables = [
-	// Guards
-	CanActivateViaAuthGuard,
-	// Services
-	AuthService,
-	// Backend clients
-	InviteToEventClient,
-	OrganizeAppointmentClient,
-	OrganizeEventClient,
-	ParticipateEventClient,
-	SessionClient,
-	ResetPasswordClient,
-	UserClient
-];
-
 const components = [
 	MainLayoutComponent,
 	MainTitleComponent,
@@ -127,7 +99,6 @@ export class SharedModule {
 		return {
 			ngModule: SharedModule,
 			providers: [
-				...injectables,
 				// Hook up HTTP interceptors
 				{
 					provide: HTTP_INTERCEPTORS,
