@@ -15,8 +15,6 @@ namespace HeyImIn.Shared.Tests
 		{
 		}
 
-		private readonly ITestOutputHelper _output;
-
 		public ILogger CreateLogger(string categoryName)
 		{
 			return new XUnitLogger<object>(_output);
@@ -26,5 +24,7 @@ namespace HeyImIn.Shared.Tests
 		{
 			throw new NotImplementedException();
 		}
+
+		private readonly ITestOutputHelper _output;
 	}
 }

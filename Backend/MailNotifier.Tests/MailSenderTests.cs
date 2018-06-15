@@ -15,6 +15,10 @@ namespace HeyImIn.MailNotifier.Tests
 {
 	public class MailSenderTests : TestBase
 	{
+		public MailSenderTests(ITestOutputHelper output) : base(output)
+		{
+		}
+
 		[Fact]
 		public async Task GivenEmail_SendGridApiCalledCorrectly()
 		{
@@ -46,10 +50,6 @@ namespace HeyImIn.MailNotifier.Tests
 			Assert.Equal(recipients, emailToBeSent.Tos.Select(emailAddress => emailAddress.Email));
 			Assert.Null(emailToBeSent.Bccs);
 			Assert.Null(emailToBeSent.Ccs);
-		}
-
-		public MailSenderTests(ITestOutputHelper output) : base(output)
-		{
 		}
 	}
 }

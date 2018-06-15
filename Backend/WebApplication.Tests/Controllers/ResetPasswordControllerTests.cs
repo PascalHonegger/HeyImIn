@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using HeyImIn.Authentication;
@@ -24,21 +23,6 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 	{
 		public ResetPasswordControllerTests(ITestOutputHelper output) : base(output)
 		{
-		}
-
-		private readonly HeyImInConfiguration _configuration = new HeyImInConfiguration();
-
-		private (ResetPasswordController participateEventController, Mock<IPasswordService> passwordServiceServiceMock, Mock<INotificationService> notificationMock) CreateController(GetDatabaseContext getContext, int? currentUserId)
-		{
-			var passwordServiceServiceMock = new Mock<IPasswordService>(MockBehavior.Strict);
-			var notificationServiceMock = new Mock<INotificationService>(MockBehavior.Strict);
-
-			var controller = new ResetPasswordController(passwordServiceServiceMock.Object, notificationServiceMock.Object, _configuration, getContext, DummyLogger<ResetPasswordController>())
-			{
-				ControllerContext = CurrentUserContext(currentUserId)
-			};
-
-			return (controller, passwordServiceServiceMock, notificationServiceMock);
 		}
 
 		[Fact]
@@ -79,18 +63,18 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 		}
 
 		[Fact]
-		public async Task RequestPasswordReset_GivenNonExistingUser_SendsResetToken()
+		public async Task RequestPasswordReset_GivenNonExistingUser_RequestRejected()
 		{
 			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext(_output);
 
 			// Act
 			(ResetPasswordController controller, _, _) = CreateController(getContext, null);
 
-			IActionResult response = await controller.RequestPasswordReset(new RequestPasswordResetDto { });
+			IActionResult response = await controller.RequestPasswordReset(new RequestPasswordResetDto { Email = "random@user.com" });
 
 			// Assert
 			Assert.IsType<BadRequestObjectResult>(response);
-			var badRequestResponse = (BadRequestObjectResult) response;
+			var badRequestResponse = (BadRequestObjectResult)response;
 			Assert.Equal(RequestStringMessages.NoProfileWithEmailFound, badRequestResponse.Value);
 			using (IDatabaseContext context = getContext())
 			{
@@ -129,10 +113,100 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 			using (IDatabaseContext context = getContext())
 			{
 				passwordServiceMock.Verify(p => p.HashPassword(NewPassword), Times.Once);
-				PasswordReset passwordReset = await context.PasswordResets.SingleOrDefaultAsync();
+				PasswordReset passwordReset = await context.PasswordResets.Include(p => p.User).SingleOrDefaultAsync();
 				Assert.NotNull(passwordReset);
 				Assert.True(passwordReset.Used);
+				Assert.Equal(NewPasswordHash, passwordReset.User.PasswordHash);
 			}
 		}
+
+		[Fact]
+		public async Task ResetPassword_GivenInvalidPasswordReset_RequestRejected()
+		{
+			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext(_output);
+
+			// Act
+			(ResetPasswordController controller, _, _) = CreateController(getContext, null);
+
+			IActionResult response = await controller.ResetPassword(new ResetPasswordDto { NewPassword = "Doesn't matter", PasswordResetToken = Guid.NewGuid() });
+
+			// Assert
+			Assert.IsType<BadRequestObjectResult>(response);
+			var badRequestResponse = (BadRequestObjectResult)response;
+			Assert.Equal(RequestStringMessages.ResetCodeInvalid, badRequestResponse.Value);
+		}
+
+		[Fact]
+		public async Task ResetPassword_GivenUsedPasswordReset_RequestRejected()
+		{
+			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext(_output);
+			Guid resetToken;
+
+			// Arrange
+			using (IDatabaseContext context = getContext())
+			{
+				User john = ContextUtilities.CreateJohnDoe();
+				var reset = new PasswordReset { Requested = DateTime.UtcNow, User = john, Used = true };
+				context.PasswordResets.Add(reset);
+
+				await context.SaveChangesAsync();
+
+				resetToken = reset.Token;
+			}
+
+			// Act
+			(ResetPasswordController controller, _, _) = CreateController(getContext, null);
+
+			IActionResult response = await controller.ResetPassword(new ResetPasswordDto { NewPassword = "Doesn't matter", PasswordResetToken = resetToken });
+
+			// Assert
+			Assert.IsType<BadRequestObjectResult>(response);
+			var badRequestResponse = (BadRequestObjectResult)response;
+			Assert.Equal(RequestStringMessages.ResetCodeAlreadyUsedOrExpired, badRequestResponse.Value);
+		}
+
+		[Fact]
+		public async Task ResetPassword_GivenExpiredPasswordReset_RequestRejected()
+		{
+			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext(_output);
+			Guid resetToken;
+
+			// Arrange
+			using (IDatabaseContext context = getContext())
+			{
+				User john = ContextUtilities.CreateJohnDoe();
+				var reset = new PasswordReset { Requested = DateTime.UtcNow - _configuration.Timeouts.PasswordResetTimeout, User = john, Used = true };
+				context.PasswordResets.Add(reset);
+
+				await context.SaveChangesAsync();
+
+				resetToken = reset.Token;
+			}
+
+			// Act
+			(ResetPasswordController controller, _, _) = CreateController(getContext, null);
+
+			IActionResult response = await controller.ResetPassword(new ResetPasswordDto { NewPassword = "Doesn't matter", PasswordResetToken = resetToken });
+
+			// Assert
+			Assert.IsType<BadRequestObjectResult>(response);
+			var badRequestResponse = (BadRequestObjectResult)response;
+			Assert.Equal(RequestStringMessages.ResetCodeAlreadyUsedOrExpired, badRequestResponse.Value);
+		}
+
+		private (ResetPasswordController participateEventController, Mock<IPasswordService> passwordServiceServiceMock, Mock<INotificationService> notificationMock) CreateController(GetDatabaseContext getContext, int? currentUserId)
+		{
+			var passwordServiceServiceMock = new Mock<IPasswordService>(MockBehavior.Strict);
+			var notificationServiceMock = new Mock<INotificationService>(MockBehavior.Strict);
+
+			var controller = new ResetPasswordController(passwordServiceServiceMock.Object, notificationServiceMock.Object, _configuration, getContext, DummyLogger<ResetPasswordController>())
+			{
+				ControllerContext = CurrentUserContext(currentUserId)
+			};
+
+			return (controller, passwordServiceServiceMock, notificationServiceMock);
+		}
+
+		private readonly HeyImInConfiguration _configuration = new HeyImInConfiguration();
 	}
 }

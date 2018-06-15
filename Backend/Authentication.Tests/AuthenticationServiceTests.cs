@@ -13,6 +13,10 @@ namespace HeyImIn.Authentication.Tests
 {
 	public class AuthenticationServiceTests : TestBase
 	{
+		public AuthenticationServiceTests(ITestOutputHelper output) : base(output)
+		{
+		}
+
 		[Theory]
 		[InlineData(Email, Password, true)]
 		[InlineData("wrong@email.com", Password, false)]
@@ -52,9 +56,5 @@ namespace HeyImIn.Authentication.Tests
 		private const string PasswordHash = "PasswordHash";
 		private const string Password = "password";
 		private const string Email = "user@email.com";
-
-		public AuthenticationServiceTests(ITestOutputHelper output) : base(output)
-		{
-		}
 	}
 }

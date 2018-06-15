@@ -12,13 +12,17 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 {
 	public class CronControllerTests : ControllerTestBase
 	{
+		public CronControllerTests(ITestOutputHelper output) : base(output)
+		{
+		}
+
 		[Fact]
 		public async Task Run_GivenFunctioningService_CallsCronServiceRunAsync()
 		{
 			var cronServiceMock = new Mock<ICronService>();
 			cronServiceMock.Setup(c => c.DescriptiveName).Returns("Some descriptive name");
 
-			var cronController = new CronController(new [] { cronServiceMock.Object }, DummyLogger<CronController>());
+			var cronController = new CronController(new[] { cronServiceMock.Object }, DummyLogger<CronController>());
 			IActionResult response = await cronController.Run();
 
 			cronServiceMock.Verify(c => c.RunAsync(), Times.Once);
@@ -46,16 +50,12 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 			workingCronService2.Verify(c => c.RunAsync(), Times.Once);
 			failingCronService.Verify(c => c.RunAsync(), Times.Once);
 			Assert.IsType<ObjectResult>(response);
-			var statusCodeResult = (ObjectResult) response;
+			var statusCodeResult = (ObjectResult)response;
 			Assert.Equal(500, statusCodeResult.StatusCode);
 			var errors = statusCodeResult.Value as List<(string, string)>;
 			Assert.NotNull(errors);
 			Assert.Single(errors);
 			Assert.Equal((FailingCronName, ExceptionMessage), errors[0]);
-		}
-
-		public CronControllerTests(ITestOutputHelper output) : base(output)
-		{
 		}
 	}
 }

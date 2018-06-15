@@ -87,7 +87,7 @@ namespace HeyImIn.Authentication.Impl
 		}
 
 		/// <summary>
-		/// This methods sets the <see cref="Session.ValidUntil"/> property, activating or extending it
+		///     This methods sets the <see cref="Session.ValidUntil" /> property, activating or extending it
 		/// </summary>
 		private void SetValidUntilDate(Session session)
 		{

@@ -207,7 +207,7 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 				Event loadedEvent = await context.Events
 					.Include(e => e.EventParticipations)
 					.Include(e => e.Appointments)
-						.ThenInclude(a => a.AppointmentParticipations)
+					.ThenInclude(a => a.AppointmentParticipations)
 					.FirstOrDefaultAsync(e => e.Id == eventId);
 				Assert.NotNull(loadedEvent);
 				Assert.Single(loadedEvent.EventParticipations);

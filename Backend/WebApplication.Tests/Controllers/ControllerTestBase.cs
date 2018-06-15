@@ -16,7 +16,7 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 
 		protected static ControllerContext CurrentUserContext(int? johnDoeId, Guid sessionToken = default)
 		{
-			var context =  new ControllerContext
+			var context = new ControllerContext
 			{
 				HttpContext = new DefaultHttpContext()
 			};
