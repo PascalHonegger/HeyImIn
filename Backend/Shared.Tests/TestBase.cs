@@ -6,8 +6,6 @@ namespace HeyImIn.Shared.Tests
 {
 	public abstract class TestBase
 	{
-		protected readonly ITestOutputHelper _output;
-
 		protected TestBase(ITestOutputHelper output)
 		{
 			_output = output;
@@ -24,5 +22,7 @@ namespace HeyImIn.Shared.Tests
 			mock.Setup(lf => lf.CreateLogger(LogHelpers.AuditLoggerName)).Returns(DummyLogger<object>());
 			return mock.Object;
 		}
+
+		protected readonly ITestOutputHelper _output;
 	}
 }

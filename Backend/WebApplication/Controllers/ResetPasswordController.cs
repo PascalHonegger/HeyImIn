@@ -82,7 +82,7 @@ namespace HeyImIn.WebApplication.Controllers
 				{
 					_logger.LogInformation("{0}(resetToken={1}): Tried to reset password for user {2} with an expired or used token", nameof(ResetPassword), resetPasswordDto.PasswordResetToken, passwordReset.UserId);
 
-					return BadRequest(RequestStringMessages.ResetCodeAlreadyUsed);
+					return BadRequest(RequestStringMessages.ResetCodeAlreadyUsedOrExpired);
 				}
 
 				passwordReset.User.PasswordHash = _passwordService.HashPassword(resetPasswordDto.NewPassword);

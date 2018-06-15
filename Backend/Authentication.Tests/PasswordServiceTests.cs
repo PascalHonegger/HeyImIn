@@ -8,6 +8,10 @@ namespace HeyImIn.Authentication.Tests
 {
 	public class PasswordServiceTests : TestBase
 	{
+		public PasswordServiceTests(ITestOutputHelper output) : base(output)
+		{
+		}
+
 		[Fact]
 		public void HashedPasswordCanBeVerified()
 		{
@@ -58,9 +62,5 @@ namespace HeyImIn.Authentication.Tests
 		}
 
 		private const string InputPassword = "Password to be hashed";
-
-		public PasswordServiceTests(ITestOutputHelper output) : base(output)
-		{
-		}
 	}
 }

@@ -14,6 +14,10 @@ namespace HeyImIn.Authentication.Tests
 {
 	public class SessionServiceTests : TestBase
 	{
+		public SessionServiceTests(ITestOutputHelper output) : base(output)
+		{
+		}
+
 		private (GetDatabaseContext, SessionService) SetupSessionService()
 		{
 			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext(_output);
@@ -326,9 +330,5 @@ namespace HeyImIn.Authentication.Tests
 		}
 
 		#endregion
-
-		public SessionServiceTests(ITestOutputHelper output) : base(output)
-		{
-		}
 	}
 }
