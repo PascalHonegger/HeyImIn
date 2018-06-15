@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
@@ -24,13 +25,8 @@ namespace HeyImIn.WebApplication.Services.Impl
 		{
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
-				List<Appointment> appointmentsWithPossibleReminders = await context.Appointments
-					.Where(a => (a.StartTime >= DateTime.UtcNow) && (a.StartTime.AddHours(-a.Event.ReminderTimeWindowInHours) <= DateTime.UtcNow))
-					.ToListAsync();
-
-				List<Appointment> appointmentsWithPossibleSummaries = await context.Appointments
-					.Where(a => (a.StartTime >= DateTime.UtcNow) && (a.StartTime.AddHours(-a.Event.SummaryTimeWindowInHours) <= DateTime.UtcNow))
-					.ToListAsync();
+				List<Appointment> appointmentsWithPossibleReminders = await GetFutureAppointsmentsAsync(context, a => a.StartTime.AddHours(-a.Event.ReminderTimeWindowInHours) <= DateTime.UtcNow);
+				List<Appointment> appointmentsWithPossibleSummaries = await GetFutureAppointsmentsAsync(context, a => a.StartTime.AddHours(-a.Event.SummaryTimeWindowInHours) <= DateTime.UtcNow);
 
 				foreach (Appointment appointmentsWithPossibleReminder in appointmentsWithPossibleReminders)
 				{
@@ -44,6 +40,16 @@ namespace HeyImIn.WebApplication.Services.Impl
 
 				// Save sent reminders & summaries
 				await context.SaveChangesAsync();
+			}
+
+			async Task<List<Appointment>> GetFutureAppointsmentsAsync(IDatabaseContext context, Expression<Func<Appointment, bool>> additionalAppointmentFilter)
+			{
+				return await context.Appointments
+					.Include(a => a.Event)
+					.Include(a => a.AppointmentParticipations)
+					.Where(a => a.StartTime >= DateTime.UtcNow)
+					.Where(additionalAppointmentFilter)
+					.ToListAsync();
 			}
 		}
 
