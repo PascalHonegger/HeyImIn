@@ -1,12 +1,13 @@
 // Taken from HappyMeter
 
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { Link } from './link.model';
 
 @Component({
 	selector: 'main-layout',
 	templateUrl: 'main-layout.component.html',
-	styleUrls: ['main-layout.component.scss']
+	styleUrls: ['main-layout.component.scss'],
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MainLayoutComponent {
 	@Input()

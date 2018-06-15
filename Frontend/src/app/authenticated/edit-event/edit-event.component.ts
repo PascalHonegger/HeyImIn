@@ -11,7 +11,6 @@ import { AddParticipantDialogComponent } from '../add-participant-dialog/add-par
 import { InviteToEventClient } from '../../shared/backend-clients/invite-to-event.client';
 
 @Component({
-	selector: 'edit-event',
 	styleUrls: ['./edit-event.component.scss'],
 	templateUrl: './edit-event.component.html'
 })

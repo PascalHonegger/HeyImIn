@@ -3,7 +3,6 @@ import { Component } from '@angular/core';
 import { Link } from '../../shared/main-layout/link.model';
 
 @Component({
-	selector: 'authenticated-layout',
 	styleUrls: [ './authenticated-layout.component.scss' ],
 	templateUrl: './authenticated-layout.component.html'
 })

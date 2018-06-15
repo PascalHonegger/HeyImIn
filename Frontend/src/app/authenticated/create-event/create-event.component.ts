@@ -4,7 +4,6 @@ import { OrganizeEventClient } from '../../shared/backend-clients/organize-event
 import { GeneralEventInfo } from '../../shared/server-model/general-event-info.model';
 
 @Component({
-	selector: 'create-event',
 	styleUrls: ['./create-event.component.scss'],
 	templateUrl: './create-event.component.html'
 })

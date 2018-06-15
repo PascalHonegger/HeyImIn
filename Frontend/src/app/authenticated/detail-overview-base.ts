@@ -4,13 +4,13 @@ import { ParticipateEventClient } from '../shared/backend-clients/participate-ev
 import { AreYouSureDialogComponent } from '../shared/are-you-sure-dialog/are-you-sure-dialog.component';
 
 export abstract class DetailOverviewBase {
-	public get currentUserId(): number {
-		return this.authService.session.userId;
-	}
+	public currentUserId: number;
 
 	constructor(protected eventServer: ParticipateEventClient,
 				private dialog: MatDialog,
-				private authService: AuthService) { }
+				authService: AuthService) {
+					this.currentUserId = authService.session.userId;
+				}
 
 	public async leaveEventAsync(eventId: number) {
 		const result = await this.dialog
