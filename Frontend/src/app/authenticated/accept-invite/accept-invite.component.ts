@@ -3,7 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { InviteToEventClient } from '../../shared/backend-clients/invite-to-event.client';
 
 @Component({
-	selector: 'accept-invite',
 	styleUrls: ['./accept-invite.component.scss'],
 	templateUrl: './accept-invite.component.html'
 })

@@ -2,7 +2,7 @@
 <div class="layout-wrapper" fxLayout="column">
 	<mat-toolbar class="app-toolbar mat-primary mat-elevation-z6" role="navigation">
 		<mat-toolbar-row>
-			<img src="assets/img/atos-logo.png" class="app-logo" alt="Atos">
+			<img src="assets/img/atos-logo.png" class="app-logo" alt="Atos Logo">
 			<a routerLink="/" fxFlex class="app-title">Hey, I'm in</a>
 
 			<nav fxLayout="row" fxHide fxShow.gt-sm>
@@ -17,7 +17,7 @@
 
 		<mat-toolbar-row fxHide.gt-sm>
 			<nav fxLayout="row" class="nav-flex-div">
-				<a class="menu-link" [ngClass.xs]="['smaller-menu']" *ngFor="let link of links"
+				<a class="menu-link" *ngFor="let link of links"
 				[fxFlex]="link.content ? 'grow' : 'none'" mat-button [routerLink]="link.url"
 				routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
 					<mat-icon [fxHide.xs]="link.content">{{link.matIcon}}</mat-icon>
@@ -32,7 +32,7 @@
 	</div>
 
 	<div ngClass.gt-xs="footer-wrapper" ngClass.xs="footer-wrapper-xs" fxLayoutAlign="end end">
-		<a mat-button href="https://github.com/PascalHonegger/HeyImIn" target="_blank" rel="noopener noreferrer"><img src="assets/img/GitHub-mark.png" class="github-mark"> GitHub</a>
+		<a mat-button href="https://github.com/PascalHonegger/HeyImIn" target="_blank" rel="noopener noreferrer"><img src="assets/img/GitHub-mark.png" class="github-mark" alt="GitHub Logo"> GitHub</a>
 		<a mat-button href="https://github.com/PascalHonegger/HeyImIn/issues/new" target="_blank" rel="noopener noreferrer"><mat-icon>feedback</mat-icon> Rückmeldung geben</a>
 	</div>
 </div>

@@ -1,13 +1,13 @@
-import { Component, ViewChild, } from '@angular/core';
+import { Component, ViewChild, ChangeDetectionStrategy, } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Constants } from '../../shared/constants';
 import { MatStepper } from '@angular/material';
 import { ResetPasswordClient } from '../../shared/backend-clients/reset-password.client';
 
 @Component({
-	selector: 'reset-password',
 	styleUrls: ['./reset-password.component.scss'],
-	templateUrl: './reset-password.component.html'
+	templateUrl: './reset-password.component.html',
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ResetPasswordComponent {
 	@ViewChild('stepper')

@@ -9,7 +9,6 @@ import { DetailOverviewBase } from '../detail-overview-base';
 import { AppointmentDetails } from '../../shared/server-model/event-edit-details.model';
 
 @Component({
-	selector: 'view-event',
 	styleUrls: ['./view-event.component.scss'],
 	templateUrl: './view-event.component.html'
 })
