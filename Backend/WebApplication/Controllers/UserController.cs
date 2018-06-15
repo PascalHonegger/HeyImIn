@@ -112,7 +112,24 @@ namespace HeyImIn.WebApplication.Controllers
 		{
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
-				User currentUser = await HttpContext.GetCurrentUserAsync(context);
+				int currentUserId = HttpContext.GetUserId();
+
+				User currentUser = await context.Users
+					.Include(u => u.AppointmentParticipations)
+						.ThenInclude(ap => ap.Appointment)
+							.ThenInclude(a => a.Event)
+								.ThenInclude(e => e.Appointments)
+									.ThenInclude(ap => ap.AppointmentParticipations)
+					.Include(u => u.Sessions)
+					.Include(u => u.PasswordResets)
+					.Include(u => u.EventParticipations)
+					.Include(u => u.OrganizedEvents)
+						.ThenInclude(e => e.EventParticipations)
+					.Include(u => u.OrganizedEvents)
+						.ThenInclude(e => e.Appointments)
+					.Include(u => u.OrganizedEvents)
+						.ThenInclude(e => e.EventInvitations)
+					.FirstAsync(u => u.Id == currentUserId);
 
 				// Appointments the user participates, excluding his organized events
 				List<Appointment> userAppointments = currentUser.AppointmentParticipations
