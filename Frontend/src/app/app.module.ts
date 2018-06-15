@@ -17,6 +17,9 @@ registerLocaleData(localeDeCh);
 import * as moment from 'moment';
 import 'moment/locale/de-ch';
 
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
+
 moment.locale('de-ch');
 
 @NgModule({
@@ -29,7 +32,8 @@ moment.locale('de-ch');
 		AnonymousModule,
 		BrowserModule,
 		AppRoutingModule,
-		BrowserAnimationsModule
+		BrowserAnimationsModule,
+		ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production })
 	],
 	providers: [ { provide: LOCALE_ID, useValue: 'de-CH' } ],
 	bootstrap: [AppComponent]
