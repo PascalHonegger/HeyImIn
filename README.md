@@ -14,3 +14,7 @@ Die Veröffentlichungen inklusive einer Änderungshistorie sind unter den [Relea
 * Issue-Tracking über GitHub
 * Code, Logs und Kommentare auf Englisch
 * Commits & Dokumentation auf Deutsch
+
+## Datenbankmigration
+Um eine neue Migration hinzuzufügen (welche beim Start automatisch angewandt wird), muss folgender Befehl ausgeführt werden:
+`dotnet ef migrations add <MigrationName> --project Database --startup-project Database`
