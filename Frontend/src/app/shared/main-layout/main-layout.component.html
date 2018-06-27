@@ -1,6 +1,10 @@
 <!-- Inspired by HappyMeter -->
 <div class="layout-wrapper" fxLayout="column">
 	<mat-toolbar class="app-toolbar mat-primary mat-elevation-z6" role="navigation">
+		<mat-toolbar-row fxLayout="row" *ngIf="updateService.updateAvailable$ | async">
+			<div fxFlex><mat-icon>new_releases</mat-icon> Update verfügbar <mat-icon>new_releases</mat-icon></div>
+			<button mat-button (click)="updateService.applyUpdate()"><mat-icon>refresh</mat-icon> Aktualisieren</button>
+		</mat-toolbar-row>
 		<mat-toolbar-row>
 			<img src="assets/img/atos-logo.png" class="app-logo" alt="Atos Logo">
 			<a routerLink="/" fxFlex class="app-title">Hey, I'm in</a>
@@ -9,8 +13,7 @@
 				<a class="menu-link" [class.has-icon-min-width]="link.content" *ngFor="let link of links"
 					fxFlex mat-button [routerLink]="link.url"
 					routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
-					<mat-icon>{{link.matIcon}}</mat-icon>
-					<span>{{link.content}}</span>
+					<mat-icon>{{link.matIcon}}</mat-icon>&nbsp;<span>{{link.content}}</span>
 				</a>
 			</nav>
 		</mat-toolbar-row>
@@ -20,8 +23,7 @@
 				<a class="menu-link" *ngFor="let link of links"
 				[fxFlex]="link.content ? 'grow' : 'none'" mat-button [routerLink]="link.url"
 				routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
-					<mat-icon [fxHide.xs]="link.content">{{link.matIcon}}</mat-icon>
-					<span>{{link.content}}</span>
+					<mat-icon [fxHide.xs]="link.content">{{link.matIcon}}</mat-icon>&nbsp;<span>{{link.content}}</span>
 				</a>
 			</nav>
 		</mat-toolbar-row>

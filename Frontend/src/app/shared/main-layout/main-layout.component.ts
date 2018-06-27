@@ -2,6 +2,7 @@
 
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { Link } from './link.model';
+import { UpdateService } from '../services/update.service';
 
 @Component({
 	selector: 'main-layout',
@@ -12,4 +13,5 @@ import { Link } from './link.model';
 export class MainLayoutComponent {
 	@Input()
 	public links: Link[];
+	constructor(public updateService: UpdateService) { }
 }
