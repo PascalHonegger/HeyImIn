@@ -28,6 +28,12 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
 		return next.handle(request).pipe((
 			tap(() => undefined, (event) => {
 				if (event instanceof HttpErrorResponse) {
+					if (event.status === 0) {
+						// Display a toast when the server couldn't be reached
+						this.snackBar.open('Mutterschiff konnte nicht erreicht werden', 'Ok');
+						return;
+					}
+
 					if (event.status === 400) {
 						// Display a toast with the error message
 						// E.g. Email is already taken
