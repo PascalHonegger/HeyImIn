@@ -11,14 +11,8 @@ import { registerLocaleData } from '@angular/common';
 import localeDeCh from '@angular/common/locales/de-ch';
 registerLocaleData(localeDeCh);
 
-// Ensure swiss german language for moment / dates
-import * as moment from 'moment';
-import 'moment/locale/de-ch';
-
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
-
-moment.locale('de-ch');
 
 @NgModule({
 	declarations: [
