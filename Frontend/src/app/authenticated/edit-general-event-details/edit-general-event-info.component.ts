@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Constants } from '../../shared/constants';
 import { GeneralEventInfo } from '../../shared/server-model/general-event-info.model';
@@ -6,7 +6,8 @@ import { GeneralEventInfo } from '../../shared/server-model/general-event-info.m
 @Component({
 	selector: 'edit-general-event-info',
 	styleUrls: ['./edit-general-event-info.component.scss'],
-	templateUrl: './edit-general-event-info.component.html'
+	templateUrl: './edit-general-event-info.component.html',
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EditGeneralEventInfoComponent {
 	public form: FormGroup;

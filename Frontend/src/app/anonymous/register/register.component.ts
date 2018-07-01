@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../shared/services/auth.service';
@@ -7,9 +7,9 @@ import { UserClient } from '../../shared/backend-clients/user.client';
 import { Constants } from '../../shared/constants';
 
 @Component({
-	selector: 'register',
 	styleUrls: ['./register.component.scss'],
-	templateUrl: './register.component.html'
+	templateUrl: './register.component.html',
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RegisterComponent {
 	public form: FormGroup;

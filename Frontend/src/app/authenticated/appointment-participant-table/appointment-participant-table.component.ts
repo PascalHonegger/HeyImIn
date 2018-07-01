@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ViewChild, Input, EventEmitter, Output } from '@angular/core';
+import { Component, AfterViewInit, ViewChild, Input, EventEmitter, Output, ChangeDetectionStrategy } from '@angular/core';
 import { MatTableDataSource, MatSort } from '@angular/material';
 import { AppointmentParticipationInformation, AppointmentInformation } from '../../shared/server-model/event-edit-details.model';
 import { AuthService } from '../../shared/services/auth.service';
@@ -6,7 +6,8 @@ import { AuthService } from '../../shared/services/auth.service';
 @Component({
 	selector: 'appointment-participant-table',
 	styleUrls: ['./appointment-participant-table.component.scss'],
-	templateUrl: './appointment-participant-table.component.html'
+	templateUrl: './appointment-participant-table.component.html',
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppointmentParticipantTableComponent implements AfterViewInit {
 	@ViewChild(MatSort)

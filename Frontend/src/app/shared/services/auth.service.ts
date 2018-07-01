@@ -85,7 +85,6 @@ export class AuthService {
 		} catch (err) {
 			// If the error was due to the token being invalid (401),
 			// an interceptor will clear the local session automatically
-			console.info('Loading saved session failed', err);
 			return false;
 		}
 	}
@@ -101,7 +100,6 @@ export class AuthService {
 			this.urlAfterLogin = '/';
 		} catch (err) {
 			// The server session will automatically turn invalid after a while
-			console.info('Removing session from server failed', err);
 		}
 
 		this.clearLocalSession();
