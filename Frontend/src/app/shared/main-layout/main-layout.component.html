@@ -1,9 +1,9 @@
 <!-- Inspired by HappyMeter -->
 <div class="layout-wrapper" fxLayout="column">
 	<mat-toolbar class="app-toolbar mat-primary mat-elevation-z6" role="navigation">
-		<mat-toolbar-row fxLayout="row" *ngIf="updateService.updateAvailable$ | async">
+		<mat-toolbar-row fxLayout="row" *ngIf="updateAvailable$ | async">
 			<div fxFlex><mat-icon>new_releases</mat-icon> Update verfügbar <mat-icon>new_releases</mat-icon></div>
-			<button mat-button (click)="updateService.applyUpdate()"><mat-icon>refresh</mat-icon> Aktualisieren</button>
+			<button mat-button (click)="applyUpdate()"><mat-icon>refresh</mat-icon> Aktualisieren</button>
 		</mat-toolbar-row>
 		<mat-toolbar-row>
 			<img src="assets/img/atos-logo.png" class="app-logo" alt="Atos Logo">
