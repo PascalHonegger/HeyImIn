@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material';
 import { Router } from '@angular/router';
@@ -7,9 +7,9 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Constants } from '../../shared/constants';
 
 @Component({
-	selector: 'login',
 	styleUrls: ['./login.component.scss'],
-	templateUrl: './login.component.html'
+	templateUrl: './login.component.html',
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginComponent {
 	public form: FormGroup;

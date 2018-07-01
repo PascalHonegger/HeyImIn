@@ -3,7 +3,6 @@ import { ParticipateEventClient } from '../../shared/backend-clients/participate
 import { EventOverview } from '../../shared/server-model/event-overview.model';
 
 @Component({
-	selector: 'events-overview',
 	styleUrls: ['./events-overview.component.scss'],
 	templateUrl: './events-overview.component.html'
 })

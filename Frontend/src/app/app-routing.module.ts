@@ -15,7 +15,7 @@ import { ViewEventComponent } from './authenticated/view-event/view-event.compon
 import { EventsOverviewComponent } from './authenticated/events-overview/events-overview.component';
 
 const routes: Routes = [
-{
+	{
 		path: '',
 		component: AuthenticatedLayoutComponent,
 		canActivateChild: [ CanActivateViaAuthGuard ],

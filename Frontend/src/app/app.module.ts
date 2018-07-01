@@ -1,4 +1,3 @@
-import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, LOCALE_ID } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -6,18 +5,14 @@ import { SharedModule } from './shared/shared.module';
 import { AuthenticatedModule } from './authenticated/authenticated.module';
 import { AnonymousModule } from './anonymous/anonymous.module';
 import { AppComponent } from './app.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 // Ensure swiss german language for angular pipes
 import { registerLocaleData } from '@angular/common';
 import localeDeCh from '@angular/common/locales/de-ch';
 registerLocaleData(localeDeCh);
 
-// Ensure swiss german language for moment / dates
-import * as moment from 'moment';
-import 'moment/locale/de-ch';
-
-moment.locale('de-ch');
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 @NgModule({
 	declarations: [
@@ -27,9 +22,8 @@ moment.locale('de-ch');
 		SharedModule.forRoot(),
 		AuthenticatedModule,
 		AnonymousModule,
-		BrowserModule,
 		AppRoutingModule,
-		BrowserAnimationsModule
+		ServiceWorkerModule.register('/ngsw-worker.js', { enabled: environment.production })
 	],
 	providers: [ { provide: LOCALE_ID, useValue: 'de-CH' } ],
 	bootstrap: [AppComponent]
