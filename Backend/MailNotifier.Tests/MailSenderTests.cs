@@ -28,7 +28,7 @@ namespace HeyImIn.MailNotifier.Tests
 			SendGridMessage sentMessage = null;
 			mock.Setup(m => m.SendEmailAsync(It.IsAny<SendGridMessage>(), It.IsAny<CancellationToken>()))
 				.Callback<SendGridMessage, CancellationToken>((m, _) => sentMessage = m)
-				.Returns(Task.FromResult(new Response(HttpStatusCode.OK, null, null)));
+				.ReturnsAsync(new Response(HttpStatusCode.OK, null, null));
 
 			// Act
 			var mailSender = new MailSender(mock.Object, DummyLogger<MailSender>());

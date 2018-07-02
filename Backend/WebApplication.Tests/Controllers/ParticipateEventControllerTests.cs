@@ -1,5 +1,5 @@
 ﻿using HeyImIn.Database.Context;
-using HeyImIn.MailNotifier;
+using HeyImIn.MailNotifier.Tests;
 using HeyImIn.Shared;
 using HeyImIn.WebApplication.Controllers;
 using Moq;
@@ -13,9 +13,9 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 		{
 		}
 
-		private (ParticipateEventController participateEventController, Mock<INotificationService> notificationMock) CreateController(GetDatabaseContext getContext, int? currentUserId)
+		private (ParticipateEventController participateEventController, Mock<AssertingNotificationService> notificationMock) CreateController(GetDatabaseContext getContext, int? currentUserId)
 		{
-			var notificationServiceMock = new Mock<INotificationService>(MockBehavior.Strict);
+			var notificationServiceMock = new Mock<AssertingNotificationService>(MockBehavior.Strict);
 
 			var controller = new ParticipateEventController(notificationServiceMock.Object, new HeyImInConfiguration { MaxAmountOfAppointmentsPerDetailPage = MaxAmountOfAppointments }, getContext, DummyLogger<ParticipateEventController>(), DummyLoggerFactory())
 			{

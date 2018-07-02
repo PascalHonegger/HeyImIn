@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MailNotifier.Tests\MailNotifier.Tests.csproj" />
     <ProjectReference Include="..\WebApplication\WebApplication.csproj" />
     <ProjectReference Include="..\Database.Tests\Database.Tests.csproj" />
     <ProjectReference Include="..\Shared.Tests\Shared.Tests.csproj" />

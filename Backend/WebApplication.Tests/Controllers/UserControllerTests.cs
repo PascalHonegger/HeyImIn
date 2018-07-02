@@ -1,6 +1,6 @@
 ﻿using HeyImIn.Authentication;
 using HeyImIn.Database.Context;
-using HeyImIn.MailNotifier;
+using HeyImIn.MailNotifier.Tests;
 using HeyImIn.WebApplication.Controllers;
 using HeyImIn.WebApplication.Services.Impl;
 using Moq;
@@ -14,11 +14,11 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 		{
 		}
 
-		private (UserController controller, Mock<ISessionService> sessionServiceMock, Mock<IPasswordService> passwordServiceServiceMock, Mock<INotificationService> notificationServiceMock) CreateController(GetDatabaseContext getContext, int? currentUserId)
+		private (UserController controller, Mock<ISessionService> sessionServiceMock, Mock<IPasswordService> passwordServiceServiceMock, Mock<AssertingNotificationService> notificationServiceMock) CreateController(GetDatabaseContext getContext, int? currentUserId)
 		{
 			var passwordServiceServiceMock = new Mock<IPasswordService>(MockBehavior.Strict);
 			var sessionServiceMock = new Mock<ISessionService>(MockBehavior.Strict);
-			var notificationServiceMock = new Mock<INotificationService>(MockBehavior.Strict);
+			var notificationServiceMock = new Mock<AssertingNotificationService>(MockBehavior.Strict);
 
 			var controller = new UserController(passwordServiceServiceMock.Object, sessionServiceMock.Object, notificationServiceMock.Object, new DeleteService(), getContext, DummyLogger<UserController>(), DummyLoggerFactory())
 			{
