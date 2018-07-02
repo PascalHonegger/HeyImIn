@@ -147,6 +147,7 @@ namespace HeyImIn.WebApplication.Controllers
 					.Include(a => a.Event)
 						.ThenInclude(e => e.EventParticipations)
 					.Include(a => a.AppointmentParticipations)
+						.ThenInclude(ap => ap.Participant)
 					.FirstOrDefaultAsync(a => a.Id == setAppointmentResponseDto.AppointmentId);
 
 				if (appointment == null)
