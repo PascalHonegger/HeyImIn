@@ -266,7 +266,10 @@ namespace HeyImIn.WebApplication.Controllers
 					.Include(ap => ap.Appointment)
 					.ToListAsync();
 
-				List<Appointment> appointments = appointmentParticipations.Select(a => a.Appointment).ToList();
+				List<Appointment> appointmentsWithAcceptedResponse = appointmentParticipations
+					.Where(ap => ap.AppointmentParticipationAnswer == AppointmentParticipationAnswer.Accepted)
+					.Select(ap => ap.Appointment)
+					.ToList();
 				context.AppointmentParticipations.RemoveRange(appointmentParticipations);
 
 				await context.SaveChangesAsync();
@@ -283,7 +286,7 @@ namespace HeyImIn.WebApplication.Controllers
 					_auditLogger.LogInformation("{0}(): Left the event {1}", nameof(RemoveFromEvent), @event.Id);
 				}
 
-				foreach (Appointment appointment in appointments)
+				foreach (Appointment appointment in appointmentsWithAcceptedResponse)
 				{
 					await _notificationService.SendLastMinuteChangeIfRequiredAsync(appointment);
 				}

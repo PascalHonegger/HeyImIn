@@ -206,14 +206,11 @@ namespace HeyImIn.WebApplication.Controllers
 					context.AppointmentParticipations.Add(appointmentParticipation);
 				}
 
-				if (setAppointmentResponseDto.Response.HasValue)
-				{
-					appointmentParticipation.AppointmentParticipationAnswer = setAppointmentResponseDto.Response.Value;
-				}
-				else
-				{
-					context.AppointmentParticipations.Remove(appointmentParticipation);
-				}
+				bool changeRelevantForSummary =
+					(appointmentParticipation.AppointmentParticipationAnswer == AppointmentParticipationAnswer.Accepted) ||
+					(setAppointmentResponseDto.Response == AppointmentParticipationAnswer.Accepted);
+
+				appointmentParticipation.AppointmentParticipationAnswer = setAppointmentResponseDto.Response;
 
 				if (!appointment.Event.EventParticipations.Select(e => e.ParticipantId).Contains(currentUser.Id))
 				{
@@ -243,7 +240,16 @@ namespace HeyImIn.WebApplication.Controllers
 					_logger.LogDebug("{0}(response={1}): Set own response for appointment {2}", nameof(SetAppointmentResponse), setAppointmentResponseDto.Response, appointment.Id);
 				}
 
-				await _notificationService.SendLastMinuteChangeIfRequiredAsync(appointment);
+				if (changeRelevantForSummary)
+				{
+					// Don't send a last minute change if the response change is irrelevant
+					// E.g. Changing from No Answer to Declined
+					await _notificationService.SendLastMinuteChangeIfRequiredAsync(appointment);
+				}
+				else
+				{
+					_logger.LogDebug("{0}(response={1}): Intentionally skipped last minute change as the change wasn't relevant for the summary", nameof(SetAppointmentResponse), setAppointmentResponseDto.Response, appointment.Id);
+				}
 
 				return Ok();
 			}

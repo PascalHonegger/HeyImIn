@@ -133,6 +133,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				// Appointments the user participates, excluding his organized events
 				List<Appointment> userAppointments = currentUser.AppointmentParticipations
+					.Where(a => a.AppointmentParticipationAnswer == AppointmentParticipationAnswer.Accepted)
 					.Select(a => a.Appointment)
 					.Where(a => a.Event.OrganizerId != currentUser.Id)
 					.ToList();
