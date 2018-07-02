@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
 using HeyImIn.Database.Tests;
-using HeyImIn.MailNotifier;
 using HeyImIn.MailNotifier.Models;
+using HeyImIn.MailNotifier.Tests;
 using HeyImIn.WebApplication.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -81,8 +81,8 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 		{
 			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext(_output);
 			int johnDoeId;
-			int event1Id;
-			int event2Id;
+			int eventId1;
+			int eventId2;
 
 			// Arrange
 			using (IDatabaseContext context = getContext())
@@ -100,33 +100,21 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 				await context.SaveChangesAsync();
 
 				johnDoeId = john.Id;
-				event1Id = event1.Id;
-				event2Id = event2.Id;
+				eventId1 = event1.Id;
+				eventId2 = event2.Id;
 			}
 
 			// Act
-			(UserController controller, _, _, Mock<INotificationService> notificationMock) = CreateController(getContext, johnDoeId);
+			(UserController controller, _, _, Mock<AssertingNotificationService> notificationMock) = CreateController(getContext, johnDoeId);
 
-			EventNotificationInformation notificationInformation1 = null;
-			notificationMock
-				.Setup(n => n.NotifyEventDeletedAsync(It.Is<EventNotificationInformation>(e => e.Id == event1Id)))
-				.Callback<EventNotificationInformation>(e => notificationInformation1 = e)
-				.Returns(Task.CompletedTask);
-
-			EventNotificationInformation notificationInformation2 = null;
-			notificationMock
-				.Setup(n => n.NotifyEventDeletedAsync(It.Is<EventNotificationInformation>(e => e.Id == event2Id)))
-				.Callback<EventNotificationInformation>(e => notificationInformation2 = e)
-				.Returns(Task.CompletedTask);
+			notificationMock.Setup(n => n.NotifyEventDeletedAsync(It.Is<EventNotificationInformation>(e => e.Id == eventId1))).CallBase();
+			notificationMock.Setup(n => n.NotifyEventDeletedAsync(It.Is<EventNotificationInformation>(e => e.Id == eventId2))).CallBase();
 
 			IActionResult response = await controller.DeleteAccount();
 
 			// Assert
-			notificationMock.Verify(n => n.NotifyEventDeletedAsync(It.Is<EventNotificationInformation>(e => e.Id == event1Id)), Times.Once);
-			notificationMock.Verify(n => n.NotifyEventDeletedAsync(It.Is<EventNotificationInformation>(e => e.Id == event2Id)), Times.Once);
-
-			AssertNotificationInformation(notificationInformation1);
-			AssertNotificationInformation(notificationInformation2);
+			notificationMock.Verify(n => n.NotifyEventDeletedAsync(It.Is<EventNotificationInformation>(e => e.Id == eventId1)), Times.Once);
+			notificationMock.Verify(n => n.NotifyEventDeletedAsync(It.Is<EventNotificationInformation>(e => e.Id == eventId2)), Times.Once);
 
 			Assert.IsType<OkResult>(response);
 			using (IDatabaseContext context = getContext())
@@ -135,18 +123,57 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 				Assert.Empty(context.Events);
 				Assert.Empty(context.EventParticipations);
 			}
+		}
 
-			void AssertNotificationInformation(EventNotificationInformation notificationInformation)
+		[Fact]
+		public async Task DeleteAccount_GivenEventOrganizedByOtherUser_PossibleLastMinuteChangesSent()
+		{
+			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext(_output);
+			int johnDoeId;
+			int acceptedAppointmentId;
+			int declinedAppointmentId;
+			int noAnswerAppointmentId;
+
+			// Arrange
+			using (IDatabaseContext context = getContext())
 			{
-				Assert.NotNull(notificationInformation);
-				Assert.NotNull(notificationInformation.Title);
-				Assert.NotNull(notificationInformation.Participations);
-				foreach (UserNotificationInformation participation in notificationInformation.Participations)
-				{
-					Assert.NotNull(participation);
-					Assert.NotNull(participation.Email);
-					Assert.NotNull(participation.FullName);
-				}
+				User john = ContextUtilities.CreateJohnDoe();
+
+				Event @event = DummyEvent(ContextUtilities.CreateRichardRoe());
+				context.EventParticipations.Add(new EventParticipation { Event = @event, Participant = john });
+				var acceptedAppointment = new Appointment { Event = @event, StartTime = DateTime.UtcNow };
+				var declinedAppointment = new Appointment { Event = @event, StartTime = DateTime.UtcNow };
+				var noAnswerAppointment = new Appointment { Event = @event, StartTime = DateTime.UtcNow };
+				context.AppointmentParticipations.Add(new AppointmentParticipation { Appointment = acceptedAppointment, Participant = john, AppointmentParticipationAnswer = AppointmentParticipationAnswer.Accepted });
+				context.AppointmentParticipations.Add(new AppointmentParticipation { Appointment = declinedAppointment, Participant = john, AppointmentParticipationAnswer = AppointmentParticipationAnswer.Declined });
+				context.AppointmentParticipations.Add(new AppointmentParticipation { Appointment = noAnswerAppointment, Participant = john, AppointmentParticipationAnswer = null });
+
+				await context.SaveChangesAsync();
+
+				johnDoeId = john.Id;
+				acceptedAppointmentId = acceptedAppointment.Id;
+				declinedAppointmentId = declinedAppointment.Id;
+				noAnswerAppointmentId = noAnswerAppointment.Id;
+			}
+
+			// Act
+			(UserController controller, _, _, Mock<AssertingNotificationService> notificationMock) = CreateController(getContext, johnDoeId);
+
+			notificationMock.Setup(n => n.SendLastMinuteChangeIfRequiredAsync(It.Is<Appointment>(e => e.Id == acceptedAppointmentId))).CallBase();
+
+			IActionResult response = await controller.DeleteAccount();
+
+			// Assert
+			notificationMock.Verify(n => n.SendLastMinuteChangeIfRequiredAsync(It.Is<Appointment>(e => e.Id == acceptedAppointmentId)), Times.Once);
+			notificationMock.Verify(n => n.SendLastMinuteChangeIfRequiredAsync(It.Is<Appointment>(e => e.Id == declinedAppointmentId)), Times.Never);
+			notificationMock.Verify(n => n.SendLastMinuteChangeIfRequiredAsync(It.Is<Appointment>(e => e.Id == noAnswerAppointmentId)), Times.Never);
+
+			Assert.IsType<OkResult>(response);
+			using (IDatabaseContext context = getContext())
+			{
+				Assert.Single(context.Users);
+				Assert.Empty(context.EventParticipations);
+				Assert.Empty(context.AppointmentParticipations);
 			}
 		}
 	}

@@ -5,7 +5,7 @@ using HeyImIn.Authentication;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
 using HeyImIn.Database.Tests;
-using HeyImIn.MailNotifier;
+using HeyImIn.MailNotifier.Tests;
 using HeyImIn.Shared;
 using HeyImIn.WebApplication.Controllers;
 using HeyImIn.WebApplication.FrontendModels.ParameterTypes;
@@ -44,9 +44,9 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 			}
 
 			// Act
-			(ResetPasswordController controller, _, Mock<INotificationService> notificationServiceMock) = CreateController(getContext, null);
-			Expression<Func<INotificationService, Task>> sendPasswordResetExpression = n => n.SendPasswordResetTokenAsync(It.IsAny<Guid>(), It.Is<User>(u => u.Id == johnDoeId));
-			notificationServiceMock.Setup(sendPasswordResetExpression).Returns(Task.CompletedTask);
+			(ResetPasswordController controller, _, Mock<AssertingNotificationService> notificationServiceMock) = CreateController(getContext, null);
+			Expression<Func<AssertingNotificationService, Task>> sendPasswordResetExpression = n => n.SendPasswordResetTokenAsync(It.IsAny<Guid>(), It.Is<User>(u => u.Id == johnDoeId));
+			notificationServiceMock.Setup(sendPasswordResetExpression).CallBase();
 
 			IActionResult response = await controller.RequestPasswordReset(new RequestPasswordResetDto { Email = johnDoeEmail });
 
@@ -194,10 +194,10 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 			Assert.Equal(RequestStringMessages.ResetCodeAlreadyUsedOrExpired, badRequestResponse.Value);
 		}
 
-		private (ResetPasswordController participateEventController, Mock<IPasswordService> passwordServiceServiceMock, Mock<INotificationService> notificationMock) CreateController(GetDatabaseContext getContext, int? currentUserId)
+		private (ResetPasswordController participateEventController, Mock<IPasswordService> passwordServiceServiceMock, Mock<AssertingNotificationService> notificationMock) CreateController(GetDatabaseContext getContext, int? currentUserId)
 		{
 			var passwordServiceServiceMock = new Mock<IPasswordService>(MockBehavior.Strict);
-			var notificationServiceMock = new Mock<INotificationService>(MockBehavior.Strict);
+			var notificationServiceMock = new Mock<AssertingNotificationService>(MockBehavior.Strict);
 
 			var controller = new ResetPasswordController(passwordServiceServiceMock.Object, notificationServiceMock.Object, _configuration, getContext, DummyLogger<ResetPasswordController>())
 			{
