@@ -75,14 +75,14 @@ namespace HeyImIn.WebApplication.Controllers
 
 				foreach (Event @event in databaseResult)
 				{
-					Appointment upcommingAppointment = await context.Entry(@event)
+					Appointment upcomingAppointment = await context.Entry(@event)
 						.Collection(e => e.Appointments)
 						.Query()
 						.Include(a => a.AppointmentParticipations)
 						.OrderBy(a => a.StartTime)
 						.FirstOrDefaultAsync(a => a.StartTime >= DateTime.UtcNow);
 
-					result.Add((@event, upcommingAppointment));
+					result.Add((@event, upcomingAppointment));
 				}
 
 				return result;
@@ -247,7 +247,7 @@ namespace HeyImIn.WebApplication.Controllers
 				{
 					_logger.LogInformation("{0}(): Tried to remove user {1} from then event {2}, which he's not organizing", nameof(RemoveFromEvent), userToRemove.Id, @event.Id);
 
-					return BadRequest(RequestStringMessages.OrganizorRequired);
+					return BadRequest(RequestStringMessages.OrganizerRequired);
 				}
 
 				EventParticipation participation = @event.EventParticipations.FirstOrDefault(e => e.ParticipantId == userToRemove.Id);
@@ -304,16 +304,9 @@ namespace HeyImIn.WebApplication.Controllers
 		{
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
-				Event @event = await context.Events.FindAsync(notificationConfigurationDto.EventId);
+				int currentUserId = HttpContext.GetUserId();
 
-				if (@event == null)
-				{
-					return BadRequest(RequestStringMessages.EventNotFound);
-				}
-
-				User currentUser = await HttpContext.GetCurrentUserAsync(context);
-
-				EventParticipation participation = @event.EventParticipations.FirstOrDefault(e => e.Participant == currentUser);
+				EventParticipation participation = await context.EventParticipations.FirstOrDefaultAsync(e => (e.EventId == notificationConfigurationDto.EventId) && (e.ParticipantId == currentUserId));
 
 				if (participation == null)
 				{

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Global
@@ -6,6 +7,7 @@ using Microsoft.EntityFrameworkCore.Design;
 namespace HeyImIn.Database.Context.Impl
 {
 	// ReSharper disable once ClassWithVirtualMembersNeverInherited.Global => Entity Framework
+	[ExcludeFromCodeCoverage]
 	public class HeyImInDatabaseContextFactory : IDesignTimeDbContextFactory<HeyImInDatabaseContext>
 	{
 		public HeyImInDatabaseContext CreateDbContext(string[] args)

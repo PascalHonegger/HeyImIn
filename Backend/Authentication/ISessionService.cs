@@ -22,7 +22,7 @@ namespace HeyImIn.Authentication
 		///     Creates a new session for a user
 		/// </summary>
 		/// <param name="userId">The user the session belongs to</param>
-		/// <param name="automaticallyActivate">Wheter the session should be activated automatically</param>
+		/// <param name="automaticallyActivate">Whether the session should be activated automatically</param>
 		/// <returns>Token of the created session</returns>
 		Task<Guid> CreateSessionAsync(int userId, bool automaticallyActivate);
 

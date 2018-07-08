@@ -13,7 +13,7 @@
 		public const string UserNotPartOfEvent = "Der angegebene Benutzer nimmt nicht an dem Event teil";
 
 		public const string InvitationRequired = "Der angegebene Event ist privat und benötigt eine Einladung";
-		public const string OrganizorRequired = "Sie müssen Organisator dieses Event sein, um diese Aktion durchzuführen";
+		public const string OrganizerRequired = "Sie müssen Organisator dieses Event sein, um diese Aktion durchzuführen";
 
 		public const string AppointmentsHaveToStartInTheFuture = "Termine müssen in der Zukunft liegen, überprüfen Sie ihre Eingabe";
 

@@ -5,7 +5,7 @@ namespace HeyImIn.Shared
 	/// <summary>
 	///     The configuration specific to the behaviour of the HeyImIn software
 	///     For descriptions of the values see the appsettings.json file, where settings can be explicitly specified
-	///     CAUTION: The default values should be keept in sync with the default appsettings.json
+	///     CAUTION: The default values should be kept in sync with the default appsettings.json
 	/// </summary>
 	public class HeyImInConfiguration
 	{

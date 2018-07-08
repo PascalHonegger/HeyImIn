@@ -24,7 +24,7 @@ namespace HeyImIn.Database.Models
 		public DateTime Requested { get; set; }
 
 		/// <summary>
-		///     Wheter this password reset was used
+		///     Whether this password reset was used
 		/// </summary>
 		public bool Used { get; set; }
 	}

@@ -43,7 +43,7 @@ namespace HeyImIn.MailNotifier
 		Task SendAndUpdateRemindersAsync(Appointment appointment);
 
 		/// <summary>
-		///     Sends a summary to all users who haven't recieved one yet
+		///     Sends a summary to all users who haven't received one yet
 		///     Updates the appointment object -> Execute save() after this method was called
 		/// </summary>
 		/// <param name="appointment">Appointment for which to send summaries</param>

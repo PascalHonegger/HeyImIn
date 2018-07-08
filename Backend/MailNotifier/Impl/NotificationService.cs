@@ -100,7 +100,7 @@ namespace HeyImIn.MailNotifier.Impl
 		private readonly IMailSender _mailSender;
 
 		/// <summary>
-		///     The url being referd to within emails
+		///     The url being referred to within emails
 		/// </summary>
 		private readonly string _baseWebUrl;
 

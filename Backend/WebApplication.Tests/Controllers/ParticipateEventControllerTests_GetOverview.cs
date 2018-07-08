@@ -160,7 +160,7 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 		}
 
 		[Fact]
-		public async Task GetOverview_GivenSomeEvents_EventsSortedByDateOfUpcommingAppointment()
+		public async Task GetOverview_GivenSomeEvents_EventsSortedByDateOfUpcomingAppointment()
 		{
 			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext(_output);
 

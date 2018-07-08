@@ -42,7 +42,7 @@ namespace HeyImIn.Database.Models
 		public string Description { get; set; }
 
 		/// <summary>
-		///     Wheter the event is private or public. Private events require an invitation
+		///     Whether the event is private or public. Private events require an invitation
 		/// </summary>
 		public bool IsPrivate { get; set; }
 

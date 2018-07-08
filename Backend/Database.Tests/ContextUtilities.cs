@@ -32,7 +32,7 @@ namespace HeyImIn.Database.Tests
 
 		/// <summary>
 		///     The main dummy user who is used within tests
-		///     Usually the user which perfoms an action
+		///     Usually the user which performs an action
 		///     E.g. join an event
 		/// </summary>
 		public static User CreateJohnDoe()

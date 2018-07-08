@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace HeyImIn.WebApplication.FrontendModels.ParameterTypes
 {
-	public class AddAppointsmentsDto
+	public class AddAppointmentsDto
 	{
 		public int EventId { get; set; }
 
