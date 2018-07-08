@@ -25,7 +25,7 @@ namespace HeyImIn.WebApplication.Tests.Services
 			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext(_output);
 
 			// Arrange
-			Appointment appointment = await CreateTestDataAsync(getContext, DateTime.UtcNow + TimeSpan.FromHours(ReminderTimewindowInHours));
+			Appointment appointment = await CreateTestDataAsync(getContext, DateTime.UtcNow + TimeSpan.FromHours(ReminderTimeWindowInHours));
 
 			// Act
 			(CronSendNotificationsService service, Mock<AssertingNotificationService> notificationServiceMock) = CreateService(getContext);
@@ -42,7 +42,7 @@ namespace HeyImIn.WebApplication.Tests.Services
 			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext(_output);
 
 			// Arrange
-			Appointment appointment = await CreateTestDataAsync(getContext, DateTime.UtcNow + TimeSpan.FromHours(SummaryTimewindowInHours));
+			Appointment appointment = await CreateTestDataAsync(getContext, DateTime.UtcNow + TimeSpan.FromHours(SummaryTimeWindowInHours));
 
 			// Act
 			(CronSendNotificationsService service, Mock<AssertingNotificationService> notificationServiceMock) = CreateService(getContext);
@@ -68,8 +68,8 @@ namespace HeyImIn.WebApplication.Tests.Services
 					Description = "An event with upcomming appointments",
 					MeetingPlace = "Somewhere",
 					Organizer = john,
-					ReminderTimeWindowInHours = ReminderTimewindowInHours,
-					SummaryTimeWindowInHours = SummaryTimewindowInHours,
+					ReminderTimeWindowInHours = ReminderTimeWindowInHours,
+					SummaryTimeWindowInHours = SummaryTimeWindowInHours,
 					EventParticipations = new List<EventParticipation>
 					{
 						new EventParticipation { Participant = john },
@@ -103,7 +103,7 @@ namespace HeyImIn.WebApplication.Tests.Services
 			return (service, notificationServiceMock);
 		}
 
-		private const int ReminderTimewindowInHours = 2;
-		private const int SummaryTimewindowInHours = 1;
+		private const int ReminderTimeWindowInHours = 2;
+		private const int SummaryTimeWindowInHours = 1;
 	}
 }

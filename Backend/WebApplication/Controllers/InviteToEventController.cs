@@ -53,7 +53,7 @@ namespace HeyImIn.WebApplication.Controllers
 				{
 					_logger.LogInformation("{0}(): Tried to add appointments to the event {1}, which he's not organizing", nameof(InviteParticipants), @event.Id);
 
-					return BadRequest(RequestStringMessages.OrganizorRequired);
+					return BadRequest(RequestStringMessages.OrganizerRequired);
 				}
 
 				var mailInvites = new List<(string email, EventInvitation invite)>();

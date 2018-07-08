@@ -239,7 +239,7 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 			// Assert
 			Assert.IsType<BadRequestObjectResult>(response);
 			var objectResult = (BadRequestObjectResult)response;
-			Assert.Equal(RequestStringMessages.OrganizorRequired, objectResult.Value);
+			Assert.Equal(RequestStringMessages.OrganizerRequired, objectResult.Value);
 
 			using (IDatabaseContext context = getContext())
 			{

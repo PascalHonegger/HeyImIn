@@ -89,7 +89,7 @@ namespace HeyImIn.Authentication.Tests
 		#region GetSession
 
 		[Fact]
-		public async Task GetSession_GivenInexistantSession_NullReturned()
+		public async Task GetSession_GivenNonexistentSession_NullReturned()
 		{
 			(_, SessionService sessionService) = SetupSessionService();
 
@@ -252,7 +252,7 @@ namespace HeyImIn.Authentication.Tests
 		#region InvalidateSession
 
 		[Fact]
-		public async Task InvalidateSession_GivenInexistantSession_NoErrorThrown()
+		public async Task InvalidateSession_GivenNonexistentSession_NoErrorThrown()
 		{
 			(_, SessionService sessionService) = SetupSessionService();
 

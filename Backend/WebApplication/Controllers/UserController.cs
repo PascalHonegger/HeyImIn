@@ -103,7 +103,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 		/// <summary>
 		///     Deletes the current user's account and all connections
-		///     E.g. sends cancelation for organized and participating events
+		///     E.g. sends cancellation for organized and participating events
 		/// </summary>
 		[HttpDelete(nameof(DeleteAccount))]
 		[ProducesResponseType(typeof(void), 200)]
@@ -159,7 +159,7 @@ namespace HeyImIn.WebApplication.Controllers
 		}
 
 		/// <summary>
-		///     Registeres a new user
+		///     Registers a new user
 		/// </summary>
 		/// <returns>A newly created <see cref="FrontendSession" /> so the registering user doesn't have to log in manually</returns>
 		[HttpPost(nameof(Register))]

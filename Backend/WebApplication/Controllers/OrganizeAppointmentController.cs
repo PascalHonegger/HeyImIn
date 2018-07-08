@@ -62,7 +62,7 @@ namespace HeyImIn.WebApplication.Controllers
 				{
 					_logger.LogInformation("{0}(): Tried to delete appointment {1}, which he's not organizing", nameof(DeleteAppointment), appointment.Id);
 
-					return BadRequest(RequestStringMessages.OrganizorRequired);
+					return BadRequest(RequestStringMessages.OrganizerRequired);
 				}
 
 				AppointmentNotificationInformation notificationInformation = _deleteService.DeleteAppointmentLocally(context, appointment);
@@ -78,20 +78,20 @@ namespace HeyImIn.WebApplication.Controllers
 		}
 
 		/// <summary>
-		///     Adds new appointsments to the event
+		///     Adds new appointments to the event
 		/// </summary>
 		[HttpPost(nameof(AddAppointments))]
 		[ProducesResponseType(typeof(void), 200)]
-		public async Task<IActionResult> AddAppointments(AddAppointsmentsDto addAppointsmentsDto)
+		public async Task<IActionResult> AddAppointments(AddAppointmentsDto addAppointmentsDto)
 		{
-			if (addAppointsmentsDto.StartTimes.Any(a => a < DateTime.UtcNow))
+			if (addAppointmentsDto.StartTimes.Any(a => a < DateTime.UtcNow))
 			{
 				return BadRequest(RequestStringMessages.AppointmentsHaveToStartInTheFuture);
 			}
 
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
-				Event @event = await context.Events.Include(e => e.Organizer).FirstOrDefaultAsync(e => e.Id == addAppointsmentsDto.EventId);
+				Event @event = await context.Events.Include(e => e.Organizer).FirstOrDefaultAsync(e => e.Id == addAppointmentsDto.EventId);
 
 				if (@event == null)
 				{
@@ -104,10 +104,10 @@ namespace HeyImIn.WebApplication.Controllers
 				{
 					_logger.LogInformation("{0}(): Tried to add appointments to the event {1}, which he's not organizing", nameof(AddAppointments), @event.Id);
 
-					return BadRequest(RequestStringMessages.OrganizorRequired);
+					return BadRequest(RequestStringMessages.OrganizerRequired);
 				}
 
-				foreach (DateTime startTime in addAppointsmentsDto.StartTimes)
+				foreach (DateTime startTime in addAppointmentsDto.StartTimes)
 				{
 					var newAppointment = new Appointment
 					{
@@ -121,7 +121,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 				await context.SaveChangesAsync();
 
-				_auditLogger.LogInformation("{0}(): Added {1} appointments to event {2}", nameof(AddAppointments), addAppointsmentsDto.StartTimes.Length, @event.Id);
+				_auditLogger.LogInformation("{0}(): Added {1} appointments to event {2}", nameof(AddAppointments), addAppointmentsDto.StartTimes.Length, @event.Id);
 
 				return Ok();
 			}
@@ -175,7 +175,7 @@ namespace HeyImIn.WebApplication.Controllers
 						// Only the organizer is allowed to change another user
 						_logger.LogInformation("{0}(): Tried to set response for user {1} for the appointment {2}, which he's not organizing", nameof(SetAppointmentResponse), userToSetResponseFor.Id, appointment.Id);
 
-						return BadRequest(RequestStringMessages.OrganizorRequired);
+						return BadRequest(RequestStringMessages.OrganizerRequired);
 					}
 
 					if (!userIsPartOfEvent)

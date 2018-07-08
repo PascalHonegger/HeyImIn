@@ -1,9 +1,11 @@
-﻿using System.IO;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 
 namespace HeyImIn.WebApplication
 {
+	[ExcludeFromCodeCoverage]
 	public class Program
 	{
 		public static void Main(string[] args)

@@ -65,7 +65,7 @@ namespace HeyImIn.WebApplication.Controllers
 				{
 					_logger.LogInformation("{0}(): Tried to delete event {1}, which he's not organizing", nameof(DeleteEvent), @event.Id);
 
-					return BadRequest(RequestStringMessages.OrganizorRequired);
+					return BadRequest(RequestStringMessages.OrganizerRequired);
 				}
 
 				EventNotificationInformation notificationInformation = _deleteService.DeleteEventLocally(context, @event);
@@ -106,7 +106,7 @@ namespace HeyImIn.WebApplication.Controllers
 				{
 					_logger.LogInformation("{0}(): Tried to update event {1}, which he's not organizing", nameof(UpdateEventInfo), @event.Id);
 
-					return BadRequest(RequestStringMessages.OrganizorRequired);
+					return BadRequest(RequestStringMessages.OrganizerRequired);
 				}
 
 				@event.Title = updatedEventInfoDto.Title;
@@ -194,7 +194,7 @@ namespace HeyImIn.WebApplication.Controllers
 				{
 					_logger.LogInformation("{0}(): Tried to edit event {1}, which he's not organizing", nameof(GetEditDetails), @event.Id);
 
-					return BadRequest(RequestStringMessages.OrganizorRequired);
+					return BadRequest(RequestStringMessages.OrganizerRequired);
 				}
 
 				List<User> allParticipants = @event.EventParticipations.Select(e => e.Participant).ToList();

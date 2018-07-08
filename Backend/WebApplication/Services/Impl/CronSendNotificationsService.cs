@@ -25,8 +25,8 @@ namespace HeyImIn.WebApplication.Services.Impl
 		{
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
-				List<Appointment> appointmentsWithPossibleReminders = await GetFutureAppointsmentsAsync(context, a => a.StartTime.AddHours(-a.Event.ReminderTimeWindowInHours) <= DateTime.UtcNow);
-				List<Appointment> appointmentsWithPossibleSummaries = await GetFutureAppointsmentsAsync(context, a => a.StartTime.AddHours(-a.Event.SummaryTimeWindowInHours) <= DateTime.UtcNow);
+				List<Appointment> appointmentsWithPossibleReminders = await GetFutureAppointmentsAsync(context, a => a.StartTime.AddHours(-a.Event.ReminderTimeWindowInHours) <= DateTime.UtcNow);
+				List<Appointment> appointmentsWithPossibleSummaries = await GetFutureAppointmentsAsync(context, a => a.StartTime.AddHours(-a.Event.SummaryTimeWindowInHours) <= DateTime.UtcNow);
 
 				foreach (Appointment appointmentsWithPossibleReminder in appointmentsWithPossibleReminders)
 				{
@@ -42,7 +42,7 @@ namespace HeyImIn.WebApplication.Services.Impl
 				await context.SaveChangesAsync();
 			}
 
-			async Task<List<Appointment>> GetFutureAppointsmentsAsync(IDatabaseContext context, Expression<Func<Appointment, bool>> additionalAppointmentFilter)
+			async Task<List<Appointment>> GetFutureAppointmentsAsync(IDatabaseContext context, Expression<Func<Appointment, bool>> additionalAppointmentFilter)
 			{
 				return await context.Appointments
 					.Include(a => a.Event)
