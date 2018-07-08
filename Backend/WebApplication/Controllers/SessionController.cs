@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using HeyImIn.Authentication;
+using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
 using HeyImIn.Shared;
 using HeyImIn.WebApplication.FrontendModels.ParameterTypes;
@@ -17,10 +18,11 @@ namespace HeyImIn.WebApplication.Controllers
 	[Route("api/Session")]
 	public class SessionController : ControllerBase
 	{
-		public SessionController(IAuthenticationService authenticationService, ISessionService sessionService, ILoggerFactory loggerFactory)
+		public SessionController(IAuthenticationService authenticationService, ISessionService sessionService, GetDatabaseContext getDatabaseContext, ILoggerFactory loggerFactory)
 		{
 			_authenticationService = authenticationService;
 			_sessionService = sessionService;
+			_getDatabaseContext = getDatabaseContext;
 			_auditLogger = loggerFactory.CreateAuditLogger();
 		}
 
@@ -64,7 +66,12 @@ namespace HeyImIn.WebApplication.Controllers
 				return Unauthorized();
 			}
 
-			return Ok(new FrontendSession(session.Token, session.UserId, session.User.FullName, session.User.Email));
+			using (IDatabaseContext context = _getDatabaseContext())
+			{
+				User user = await context.Users.FindAsync(session.UserId);
+
+				return Ok(new FrontendSession(session.Token, session.UserId, user.FullName, user.Email));
+			}
 		}
 
 		/// <summary>
@@ -86,6 +93,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 		private readonly IAuthenticationService _authenticationService;
 		private readonly ISessionService _sessionService;
+		private readonly GetDatabaseContext _getDatabaseContext;
 		private readonly ILogger _auditLogger;
 	}
 }

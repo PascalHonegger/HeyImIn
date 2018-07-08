@@ -13,6 +13,7 @@ using HeyImIn.WebApplication.Helpers;
 using HeyImIn.WebApplication.WebApiComponents;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Extensions.Internal;
 using Microsoft.Extensions.Logging;
 
 namespace HeyImIn.WebApplication.Controllers
@@ -105,30 +106,16 @@ namespace HeyImIn.WebApplication.Controllers
 		{
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
-				var eventWithAppointments = await context.Events
+				Event @event = await context.Events
 					.Include(e => e.Organizer)
 					.Include(e => e.EventParticipations)
 						.ThenInclude(p => p.Participant)
-					.Include(e => e.Appointments)
-						.ThenInclude(a => a.AppointmentParticipations)
-					.Select(e =>
-						new
-						{
-							@event = e,
-							appointments = e.Appointments
-								.Where(a => a.StartTime >= DateTime.UtcNow)
-								.OrderBy(a => a.StartTime)
-								.Take(_maxShownAppointmentsPerEvent)
-								.AsQueryable()
-						})
-					.FirstOrDefaultAsync(e => e.@event.Id == eventId);
+					.FirstOrDefaultAsync(e => e.Id == eventId);
 
-				if (eventWithAppointments == null)
+				if (@event == null)
 				{
 					return NotFound();
 				}
-
-				Event @event = eventWithAppointments.@event;
 
 				int currentUserId = HttpContext.GetUserId();
 
@@ -141,7 +128,15 @@ namespace HeyImIn.WebApplication.Controllers
 
 				List<User> allParticipants = @event.EventParticipations.Select(e => e.Participant).ToList();
 
-				List<AppointmentDetails> upcomingAppointments = eventWithAppointments.appointments
+				List<Appointment> appointments = await context.Appointments
+					.Include(a => a.AppointmentParticipations)
+						.ThenInclude(ap => ap.Participant)
+					.Where(a => a.StartTime >= DateTime.UtcNow)
+					.OrderBy(a => a.StartTime)
+					.Take(_maxShownAppointmentsPerEvent)
+					.ToListAsync();
+
+				List<AppointmentDetails> upcomingAppointments = appointments
 					.Select(a => AppointmentDetails.FromAppointment(a, currentUserId, allParticipants))
 					.ToList();
 

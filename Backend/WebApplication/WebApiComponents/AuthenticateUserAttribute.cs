@@ -26,7 +26,6 @@ namespace HeyImIn.WebApplication.WebApiComponents
 			SessionService = sessionService;
 		}
 
-
 		public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
 		{
 			if (context.HttpContext.Request.Headers.TryGetValue(SessionToken, out StringValues rawSessionToken))

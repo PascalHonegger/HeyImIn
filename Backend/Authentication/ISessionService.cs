@@ -10,7 +10,8 @@ namespace HeyImIn.Authentication
 	public interface ISessionService
 	{
 		/// <summary>
-		///     Tries to load a session. If one is found also extends / activates it
+		///     Tries to load a session. If one is found also extends / activates it.
+		///     Does not load related data
 		/// </summary>
 		/// <param name="token">
 		///     <see cref="Session.Token" />
