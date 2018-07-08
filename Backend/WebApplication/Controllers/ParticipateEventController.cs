@@ -13,7 +13,6 @@ using HeyImIn.WebApplication.Helpers;
 using HeyImIn.WebApplication.WebApiComponents;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Extensions.Internal;
 using Microsoft.Extensions.Logging;
 
 namespace HeyImIn.WebApplication.Controllers
@@ -43,28 +42,25 @@ namespace HeyImIn.WebApplication.Controllers
 		[ProducesResponseType(typeof(EventOverview), 200)]
 		public async Task<IActionResult> GetOverview()
 		{
-			using (IDatabaseContext context = _getDatabaseContext())
-			{
-				int currentUserId = HttpContext.GetUserId();
+			IDatabaseContext context = _getDatabaseContext();
+			int currentUserId = HttpContext.GetUserId();
 
-				List<(Event @event, Appointment upcommingAppointment)> yourEvents = await GetAndFilterEvents(context,
-					e => (e.OrganizerId == currentUserId) || e.EventParticipations.Select(ep => ep.ParticipantId).Contains(currentUserId));
-				List<(Event @event, Appointment upcommingAppointment)> publicEvents = await GetAndFilterEvents(context,
-					e => !e.IsPrivate && (e.OrganizerId != currentUserId) && !e.EventParticipations.Select(ep => ep.ParticipantId).Contains(currentUserId));
+			List<(Event @event, Appointment upcommingAppointment)> yourEvents = await GetAndFilterEvents(
+				e => (e.OrganizerId == currentUserId) || e.EventParticipations.Select(ep => ep.ParticipantId).Contains(currentUserId));
+			List<(Event @event, Appointment upcommingAppointment)> publicEvents = await GetAndFilterEvents(e => !e.IsPrivate && (e.OrganizerId != currentUserId) && !e.EventParticipations.Select(ep => ep.ParticipantId).Contains(currentUserId));
 
-				List<EventOverviewInformation> yourEventInformations = yourEvents
-					.Select(e => EventOverviewInformation.FromEvent(e.@event, e.upcommingAppointment, currentUserId))
-					.OrderBy(e => e.LatestAppointmentInformation?.StartTime ?? DateTime.MaxValue)
-					.ToList();
-				List<EventOverviewInformation> publicEventInformations = publicEvents
-					.Select(e => EventOverviewInformation.FromEvent(e.@event, e.upcommingAppointment, currentUserId))
-					.OrderBy(e => e.LatestAppointmentInformation?.StartTime ?? DateTime.MaxValue)
-					.ToList();
+			List<EventOverviewInformation> yourEventInformations = yourEvents
+				.Select(e => EventOverviewInformation.FromEvent(e.@event, e.upcommingAppointment, currentUserId))
+				.OrderBy(e => e.LatestAppointmentInformation?.StartTime ?? DateTime.MaxValue)
+				.ToList();
+			List<EventOverviewInformation> publicEventInformations = publicEvents
+				.Select(e => EventOverviewInformation.FromEvent(e.@event, e.upcommingAppointment, currentUserId))
+				.OrderBy(e => e.LatestAppointmentInformation?.StartTime ?? DateTime.MaxValue)
+				.ToList();
 
-				return Ok(new EventOverview(yourEventInformations, publicEventInformations));
-			}
+			return Ok(new EventOverview(yourEventInformations, publicEventInformations));
 
-			async Task<List<(Event @event, Appointment upcommingAppointment)>> GetAndFilterEvents(IDatabaseContext context, Expression<Func<Event, bool>> eventFilter)
+			async Task<List<(Event @event, Appointment upcommingAppointment)>> GetAndFilterEvents(Expression<Func<Event, bool>> eventFilter)
 			{
 				List<Event> databaseResult = await context.Events
 					.Where(eventFilter)
@@ -104,54 +100,52 @@ namespace HeyImIn.WebApplication.Controllers
 		[ProducesResponseType(typeof(void), 404)]
 		public async Task<IActionResult> GetDetails(int eventId)
 		{
-			using (IDatabaseContext context = _getDatabaseContext())
+			IDatabaseContext context = _getDatabaseContext();
+			Event @event = await context.Events
+				.Include(e => e.Organizer)
+				.Include(e => e.EventParticipations)
+					.ThenInclude(p => p.Participant)
+				.FirstOrDefaultAsync(e => e.Id == eventId);
+
+			if (@event == null)
 			{
-				Event @event = await context.Events
-					.Include(e => e.Organizer)
-					.Include(e => e.EventParticipations)
-						.ThenInclude(p => p.Participant)
-					.FirstOrDefaultAsync(e => e.Id == eventId);
-
-				if (@event == null)
-				{
-					return NotFound();
-				}
-
-				int currentUserId = HttpContext.GetUserId();
-
-				ViewEventInformation viewEventInformation = ViewEventInformation.FromEvent(@event, currentUserId);
-
-				if (!viewEventInformation.CurrentUserDoesParticipate && @event.IsPrivate && (@event.OrganizerId != currentUserId))
-				{
-					return BadRequest(RequestStringMessages.InvitationRequired);
-				}
-
-				List<User> allParticipants = @event.EventParticipations.Select(e => e.Participant).ToList();
-
-				List<Appointment> appointments = await context.Appointments
-					.Include(a => a.AppointmentParticipations)
-						.ThenInclude(ap => ap.Participant)
-					.Where(a => a.StartTime >= DateTime.UtcNow)
-					.OrderBy(a => a.StartTime)
-					.Take(_maxShownAppointmentsPerEvent)
-					.ToListAsync();
-
-				List<AppointmentDetails> upcomingAppointments = appointments
-					.Select(a => AppointmentDetails.FromAppointment(a, currentUserId, allParticipants))
-					.ToList();
-
-				EventParticipation currentEventParticipation = @event.EventParticipations.FirstOrDefault(e => e.ParticipantId == currentUserId);
-
-
-				NotificationConfigurationResponse notificationConfigurationResponse = null;
-
-				if (currentEventParticipation != null)
-				{
-					notificationConfigurationResponse = NotificationConfigurationResponse.FromParticipation(currentEventParticipation);
-				}
-
-				return Ok(new EventDetails(viewEventInformation, upcomingAppointments, notificationConfigurationResponse));
+				return NotFound();
 			}
+
+			int currentUserId = HttpContext.GetUserId();
+
+			ViewEventInformation viewEventInformation = ViewEventInformation.FromEvent(@event, currentUserId);
+
+			if (!viewEventInformation.CurrentUserDoesParticipate && @event.IsPrivate && (@event.OrganizerId != currentUserId))
+			{
+				return BadRequest(RequestStringMessages.InvitationRequired);
+			}
+
+			List<User> allParticipants = @event.EventParticipations.Select(e => e.Participant).ToList();
+
+			List<Appointment> appointments = await context.Appointments
+				.Include(a => a.AppointmentParticipations)
+					.ThenInclude(ap => ap.Participant)
+				.Where(a => a.StartTime >= DateTime.UtcNow)
+				.OrderBy(a => a.StartTime)
+				.Take(_maxShownAppointmentsPerEvent)
+				.ToListAsync();
+
+			List<AppointmentDetails> upcomingAppointments = appointments
+				.Select(a => AppointmentDetails.FromAppointment(a, currentUserId, allParticipants))
+				.ToList();
+
+			EventParticipation currentEventParticipation = @event.EventParticipations.FirstOrDefault(e => e.ParticipantId == currentUserId);
+
+
+			NotificationConfigurationResponse notificationConfigurationResponse = null;
+
+			if (currentEventParticipation != null)
+			{
+				notificationConfigurationResponse = NotificationConfigurationResponse.FromParticipation(currentEventParticipation);
+			}
+
+			return Ok(new EventDetails(viewEventInformation, upcomingAppointments, notificationConfigurationResponse));
 		}
 
 		/// <summary>
@@ -164,7 +158,7 @@ namespace HeyImIn.WebApplication.Controllers
 		[ProducesResponseType(typeof(void), 200)]
 		public async Task<IActionResult> JoinEvent(JoinEventDto joinEventDto)
 		{
-			using (IDatabaseContext context = _getDatabaseContext())
+			IDatabaseContext context = _getDatabaseContext();
 			{
 				Event @event = await context.Events
 					.Include(e => e.EventParticipations)
@@ -215,79 +209,77 @@ namespace HeyImIn.WebApplication.Controllers
 		[ProducesResponseType(typeof(void), 200)]
 		public async Task<IActionResult> RemoveFromEvent(RemoveFromEventDto removeFromEventDto)
 		{
-			using (IDatabaseContext context = _getDatabaseContext())
+			IDatabaseContext context = _getDatabaseContext();
+			User userToRemove = await context.Users.FindAsync(removeFromEventDto.UserId);
+
+			if (userToRemove == null)
 			{
-				User userToRemove = await context.Users.FindAsync(removeFromEventDto.UserId);
-
-				if (userToRemove == null)
-				{
-					return BadRequest(RequestStringMessages.UserNotFound);
-				}
-
-				Event @event = await context.Events
-					.Include(e => e.Organizer)
-					.Include(e => e.EventParticipations)
-					.FirstOrDefaultAsync(e => e.Id == removeFromEventDto.EventId);
-
-				if (@event == null)
-				{
-					return BadRequest(RequestStringMessages.EventNotFound);
-				}
-
-				int currentUserId = HttpContext.GetUserId();
-
-				bool changingOtherUser = currentUserId != userToRemove.Id;
-
-				if (changingOtherUser && (@event.OrganizerId != currentUserId))
-				{
-					_logger.LogInformation("{0}(): Tried to remove user {1} from then event {2}, which he's not organizing", nameof(RemoveFromEvent), userToRemove.Id, @event.Id);
-
-					return BadRequest(RequestStringMessages.OrganizerRequired);
-				}
-
-				EventParticipation participation = @event.EventParticipations.FirstOrDefault(e => e.ParticipantId == userToRemove.Id);
-
-				if (participation == null)
-				{
-					return BadRequest(RequestStringMessages.UserNotPartOfEvent);
-				}
-
-				// Remove event participation
-				context.EventParticipations.Remove(participation);
-
-				// Remove appointment participations within the event
-				List<AppointmentParticipation> appointmentParticipations = await context.AppointmentParticipations
-					.Where(a => (a.ParticipantId == removeFromEventDto.UserId) && (a.Appointment.EventId == removeFromEventDto.EventId))
-					.Include(ap => ap.Appointment)
-					.ToListAsync();
-
-				List<Appointment> appointmentsWithAcceptedResponse = appointmentParticipations
-					.Where(ap => ap.AppointmentParticipationAnswer == AppointmentParticipationAnswer.Accepted)
-					.Select(ap => ap.Appointment)
-					.ToList();
-				context.AppointmentParticipations.RemoveRange(appointmentParticipations);
-
-				await context.SaveChangesAsync();
-
-				// Handle notifications
-				if (changingOtherUser)
-				{
-					_auditLogger.LogInformation("{0}(): The organizer removed the user {1} from the event {2}", nameof(RemoveFromEvent), userToRemove.Id, @event.Id);
-
-					await _notificationService.NotifyOrganizerUpdatedUserInfoAsync(@event, userToRemove, "Der Organisator hat Sie vom Event entfernt.");
-				}
-				else
-				{
-					_auditLogger.LogInformation("{0}(): Left the event {1}", nameof(RemoveFromEvent), @event.Id);
-				}
-
-				foreach (Appointment appointment in appointmentsWithAcceptedResponse)
-				{
-					await _notificationService.SendLastMinuteChangeIfRequiredAsync(appointment);
-				}
-
-				return Ok();
+				return BadRequest(RequestStringMessages.UserNotFound);
 			}
+
+			Event @event = await context.Events
+				.Include(e => e.Organizer)
+				.Include(e => e.EventParticipations)
+				.FirstOrDefaultAsync(e => e.Id == removeFromEventDto.EventId);
+
+			if (@event == null)
+			{
+				return BadRequest(RequestStringMessages.EventNotFound);
+			}
+
+			int currentUserId = HttpContext.GetUserId();
+
+			bool changingOtherUser = currentUserId != userToRemove.Id;
+
+			if (changingOtherUser && (@event.OrganizerId != currentUserId))
+			{
+				_logger.LogInformation("{0}(): Tried to remove user {1} from then event {2}, which he's not organizing", nameof(RemoveFromEvent), userToRemove.Id, @event.Id);
+
+				return BadRequest(RequestStringMessages.OrganizerRequired);
+			}
+
+			EventParticipation participation = @event.EventParticipations.FirstOrDefault(e => e.ParticipantId == userToRemove.Id);
+
+			if (participation == null)
+			{
+				return BadRequest(RequestStringMessages.UserNotPartOfEvent);
+			}
+
+			// Remove event participation
+			context.EventParticipations.Remove(participation);
+
+			// Remove appointment participations within the event
+			List<AppointmentParticipation> appointmentParticipations = await context.AppointmentParticipations
+				.Where(a => (a.ParticipantId == removeFromEventDto.UserId) && (a.Appointment.EventId == removeFromEventDto.EventId))
+				.Include(ap => ap.Appointment)
+				.ToListAsync();
+
+			List<Appointment> appointmentsWithAcceptedResponse = appointmentParticipations
+				.Where(ap => ap.AppointmentParticipationAnswer == AppointmentParticipationAnswer.Accepted)
+				.Select(ap => ap.Appointment)
+				.ToList();
+			context.AppointmentParticipations.RemoveRange(appointmentParticipations);
+
+			await context.SaveChangesAsync();
+
+			// Handle notifications
+			if (changingOtherUser)
+			{
+				_auditLogger.LogInformation("{0}(): The organizer removed the user {1} from the event {2}", nameof(RemoveFromEvent), userToRemove.Id, @event.Id);
+
+				await _notificationService.NotifyOrganizerUpdatedUserInfoAsync(@event, userToRemove, "Der Organisator hat Sie vom Event entfernt.");
+			}
+			else
+			{
+				_auditLogger.LogInformation("{0}(): Left the event {1}", nameof(RemoveFromEvent), @event.Id);
+			}
+
+			foreach (Appointment appointment in appointmentsWithAcceptedResponse)
+			{
+				await _notificationService.SendLastMinuteChangeIfRequiredAsync(appointment);
+			}
+
+			return Ok();
 		}
 
 		/// <summary>
@@ -297,27 +289,25 @@ namespace HeyImIn.WebApplication.Controllers
 		[ProducesResponseType(typeof(void), 200)]
 		public async Task<IActionResult> ConfigureNotifications(NotificationConfigurationDto notificationConfigurationDto)
 		{
-			using (IDatabaseContext context = _getDatabaseContext())
+			IDatabaseContext context = _getDatabaseContext();
+			int currentUserId = HttpContext.GetUserId();
+
+			EventParticipation participation = await context.EventParticipations.FirstOrDefaultAsync(e => (e.EventId == notificationConfigurationDto.EventId) && (e.ParticipantId == currentUserId));
+
+			if (participation == null)
 			{
-				int currentUserId = HttpContext.GetUserId();
-
-				EventParticipation participation = await context.EventParticipations.FirstOrDefaultAsync(e => (e.EventId == notificationConfigurationDto.EventId) && (e.ParticipantId == currentUserId));
-
-				if (participation == null)
-				{
-					return BadRequest(RequestStringMessages.UserNotPartOfEvent);
-				}
-
-				participation.SendReminderEmail = notificationConfigurationDto.SendReminderEmail;
-				participation.SendSummaryEmail = notificationConfigurationDto.SendSummaryEmail;
-				participation.SendLastMinuteChangesEmail = notificationConfigurationDto.SendLastMinuteChangesEmail;
-
-				await context.SaveChangesAsync();
-
-				_logger.LogInformation("{0}(): Updated notification settings", nameof(ConfigureNotifications));
-
-				return Ok();
+				return BadRequest(RequestStringMessages.UserNotPartOfEvent);
 			}
+
+			participation.SendReminderEmail = notificationConfigurationDto.SendReminderEmail;
+			participation.SendSummaryEmail = notificationConfigurationDto.SendSummaryEmail;
+			participation.SendLastMinuteChangesEmail = notificationConfigurationDto.SendLastMinuteChangesEmail;
+
+			await context.SaveChangesAsync();
+
+			_logger.LogInformation("{0}(): Updated notification settings", nameof(ConfigureNotifications));
+
+			return Ok();
 		}
 
 		private readonly INotificationService _notificationService;
