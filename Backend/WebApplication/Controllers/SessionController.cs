@@ -66,12 +66,10 @@ namespace HeyImIn.WebApplication.Controllers
 				return Unauthorized();
 			}
 
-			using (IDatabaseContext context = _getDatabaseContext())
-			{
-				User user = await context.Users.FindAsync(session.UserId);
+			IDatabaseContext context = _getDatabaseContext();
+			User user = await context.Users.FindAsync(session.UserId);
 
-				return Ok(new FrontendSession(session.Token, session.UserId, user.FullName, user.Email));
-			}
+			return Ok(new FrontendSession(session.Token, session.UserId, user.FullName, user.Email));
 		}
 
 		/// <summary>

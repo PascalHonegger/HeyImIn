@@ -44,40 +44,38 @@ namespace HeyImIn.WebApplication.Controllers
 		[ProducesResponseType(typeof(void), 200)]
 		public async Task<IActionResult> DeleteEvent(int eventId)
 		{
-			using (IDatabaseContext context = _getDatabaseContext())
+			IDatabaseContext context = _getDatabaseContext();
+			Event @event = await context.Events
+				.Include(e => e.Organizer)
+				.Include(e => e.EventInvitations)
+				.Include(e => e.EventParticipations)
+				.Include(e => e.Appointments)
+					.ThenInclude(a => a.AppointmentParticipations)
+				.FirstOrDefaultAsync(e => e.Id == eventId);
+
+			if (@event == null)
 			{
-				Event @event = await context.Events
-					.Include(e => e.Organizer)
-					.Include(e => e.EventInvitations)
-					.Include(e => e.EventParticipations)
-					.Include(e => e.Appointments)
-						.ThenInclude(a => a.AppointmentParticipations)
-					.FirstOrDefaultAsync(e => e.Id == eventId);
-
-				if (@event == null)
-				{
-					return BadRequest(RequestStringMessages.EventNotFound);
-				}
-
-				User currentUser = await HttpContext.GetCurrentUserAsync(context);
-
-				if (@event.Organizer != currentUser)
-				{
-					_logger.LogInformation("{0}(): Tried to delete event {1}, which he's not organizing", nameof(DeleteEvent), @event.Id);
-
-					return BadRequest(RequestStringMessages.OrganizerRequired);
-				}
-
-				EventNotificationInformation notificationInformation = _deleteService.DeleteEventLocally(context, @event);
-
-				await context.SaveChangesAsync();
-
-				_auditLogger.LogInformation("{0}(): Deleted event {1}", nameof(DeleteEvent), @event.Id);
-
-				await _notificationService.NotifyEventDeletedAsync(notificationInformation);
-
-				return Ok();
+				return BadRequest(RequestStringMessages.EventNotFound);
 			}
+
+			User currentUser = await HttpContext.GetCurrentUserAsync(context);
+
+			if (@event.Organizer != currentUser)
+			{
+				_logger.LogInformation("{0}(): Tried to delete event {1}, which he's not organizing", nameof(DeleteEvent), @event.Id);
+
+				return BadRequest(RequestStringMessages.OrganizerRequired);
+			}
+
+			EventNotificationInformation notificationInformation = _deleteService.DeleteEventLocally(context, @event);
+
+			await context.SaveChangesAsync();
+
+			_auditLogger.LogInformation("{0}(): Deleted event {1}", nameof(DeleteEvent), @event.Id);
+
+			await _notificationService.NotifyEventDeletedAsync(notificationInformation);
+
+			return Ok();
 		}
 
 		/// <summary>
@@ -88,42 +86,40 @@ namespace HeyImIn.WebApplication.Controllers
 		[ProducesResponseType(typeof(void), 200)]
 		public async Task<IActionResult> UpdateEventInfo(UpdatedEventInfoDto updatedEventInfoDto)
 		{
-			using (IDatabaseContext context = _getDatabaseContext())
+			IDatabaseContext context = _getDatabaseContext();
+			Event @event = await context.Events
+				.Include(e => e.Organizer)
+				.Include(e => e.EventParticipations)
+				.FirstOrDefaultAsync(e => e.Id == updatedEventInfoDto.EventId);
+
+			if (@event == null)
 			{
-				Event @event = await context.Events
-					.Include(e => e.Organizer)
-					.Include(e => e.EventParticipations)
-					.FirstOrDefaultAsync(e => e.Id == updatedEventInfoDto.EventId);
-
-				if (@event == null)
-				{
-					return BadRequest(RequestStringMessages.EventNotFound);
-				}
-
-				User currentUser = await HttpContext.GetCurrentUserAsync(context);
-
-				if (@event.Organizer != currentUser)
-				{
-					_logger.LogInformation("{0}(): Tried to update event {1}, which he's not organizing", nameof(UpdateEventInfo), @event.Id);
-
-					return BadRequest(RequestStringMessages.OrganizerRequired);
-				}
-
-				@event.Title = updatedEventInfoDto.Title;
-				@event.MeetingPlace = updatedEventInfoDto.MeetingPlace;
-				@event.Description = updatedEventInfoDto.Description;
-				@event.IsPrivate = updatedEventInfoDto.IsPrivate;
-				@event.ReminderTimeWindowInHours = updatedEventInfoDto.ReminderTimeWindowInHours;
-				@event.SummaryTimeWindowInHours = updatedEventInfoDto.SummaryTimeWindowInHours;
-
-				await context.SaveChangesAsync();
-
-				_auditLogger.LogInformation("{0}(): Updated event {1}", nameof(UpdateEventInfo), @event.Id);
-
-				await _notificationService.NotifyEventUpdatedAsync(@event);
-
-				return Ok();
+				return BadRequest(RequestStringMessages.EventNotFound);
 			}
+
+			User currentUser = await HttpContext.GetCurrentUserAsync(context);
+
+			if (@event.Organizer != currentUser)
+			{
+				_logger.LogInformation("{0}(): Tried to update event {1}, which he's not organizing", nameof(UpdateEventInfo), @event.Id);
+
+				return BadRequest(RequestStringMessages.OrganizerRequired);
+			}
+
+			@event.Title = updatedEventInfoDto.Title;
+			@event.MeetingPlace = updatedEventInfoDto.MeetingPlace;
+			@event.Description = updatedEventInfoDto.Description;
+			@event.IsPrivate = updatedEventInfoDto.IsPrivate;
+			@event.ReminderTimeWindowInHours = updatedEventInfoDto.ReminderTimeWindowInHours;
+			@event.SummaryTimeWindowInHours = updatedEventInfoDto.SummaryTimeWindowInHours;
+
+			await context.SaveChangesAsync();
+
+			_auditLogger.LogInformation("{0}(): Updated event {1}", nameof(UpdateEventInfo), @event.Id);
+
+			await _notificationService.NotifyEventUpdatedAsync(@event);
+
+			return Ok();
 		}
 
 		/// <summary>
@@ -136,28 +132,26 @@ namespace HeyImIn.WebApplication.Controllers
 		[ProducesResponseType(typeof(int), 200)]
 		public async Task<IActionResult> CreateEvent(GeneralEventInformation generalEventInformation)
 		{
-			using (IDatabaseContext context = _getDatabaseContext())
+			IDatabaseContext context = _getDatabaseContext();
+			var newEvent = new Event
 			{
-				var newEvent = new Event
-				{
-					Title = generalEventInformation.Title,
-					Description = generalEventInformation.Description,
-					MeetingPlace = generalEventInformation.MeetingPlace,
-					IsPrivate = generalEventInformation.IsPrivate,
-					ReminderTimeWindowInHours = generalEventInformation.ReminderTimeWindowInHours,
-					SummaryTimeWindowInHours = generalEventInformation.SummaryTimeWindowInHours,
-					OrganizerId = HttpContext.GetUserId()
-				};
+				Title = generalEventInformation.Title,
+				Description = generalEventInformation.Description,
+				MeetingPlace = generalEventInformation.MeetingPlace,
+				IsPrivate = generalEventInformation.IsPrivate,
+				ReminderTimeWindowInHours = generalEventInformation.ReminderTimeWindowInHours,
+				SummaryTimeWindowInHours = generalEventInformation.SummaryTimeWindowInHours,
+				OrganizerId = HttpContext.GetUserId()
+			};
 
 
-				context.Events.Add(newEvent);
+			context.Events.Add(newEvent);
 
-				await context.SaveChangesAsync();
+			await context.SaveChangesAsync();
 
-				_auditLogger.LogInformation("{0}(): Created event {1} ({2})", nameof(CreateEvent), newEvent.Id, newEvent.Title);
+			_auditLogger.LogInformation("{0}(): Created event {1} ({2})", nameof(CreateEvent), newEvent.Id, newEvent.Title);
 
-				return Ok(newEvent.Id);
-			}
+			return Ok(newEvent.Id);
 		}
 
 		/// <summary>
@@ -173,44 +167,42 @@ namespace HeyImIn.WebApplication.Controllers
 		[ProducesResponseType(typeof(EditEventDetails), 200)]
 		public async Task<IActionResult> GetEditDetails(int eventId)
 		{
-			using (IDatabaseContext context = _getDatabaseContext())
+			IDatabaseContext context = _getDatabaseContext();
+			Event @event = await context.Events
+				.Include(e => e.EventParticipations)
+					.ThenInclude(ep => ep.Participant)
+				.Include(e => e.Appointments)
+					.ThenInclude(ap => ap.AppointmentParticipations)
+				.Include(e => e.Organizer)
+				.FirstOrDefaultAsync(e => e.Id == eventId);
+
+			if (@event == null)
 			{
-				Event @event = await context.Events
-					.Include(e => e.EventParticipations)
-						.ThenInclude(ep => ep.Participant)
-					.Include(e => e.Appointments)
-						.ThenInclude(ap => ap.AppointmentParticipations)
-					.Include(e => e.Organizer)
-					.FirstOrDefaultAsync(e => e.Id == eventId);
-
-				if (@event == null)
-				{
-					return NotFound();
-				}
-
-				int currentUserId = HttpContext.GetUserId();
-
-				if (@event.OrganizerId != currentUserId)
-				{
-					_logger.LogInformation("{0}(): Tried to edit event {1}, which he's not organizing", nameof(GetEditDetails), @event.Id);
-
-					return BadRequest(RequestStringMessages.OrganizerRequired);
-				}
-
-				List<User> allParticipants = @event.EventParticipations.Select(e => e.Participant).ToList();
-
-				List<AppointmentDetails> upcomingAppointments = @event.Appointments
-					.Where(a => a.StartTime >= DateTime.UtcNow)
-					.OrderBy(a => a.StartTime)
-					.Select(a => AppointmentDetails.FromAppointment(a, currentUserId, allParticipants))
-					.ToList();
-
-				List<EventParticipantInformation> currentEventParticipation = @event.EventParticipations.Select(EventParticipantInformation.FromParticipation).ToList();
-
-				ViewEventInformation viewEventInformation = ViewEventInformation.FromEvent(@event, currentUserId);
-
-				return Ok(new EditEventDetails(viewEventInformation, upcomingAppointments, currentEventParticipation));
+				return NotFound();
 			}
+
+			int currentUserId = HttpContext.GetUserId();
+
+			if (@event.OrganizerId != currentUserId)
+			{
+				_logger.LogInformation("{0}(): Tried to edit event {1}, which he's not organizing", nameof(GetEditDetails), @event.Id);
+
+				return BadRequest(RequestStringMessages.OrganizerRequired);
+			}
+
+			List<User> allParticipants = @event.EventParticipations.Select(e => e.Participant).ToList();
+
+			List<AppointmentDetails> upcomingAppointments = @event.Appointments
+				.Where(a => a.StartTime >= DateTime.UtcNow)
+				.OrderBy(a => a.StartTime)
+				.Select(a => AppointmentDetails.FromAppointment(a, currentUserId, allParticipants))
+				.ToList();
+
+			List<EventParticipantInformation> currentEventParticipation = @event.EventParticipations.Select(EventParticipantInformation.FromParticipation).ToList();
+
+			ViewEventInformation viewEventInformation = ViewEventInformation.FromEvent(@event, currentUserId);
+
+			return Ok(new EditEventDetails(viewEventInformation, upcomingAppointments, currentEventParticipation));
 		}
 
 		private readonly INotificationService _notificationService;

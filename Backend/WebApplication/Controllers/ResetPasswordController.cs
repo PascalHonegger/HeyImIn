@@ -35,29 +35,27 @@ namespace HeyImIn.WebApplication.Controllers
 		[ProducesResponseType(typeof(void), 200)]
 		public async Task<IActionResult> RequestPasswordReset(RequestPasswordResetDto requestPasswordResetDto)
 		{
-			using (IDatabaseContext context = _getDatabaseContext())
+			IDatabaseContext context = _getDatabaseContext();
+			User user = await context.Users.FirstOrDefaultAsync(u => u.Email == requestPasswordResetDto.Email);
+
+			if (user == null)
 			{
-				User user = await context.Users.FirstOrDefaultAsync(u => u.Email == requestPasswordResetDto.Email);
-
-				if (user == null)
-				{
-					return BadRequest(RequestStringMessages.NoProfileWithEmailFound);
-				}
-
-				var passwordReset = new PasswordReset
-				{
-					User = user,
-					Requested = DateTime.UtcNow
-				};
-
-				context.PasswordResets.Add(passwordReset);
-
-				await context.SaveChangesAsync();
-
-				await _notificationService.SendPasswordResetTokenAsync(passwordReset.Token, user);
-
-				return Ok();
+				return BadRequest(RequestStringMessages.NoProfileWithEmailFound);
 			}
+
+			var passwordReset = new PasswordReset
+			{
+				User = user,
+				Requested = DateTime.UtcNow
+			};
+
+			context.PasswordResets.Add(passwordReset);
+
+			await context.SaveChangesAsync();
+
+			await _notificationService.SendPasswordResetTokenAsync(passwordReset.Token, user);
+
+			return Ok();
 		}
 
 		/// <summary>
@@ -67,33 +65,31 @@ namespace HeyImIn.WebApplication.Controllers
 		[ProducesResponseType(typeof(void), 200)]
 		public async Task<IActionResult> ResetPassword(ResetPasswordDto resetPasswordDto)
 		{
-			using (IDatabaseContext context = _getDatabaseContext())
+			IDatabaseContext context = _getDatabaseContext();
+			PasswordReset passwordReset = await context.PasswordResets.Include(p => p.User).FirstOrDefaultAsync(r => r.Token == resetPasswordDto.PasswordResetToken);
+
+			if (passwordReset == null)
 			{
-				PasswordReset passwordReset = await context.PasswordResets.Include(p => p.User).FirstOrDefaultAsync(r => r.Token == resetPasswordDto.PasswordResetToken);
+				_logger.LogDebug("{0}(resetToken={1}): Couldn't find the password reset token", nameof(ResetPassword), resetPasswordDto.PasswordResetToken);
 
-				if (passwordReset == null)
-				{
-					_logger.LogDebug("{0}(resetToken={1}): Couldn't find the password reset token", nameof(ResetPassword), resetPasswordDto.PasswordResetToken);
-
-					return BadRequest(RequestStringMessages.ResetCodeInvalid);
-				}
-
-				if (passwordReset.Used || (passwordReset.Requested - DateTime.UtcNow > _resetTokenValidTimeSpan))
-				{
-					_logger.LogInformation("{0}(resetToken={1}): Tried to reset password for user {2} with an expired or used token", nameof(ResetPassword), resetPasswordDto.PasswordResetToken, passwordReset.UserId);
-
-					return BadRequest(RequestStringMessages.ResetCodeAlreadyUsedOrExpired);
-				}
-
-				passwordReset.User.PasswordHash = _passwordService.HashPassword(resetPasswordDto.NewPassword);
-				passwordReset.Used = true;
-
-				await context.SaveChangesAsync();
-
-				_logger.LogInformation("{0}(resetToken={1}): Reset password for user {2}", nameof(ResetPassword), resetPasswordDto.PasswordResetToken, passwordReset.UserId);
-
-				return Ok();
+				return BadRequest(RequestStringMessages.ResetCodeInvalid);
 			}
+
+			if (passwordReset.Used || (passwordReset.Requested - DateTime.UtcNow > _resetTokenValidTimeSpan))
+			{
+				_logger.LogInformation("{0}(resetToken={1}): Tried to reset password for user {2} with an expired or used token", nameof(ResetPassword), resetPasswordDto.PasswordResetToken, passwordReset.UserId);
+
+				return BadRequest(RequestStringMessages.ResetCodeAlreadyUsedOrExpired);
+			}
+
+			passwordReset.User.PasswordHash = _passwordService.HashPassword(resetPasswordDto.NewPassword);
+			passwordReset.Used = true;
+
+			await context.SaveChangesAsync();
+
+			_logger.LogInformation("{0}(resetToken={1}): Reset password for user {2}", nameof(ResetPassword), resetPasswordDto.PasswordResetToken, passwordReset.UserId);
+
+			return Ok();
 		}
 
 		private readonly IPasswordService _passwordService;

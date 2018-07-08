@@ -23,26 +23,24 @@ namespace HeyImIn.WebApplication.Services.Impl
 
 		public async Task RunAsync()
 		{
-			using (IDatabaseContext context = _getDatabaseContext())
+			IDatabaseContext context = _getDatabaseContext();
+			List<Appointment> appointmentsWithPossibleReminders = await GetFutureAppointmentsAsync(a => a.StartTime.AddHours(-a.Event.ReminderTimeWindowInHours) <= DateTime.UtcNow);
+			List<Appointment> appointmentsWithPossibleSummaries = await GetFutureAppointmentsAsync(a => a.StartTime.AddHours(-a.Event.SummaryTimeWindowInHours) <= DateTime.UtcNow);
+
+			foreach (Appointment appointmentsWithPossibleReminder in appointmentsWithPossibleReminders)
 			{
-				List<Appointment> appointmentsWithPossibleReminders = await GetFutureAppointmentsAsync(context, a => a.StartTime.AddHours(-a.Event.ReminderTimeWindowInHours) <= DateTime.UtcNow);
-				List<Appointment> appointmentsWithPossibleSummaries = await GetFutureAppointmentsAsync(context, a => a.StartTime.AddHours(-a.Event.SummaryTimeWindowInHours) <= DateTime.UtcNow);
-
-				foreach (Appointment appointmentsWithPossibleReminder in appointmentsWithPossibleReminders)
-				{
-					await _notificationService.SendAndUpdateRemindersAsync(appointmentsWithPossibleReminder);
-				}
-
-				foreach (Appointment appointmentsWithPossibleSummary in appointmentsWithPossibleSummaries)
-				{
-					await _notificationService.SendAndUpdateSummariesAsync(appointmentsWithPossibleSummary);
-				}
-
-				// Save sent reminders & summaries
-				await context.SaveChangesAsync();
+				await _notificationService.SendAndUpdateRemindersAsync(appointmentsWithPossibleReminder);
 			}
 
-			async Task<List<Appointment>> GetFutureAppointmentsAsync(IDatabaseContext context, Expression<Func<Appointment, bool>> additionalAppointmentFilter)
+			foreach (Appointment appointmentsWithPossibleSummary in appointmentsWithPossibleSummaries)
+			{
+				await _notificationService.SendAndUpdateSummariesAsync(appointmentsWithPossibleSummary);
+			}
+
+			// Save sent reminders & summaries
+			await context.SaveChangesAsync();
+
+			async Task<List<Appointment>> GetFutureAppointmentsAsync(Expression<Func<Appointment, bool>> additionalAppointmentFilter)
 			{
 				return await context.Appointments
 					.Include(a => a.Event)

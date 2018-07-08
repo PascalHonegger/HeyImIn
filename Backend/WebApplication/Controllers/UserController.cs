@@ -45,29 +45,27 @@ namespace HeyImIn.WebApplication.Controllers
 		[AuthenticateUser]
 		public async Task<IActionResult> SetNewUserData(SetUserDataDto setUserDataDto)
 		{
-			using (IDatabaseContext context = _getDatabaseContext())
+			IDatabaseContext context = _getDatabaseContext();
+			User currentUser = await HttpContext.GetCurrentUserAsync(context);
+
+			if (currentUser.Email != setUserDataDto.NewEmail)
 			{
-				User currentUser = await HttpContext.GetCurrentUserAsync(context);
-
-				if (currentUser.Email != setUserDataDto.NewEmail)
+				bool newMailTaken = await context.Users.AnyAsync(u => u.Email == setUserDataDto.NewEmail);
+				if (newMailTaken)
 				{
-					bool newMailTaken = await context.Users.AnyAsync(u => u.Email == setUserDataDto.NewEmail);
-					if (newMailTaken)
-					{
-						return BadRequest(RequestStringMessages.EmailAlreadyInUse);
-					}
+					return BadRequest(RequestStringMessages.EmailAlreadyInUse);
 				}
-
-
-				currentUser.Email = setUserDataDto.NewEmail;
-				currentUser.FullName = setUserDataDto.NewFullName;
-
-				await context.SaveChangesAsync();
-
-				_logger.LogInformation("{0}(): Updated user data", nameof(SetNewUserData));
-
-				return Ok();
 			}
+
+
+			currentUser.Email = setUserDataDto.NewEmail;
+			currentUser.FullName = setUserDataDto.NewFullName;
+
+			await context.SaveChangesAsync();
+
+			_logger.LogInformation("{0}(): Updated user data", nameof(SetNewUserData));
+
+			return Ok();
 		}
 
 		/// <summary>
@@ -80,25 +78,23 @@ namespace HeyImIn.WebApplication.Controllers
 		[AuthenticateUser]
 		public async Task<IActionResult> SetNewPassword(SetPasswordDto setPasswordDto)
 		{
-			using (IDatabaseContext context = _getDatabaseContext())
+			IDatabaseContext context = _getDatabaseContext();
+			User currentUser = await HttpContext.GetCurrentUserAsync(context);
+
+			bool currentPasswordCorrect = _passwordService.VerifyPassword(setPasswordDto.CurrentPassword, currentUser.PasswordHash);
+
+			if (!currentPasswordCorrect)
 			{
-				User currentUser = await HttpContext.GetCurrentUserAsync(context);
-
-				bool currentPasswordCorrect = _passwordService.VerifyPassword(setPasswordDto.CurrentPassword, currentUser.PasswordHash);
-
-				if (!currentPasswordCorrect)
-				{
-					return BadRequest(RequestStringMessages.CurrentPasswordWrong);
-				}
-
-				currentUser.PasswordHash = _passwordService.HashPassword(setPasswordDto.NewPassword);
-
-				await context.SaveChangesAsync();
-
-				_logger.LogInformation("{0}(): User changed his password", nameof(SetNewPassword));
-
-				return Ok();
+				return BadRequest(RequestStringMessages.CurrentPasswordWrong);
 			}
+
+			currentUser.PasswordHash = _passwordService.HashPassword(setPasswordDto.NewPassword);
+
+			await context.SaveChangesAsync();
+
+			_logger.LogInformation("{0}(): User changed his password", nameof(SetNewPassword));
+
+			return Ok();
 		}
 
 		/// <summary>
@@ -110,52 +106,50 @@ namespace HeyImIn.WebApplication.Controllers
 		[AuthenticateUser]
 		public async Task<IActionResult> DeleteAccount()
 		{
-			using (IDatabaseContext context = _getDatabaseContext())
+			IDatabaseContext context = _getDatabaseContext();
+			int currentUserId = HttpContext.GetUserId();
+
+			User currentUser = await context.Users
+				.Include(u => u.AppointmentParticipations)
+					.ThenInclude(ap => ap.Appointment)
+						.ThenInclude(a => a.Event)
+							.ThenInclude(e => e.Appointments)
+								.ThenInclude(ap => ap.AppointmentParticipations)
+				.Include(u => u.Sessions)
+				.Include(u => u.PasswordResets)
+				.Include(u => u.EventParticipations)
+				.Include(u => u.OrganizedEvents)
+					.ThenInclude(e => e.EventParticipations)
+				.Include(u => u.OrganizedEvents)
+					.ThenInclude(e => e.Appointments)
+				.Include(u => u.OrganizedEvents)
+					.ThenInclude(e => e.EventInvitations)
+				.FirstAsync(u => u.Id == currentUserId);
+
+			// Appointments the user participates, excluding his organized events
+			List<Appointment> userAppointments = currentUser.AppointmentParticipations
+				.Where(a => a.AppointmentParticipationAnswer == AppointmentParticipationAnswer.Accepted)
+				.Select(a => a.Appointment)
+				.Where(a => a.Event.OrganizerId != currentUser.Id)
+				.ToList();
+
+			List<EventNotificationInformation> notificationInformations = _deleteService.DeleteUserLocally(context, currentUser);
+
+			await context.SaveChangesAsync();
+
+			_auditLogger.LogInformation("{0}(): Deleted user {1} ({2}) and all of his events", nameof(DeleteAccount), currentUser.Id, currentUser.FullName);
+
+			foreach (EventNotificationInformation notificationInformation in notificationInformations)
 			{
-				int currentUserId = HttpContext.GetUserId();
-
-				User currentUser = await context.Users
-					.Include(u => u.AppointmentParticipations)
-						.ThenInclude(ap => ap.Appointment)
-							.ThenInclude(a => a.Event)
-								.ThenInclude(e => e.Appointments)
-									.ThenInclude(ap => ap.AppointmentParticipations)
-					.Include(u => u.Sessions)
-					.Include(u => u.PasswordResets)
-					.Include(u => u.EventParticipations)
-					.Include(u => u.OrganizedEvents)
-						.ThenInclude(e => e.EventParticipations)
-					.Include(u => u.OrganizedEvents)
-						.ThenInclude(e => e.Appointments)
-					.Include(u => u.OrganizedEvents)
-						.ThenInclude(e => e.EventInvitations)
-					.FirstAsync(u => u.Id == currentUserId);
-
-				// Appointments the user participates, excluding his organized events
-				List<Appointment> userAppointments = currentUser.AppointmentParticipations
-					.Where(a => a.AppointmentParticipationAnswer == AppointmentParticipationAnswer.Accepted)
-					.Select(a => a.Appointment)
-					.Where(a => a.Event.OrganizerId != currentUser.Id)
-					.ToList();
-
-				List<EventNotificationInformation> notificationInformations = _deleteService.DeleteUserLocally(context, currentUser);
-
-				await context.SaveChangesAsync();
-
-				_auditLogger.LogInformation("{0}(): Deleted user {1} ({2}) and all of his events", nameof(DeleteAccount), currentUser.Id, currentUser.FullName);
-
-				foreach (EventNotificationInformation notificationInformation in notificationInformations)
-				{
-					await _notificationService.NotifyEventDeletedAsync(notificationInformation);
-				}
-
-				foreach (Appointment appointment in userAppointments)
-				{
-					await _notificationService.SendLastMinuteChangeIfRequiredAsync(appointment);
-				}
-
-				return Ok();
+				await _notificationService.NotifyEventDeletedAsync(notificationInformation);
 			}
+
+			foreach (Appointment appointment in userAppointments)
+			{
+				await _notificationService.SendLastMinuteChangeIfRequiredAsync(appointment);
+			}
+
+			return Ok();
 		}
 
 		/// <summary>
@@ -167,32 +161,30 @@ namespace HeyImIn.WebApplication.Controllers
 		[AllowAnonymous]
 		public async Task<IActionResult> Register(RegisterDto registerDto)
 		{
-			using (IDatabaseContext context = _getDatabaseContext())
+			IDatabaseContext context = _getDatabaseContext();
+			bool userWithSameMailExists = await context.Users.AnyAsync(u => u.Email == registerDto.Email);
+
+			if (userWithSameMailExists)
 			{
-				bool userWithSameMailExists = await context.Users.AnyAsync(u => u.Email == registerDto.Email);
-
-				if (userWithSameMailExists)
-				{
-					return BadRequest(RequestStringMessages.EmailAlreadyInUse);
-				}
-
-				var newUser = new User
-				{
-					FullName = registerDto.FullName,
-					Email = registerDto.Email,
-					PasswordHash = _passwordService.HashPassword(registerDto.Password)
-				};
-
-				context.Users.Add(newUser);
-
-				await context.SaveChangesAsync();
-
-				_auditLogger.LogInformation("{0}(): Registered user {1} ({2})", nameof(Register), newUser.Id, newUser.FullName);
-
-				Guid createdSessionToken = await _sessionService.CreateSessionAsync(newUser.Id, true);
-
-				return Ok(new FrontendSession(createdSessionToken, newUser.Id, registerDto.FullName, registerDto.Email));
+				return BadRequest(RequestStringMessages.EmailAlreadyInUse);
 			}
+
+			var newUser = new User
+			{
+				FullName = registerDto.FullName,
+				Email = registerDto.Email,
+				PasswordHash = _passwordService.HashPassword(registerDto.Password)
+			};
+
+			context.Users.Add(newUser);
+
+			await context.SaveChangesAsync();
+
+			_auditLogger.LogInformation("{0}(): Registered user {1} ({2})", nameof(Register), newUser.Id, newUser.FullName);
+
+			Guid createdSessionToken = await _sessionService.CreateSessionAsync(newUser.Id, true);
+
+			return Ok(new FrontendSession(createdSessionToken, newUser.Id, registerDto.FullName, registerDto.Email));
 		}
 
 		private readonly IPasswordService _passwordService;
