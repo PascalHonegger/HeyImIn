@@ -46,7 +46,9 @@ namespace HeyImIn.WebApplication.Services.Impl
 			{
 				return await context.Appointments
 					.Include(a => a.Event)
+						.ThenInclude(e => e.EventParticipations)
 					.Include(a => a.AppointmentParticipations)
+						.ThenInclude(ap => ap.Participant)
 					.Where(a => a.StartTime >= DateTime.UtcNow)
 					.Where(additionalAppointmentFilter)
 					.ToListAsync();
