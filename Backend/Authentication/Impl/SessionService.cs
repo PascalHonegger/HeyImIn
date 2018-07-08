@@ -23,7 +23,7 @@ namespace HeyImIn.Authentication.Impl
 		{
 			using (IDatabaseContext context = _getDatabaseContext())
 			{
-				Session session = await context.Sessions.Include(s => s.User).FirstOrDefaultAsync(s => s.Token == token);
+				Session session = await context.Sessions.FindAsync(token);
 
 				if ((session == null) || !IsValidSession(session))
 				{
@@ -34,9 +34,9 @@ namespace HeyImIn.Authentication.Impl
 				{
 					// Set new valid until date as the session has been used & not updated for some time
 					SetValidUntilDate(session);
-				}
 
-				await context.SaveChangesAsync();
+					await context.SaveChangesAsync();
+				}
 
 				return session;
 			}
