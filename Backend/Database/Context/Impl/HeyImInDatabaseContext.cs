@@ -39,6 +39,7 @@ namespace HeyImIn.Database.Context.Impl
 			modelBuilder.Entity<User>().HasMany(u => u.OrganizedEvents).WithOne(p => p.Organizer).OnDelete(DeleteBehavior.Restrict);
 
 			modelBuilder.Entity<Event>().HasMany(e => e.EventInvitations).WithOne(p => p.Event).OnDelete(DeleteBehavior.Cascade);
+			modelBuilder.Entity<Event>().HasMany(e => e.ChatMessages).WithOne(p => p.Event).OnDelete(DeleteBehavior.Cascade);
 			modelBuilder.Entity<Event>().HasMany(e => e.EventParticipations).WithOne(p => p.Event).OnDelete(DeleteBehavior.Restrict);
 			modelBuilder.Entity<Event>().HasMany(e => e.Appointments).WithOne(p => p.Event).OnDelete(DeleteBehavior.Restrict);
 
@@ -48,8 +49,8 @@ namespace HeyImIn.Database.Context.Impl
 
 			modelBuilder.Entity<EventParticipation>().HasIndex(e => new { e.ParticipantId, e.EventId }).IsUnique();
 
-			// TODO Add all relations
-			// TODO Cleanup delete code?
+			modelBuilder.Entity<ChatMessage>().HasIndex(c => c.SentDate);
+			modelBuilder.Entity<ChatMessage>().HasMany(c => c.EventParticipations).WithOne(p => p.LastReadMessage).OnDelete(DeleteBehavior.Cascade);
 		}
 
 		public virtual DbSet<User> Users { get; set; }
@@ -59,6 +60,8 @@ namespace HeyImIn.Database.Context.Impl
 		public virtual DbSet<Event> Events { get; set; }
 
 		public virtual DbSet<Session> Sessions { get; set; }
+
+		public virtual DbSet<ChatMessage> ChatMessages { get; set; }
 
 		// Many-To-Many relation tables
 		public virtual DbSet<AppointmentParticipation> AppointmentParticipations { get; set; }
