@@ -31,6 +31,8 @@ namespace HeyImIn.Database.Context
 
 		DbSet<Session> Sessions { get; }
 
+		DbSet<ChatMessage> ChatMessages { get; set; }
+
 		// Many-To-Many relation tables
 		DbSet<AppointmentParticipation> AppointmentParticipations { get; }
 
