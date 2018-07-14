@@ -1,39 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Reflection;
 using System.Threading.Tasks;
-using System.Web.Http;
 using HeyImIn.WebApplication.Services;
-using log4net;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace HeyImIn.WebApplication.Controllers
 {
 	[AllowAnonymous]
-	public class CronController : ApiController
+	[ApiController]
+	[Route("api/Cron")]
+	public class CronController : ControllerBase
 	{
-		private readonly IEnumerable<ICronService> _cronRunners;
-
-		public CronController(IEnumerable<ICronService> cronRunners)
+		public CronController(IEnumerable<ICronService> cronRunners, ILogger<CronController> logger)
 		{
 			_cronRunners = cronRunners;
+			_logger = logger;
 		}
 
 		/// <summary>
 		///     Runs all cron-jobs
-		///     Catches and logs exceptions thrown by the <see cref="ICronService.RunAsync"/> method
+		///     Catches and logs exceptions thrown by the <see cref="ICronService.RunAsync" /> method
 		/// </summary>
-		[HttpPost]
-		public async Task<IHttpActionResult> Run()
+		[HttpPost(nameof(Run))]
+		[ProducesResponseType(typeof(void), 200)]
+		[ProducesResponseType(typeof(List<(string, string)>), 500)]
+		public async Task<IActionResult> Run()
 		{
-			_log.DebugFormat("{0}(): Running Cron jobs", nameof(Run));
+			_logger.LogDebug("{0}(): Running Cron jobs", nameof(Run));
 
 			var cronStopwatch = new Stopwatch();
-			var hadError = false;
+			var errors = new List<(string jobName, string errorMessage)>();
 
 			foreach (ICronService cronService in _cronRunners)
 			{
-				_log.DebugFormat("{0}(): Start running '{1}'", nameof(Run), cronService.DescriptiveName);
+				_logger.LogDebug("{0}(): Start running '{1}'", nameof(Run), cronService.DescriptiveName);
 				cronStopwatch.Restart();
 
 				try
@@ -42,25 +45,27 @@ namespace HeyImIn.WebApplication.Controllers
 				}
 				catch (Exception e)
 				{
-					_log.ErrorFormat("{0}(): Error while running '{1}', error={2}", nameof(Run), cronService.DescriptiveName, e);
+					_logger.LogError("{0}(): Error while running '{1}', error={2}", nameof(Run), cronService.DescriptiveName, e);
 
-					hadError = true;
+					errors.Add((cronService.DescriptiveName, e.Message));
 				}
 				finally
 				{
 					cronStopwatch.Stop();
-					_log.DebugFormat("{0}(): Finished running '{1}', duration = {2:g}", nameof(Run), cronService.DescriptiveName, cronStopwatch.Elapsed);
+					_logger.LogDebug("{0}(): Finished running '{1}', duration = {2:g}", nameof(Run), cronService.DescriptiveName, cronStopwatch.Elapsed);
 				}
 			}
 
-			if (hadError)
+			if (errors.Count != 0)
 			{
-				return InternalServerError();
+				return StatusCode(500, errors);
 			}
 
 			return Ok();
 		}
 
-		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+		private readonly IEnumerable<ICronService> _cronRunners;
+
+		private readonly ILogger<CronController> _logger;
 	}
 }

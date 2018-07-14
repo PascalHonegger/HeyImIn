@@ -13,7 +13,9 @@ namespace HeyImIn.MailNotifier.Models
 		}
 
 		public int Id { get; }
+
 		public DateTime StartTime { get; }
+
 		public List<AppointmentParticipationNotificationInformation> Participations { get; }
 	}
 }

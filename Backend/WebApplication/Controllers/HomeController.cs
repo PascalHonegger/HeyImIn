@@ -1,26 +1,29 @@
-﻿using System;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Web.Http;
+﻿using System.IO;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 
 namespace HeyImIn.WebApplication.Controllers
 {
 	[AllowAnonymous]
-	public class HomeController : ApiController
+	public class HomeController : ControllerBase
 	{
+		public HomeController(IHostingEnvironment environment)
+		{
+			_environment = environment;
+		}
+
 		/// <summary>
 		///     Default / fallback route which redirects to index.html
 		/// </summary>
 		[HttpGet]
-		[Route("")]
-		public HttpResponseMessage Index()
+		[ProducesResponseType(200)]
+		[ProducesResponseType(404)]
+		public PhysicalFileResult Index()
 		{
-			// Taken from MediaGateway project
-			HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.MovedPermanently);
-			response.Headers.Location = new Uri("client/index.html", UriKind.Relative);
-			response.Headers.CacheControl = CacheControlHeaderValue.Parse("no-cache, no-store, must-revalidate");
-			return response;
+			return PhysicalFile(Path.Combine(_environment.WebRootPath, "index.html"), "text/html");
 		}
+
+		private readonly IHostingEnvironment _environment;
 	}
 }

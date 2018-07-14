@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MatSnackBar, MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
@@ -8,9 +8,9 @@ import { AuthService } from '../../shared/services/auth.service';
 import { AreYouSureDialogComponent } from '../../shared/are-you-sure-dialog/are-you-sure-dialog.component';
 
 @Component({
-	selector: 'profile',
 	styleUrls: ['./profile.component.scss'],
-	templateUrl: './profile.component.html'
+	templateUrl: './profile.component.html',
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ProfileComponent {
 	public userDataForm: FormGroup;

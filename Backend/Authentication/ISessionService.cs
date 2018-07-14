@@ -10,7 +10,8 @@ namespace HeyImIn.Authentication
 	public interface ISessionService
 	{
 		/// <summary>
-		///     Tries to load a session. If one is found also extends / activates it
+		///     Tries to load a session. If one is found also extends / activates it.
+		///     Does not load related data
 		/// </summary>
 		/// <param name="token">
 		///     <see cref="Session.Token" />
@@ -22,7 +23,7 @@ namespace HeyImIn.Authentication
 		///     Creates a new session for a user
 		/// </summary>
 		/// <param name="userId">The user the session belongs to</param>
-		/// <param name="automaticallyActivate">Wheter the session should be activated automatically</param>
+		/// <param name="automaticallyActivate">Whether the session should be activated automatically</param>
 		/// <returns>Token of the created session</returns>
 		Task<Guid> CreateSessionAsync(int userId, bool automaticallyActivate);
 

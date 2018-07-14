@@ -13,26 +13,24 @@ namespace HeyImIn.Database.Models
 
 		[Required]
 		[ForeignKey(nameof(Appointment))]
-		[Index("UniqueAppointmentParticipation", IsUnique = true, Order = 1)]
 		public int AppointmentId { get; set; }
 
 		public virtual User Participant { get; set; }
 
 		[Required]
 		[ForeignKey(nameof(Participant))]
-		[Index("UniqueAppointmentParticipation", IsUnique = true, Order = 2)]
 		public int ParticipantId { get; set; }
 
 		public AppointmentParticipationAnswer? AppointmentParticipationAnswer { get; set; }
 
 		/// <summary>
-		///     Wheter a reminder has already been sent
+		///     Whether a reminder has already been sent
 		/// </summary>
 		public bool SentReminder { get; set; }
 
 		/// <summary>
-		///     Wheter a summary has already been sent
-		///     If this is true and any changes occure, an updated summary is sent
+		///     Whether a summary has already been sent
+		///     If this is true and any changes occur, an updated summary is sent
 		/// </summary>
 		public bool SentSummary { get; set; }
 	}

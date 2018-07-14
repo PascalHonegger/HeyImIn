@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { GeneralEventInfo } from '../../shared/server-model/general-event-info.model';
 import { NotificationConfiguration } from '../../shared/server-model/notification-configuration.model';
@@ -6,7 +6,8 @@ import { NotificationConfiguration } from '../../shared/server-model/notificatio
 @Component({
 	selector: 'edit-notifications',
 	styleUrls: ['./edit-notifications.component.scss'],
-	templateUrl: './edit-notifications.component.html'
+	templateUrl: './edit-notifications.component.html',
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EditNotificationsComponent {
 	public form: FormGroup;

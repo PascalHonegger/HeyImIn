@@ -13,7 +13,7 @@
 		public const string UserNotPartOfEvent = "Der angegebene Benutzer nimmt nicht an dem Event teil";
 
 		public const string InvitationRequired = "Der angegebene Event ist privat und benötigt eine Einladung";
-		public const string OrganizorRequired = "Sie müssen Organisator dieses Event sein, um diese Aktion durchzuführen";
+		public const string OrganizerRequired = "Sie müssen Organisator dieses Event sein, um diese Aktion durchzuführen";
 
 		public const string AppointmentsHaveToStartInTheFuture = "Termine müssen in der Zukunft liegen, überprüfen Sie ihre Eingabe";
 
@@ -22,7 +22,7 @@
 		public const string EmailAlreadyInUse = "Für diese E-Mail-Adresse ist bereits ein Konto hinterlegt";
 
 		public const string ResetCodeInvalid = "Der angegebene Code ist ungültig";
-		public const string ResetCodeAlreadyUsed = "Der angegebene Code ist abgelaufen oder wurde bereits verwendet";
+		public const string ResetCodeAlreadyUsedOrExpired = "Der angegebene Code ist abgelaufen oder wurde bereits verwendet";
 
 		public const string InvitationInvalid = "Die Einladung ist ungültig";
 		public const string InvitationAlreadyUsed = "Die Einladung wurde bereits verwendet";

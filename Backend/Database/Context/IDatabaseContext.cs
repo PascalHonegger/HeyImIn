@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
-using System.Data.Entity.Validation;
+using System.Threading;
 using System.Threading.Tasks;
 using HeyImIn.Database.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.Extensions.Logging;
 
 namespace HeyImIn.Database.Context
 {
@@ -16,11 +16,11 @@ namespace HeyImIn.Database.Context
 	public interface IDatabaseContext : IDisposable
 	{
 		// DbContext methods we want to provide
-		Task<int> SaveChangesAsync();
+		Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 
-		DbEntityEntry<TEntity> Entry<TEntity>(TEntity entity) where TEntity : class;
+		EntityEntry<TEntity> Entry<TEntity>(TEntity entity) where TEntity : class;
 
-		IEnumerable<DbEntityValidationResult> GetValidationErrors();
+		void Migrate(ILoggerFactory loggerFactory);
 
 		// Main tables
 		DbSet<User> Users { get; }

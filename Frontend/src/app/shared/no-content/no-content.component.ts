@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { Link } from '../main-layout/link.model';
 
 @Component({
-	selector: 'no-content',
 	styleUrls: ['./no-content.component.scss'],
-	templateUrl: './no-content.component.html'
+	templateUrl: './no-content.component.html',
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NoContentComponent {
 	public links: Link[] = [{
