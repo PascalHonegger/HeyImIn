@@ -18,7 +18,6 @@
 		]
 	},
 	"angularCompilerOptions": {
-		"skipMetadataEmit": true,
 		"strictInjectionParameters": true,
 		"fullTemplateTypeCheck": true
 	},

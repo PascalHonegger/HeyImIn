@@ -42,7 +42,7 @@ namespace HeyImIn.Database.Models
 		public string Description { get; set; }
 
 		/// <summary>
-		///     Wheter the event is private or public. Private events require an invitation
+		///     Whether the event is private or public. Private events require an invitation
 		/// </summary>
 		public bool IsPrivate { get; set; }
 
@@ -64,7 +64,9 @@ namespace HeyImIn.Database.Models
 		public int SummaryTimeWindowInHours { get; set; }
 
 		public virtual ICollection<Appointment> Appointments { get; set; }
+
 		public virtual ICollection<EventParticipation> EventParticipations { get; set; }
+
 		public virtual ICollection<EventInvitation> EventInvitations { get; set; }
 	}
 }

@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialogRef } from '@angular/material';
 import { FormControl, Validators } from '@angular/forms';
 
 @Component({
 	styleUrls: ['./add-participant-dialog.component.scss'],
-	templateUrl: './add-participant-dialog.component.html'
+	templateUrl: './add-participant-dialog.component.html',
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddParticipantDialogComponent {
 	private static readonly simpleMailPattern = '\\S+@\\S+'; // https://stackoverflow.com/a/742455

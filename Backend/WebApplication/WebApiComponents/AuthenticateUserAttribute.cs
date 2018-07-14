@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Linq;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using System.Web.Http;
-using System.Web.Http.Controllers;
 using HeyImIn.Authentication;
 using HeyImIn.Database.Models;
 using HeyImIn.WebApplication.Helpers;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Primitives;
 
 namespace HeyImIn.WebApplication.WebApiComponents
 {
@@ -14,53 +15,48 @@ namespace HeyImIn.WebApplication.WebApiComponents
 	///     Authenticates the user and calls <see cref="HttpActionExtensions.SetUserId" /> &
 	///     <see cref="HttpActionExtensions.SetSessionToken" />
 	/// </summary>
-	public class AuthenticateUserAttribute : AuthorizeAttribute
+	public class AuthenticateUserAttribute : Attribute, IAsyncAuthorizationFilter, IFilterFactory
 	{
-		private const string SessionTokenHttpHeaderKey = "SessionToken";
-
-		protected override bool IsAuthorized(HttpActionContext actionContext)
+		public AuthenticateUserAttribute()
 		{
-			HttpRequestHeaders headers = actionContext.Request.Headers;
-			if (!headers.Contains(SessionTokenHttpHeaderKey))
-			{
-				// No credentials provided
-				return false;
-			}
-
-			string sessionToken = headers.GetValues(SessionTokenHttpHeaderKey).First();
-
-			if (string.IsNullOrEmpty(sessionToken))
-			{
-				return false;
-			}
-
-			if (!Guid.TryParse(sessionToken, out Guid parsedSessionToken))
-			{
-				return false;
-			}
-
-			// Start the request in a new thread so the below .Wait call won't cause a deadlock
-			Task<Session> getSessionTask = Task.Run(async () => await SessionService.GetAndExtendSessionAsync(parsedSessionToken));
-
-			// Cannot use await as that's only supported in .NET core
-			getSessionTask.Wait();
-
-			Session session = getSessionTask.Result;
-
-			if (session == null)
-			{
-				return false;
-			}
-
-			actionContext.Request.SetUserId(session.UserId);
-			actionContext.Request.SetSessionToken(session.Token);
-
-			return true;
 		}
 
-		// Set by DI
-		// ReSharper disable once MemberCanBePrivate.Global
-		// ReSharper disable once UnusedAutoPropertyAccessor.Global
-		public ISessionService SessionService { get; set; }
+		public AuthenticateUserAttribute(ISessionService sessionService)
+		{
+			SessionService = sessionService;
+		}
+
+		public async Task OnAuthorizationAsync(AuthorizationFilterContext context)
+		{
+			if (context.HttpContext.Request.Headers.TryGetValue(SessionToken, out StringValues rawSessionToken))
+			{
+				string token = rawSessionToken.First();
+				if (!string.IsNullOrEmpty(token) && Guid.TryParse(token, out Guid parsedToken))
+				{
+					Session session = await SessionService.GetAndExtendSessionAsync(parsedToken);
+
+					if (session != null)
+					{
+						context.HttpContext.SetSessionToken(session.Token);
+						context.HttpContext.SetUserId(session.UserId);
+						return;
+					}
+				}
+			}
+
+			context.Result = new UnauthorizedResult();
+		}
+
+		public IFilterMetadata CreateInstance(IServiceProvider serviceProvider)
+		{
+			var sessionService = serviceProvider.GetService<ISessionService>();
+			return new AuthenticateUserAttribute(sessionService);
+		}
+
+		public bool IsReusable { get; } = false;
+
+		private ISessionService SessionService { get; }
+
+		private const string SessionToken = "SessionToken";
 	}
 }

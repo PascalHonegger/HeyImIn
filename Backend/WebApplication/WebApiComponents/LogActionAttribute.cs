@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Reflection;
-using System.Web.Http.Controllers;
-using System.Web.Http.Filters;
+using HeyImIn.Shared;
 using HeyImIn.WebApplication.Helpers;
 using log4net;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace HeyImIn.WebApplication.WebApiComponents
 {
@@ -13,18 +11,15 @@ namespace HeyImIn.WebApplication.WebApiComponents
 	/// </summary>
 	public class LogActionAttribute : ActionFilterAttribute
 	{
-		public override void OnActionExecuting(HttpActionContext actionContext)
+		public override void OnActionExecuting(ActionExecutingContext actionContext)
 		{
-			// Save a stopwatch to measure the time it took to execute the request
-			actionContext.Request.Properties[StopwatchName] = Stopwatch.StartNew();
-
-			int? userId = actionContext.Request.TryGetUserId();
+			int? userId = actionContext.HttpContext.TryGetUserId();
 			if (userId.HasValue)
 			{
 				LogicalThreadContext.Properties[LogHelpers.UserIdLogKey] = userId.Value;
 			}
 
-			Guid? sessionToken = actionContext.Request.TryGetSessionToken();
+			Guid? sessionToken = actionContext.HttpContext.TryGetSessionToken();
 			if (sessionToken.HasValue)
 			{
 				// Don't insert the full ID as that could be a security problem
@@ -32,25 +27,12 @@ namespace HeyImIn.WebApplication.WebApiComponents
 				string semiUniqueId = sessionToken.Value.ToString("D").Substring(0, 8);
 				LogicalThreadContext.Properties[LogHelpers.SessionTokenLogKey] = semiUniqueId;
 			}
-
-			base.OnActionExecuting(actionContext);
 		}
 
-		public override void OnActionExecuted(HttpActionExecutedContext actionExecutedContext)
+		public override void OnActionExecuted(ActionExecutedContext actionExecutedContext)
 		{
-			base.OnActionExecuted(actionExecutedContext);
-			var stopwatch = actionExecutedContext.Request.Properties[StopwatchName] as Stopwatch;
-
-			string duration = stopwatch?.Elapsed.ToString("g") ?? "Unknown";
-			string url = actionExecutedContext.Request.RequestUri.AbsolutePath;
-
-			_log.DebugFormat("{0}(): WebApi method {1} returned, duration = {2}", nameof(OnActionExecuted), url, duration);
-
 			LogicalThreadContext.Properties.Remove(LogHelpers.UserIdLogKey);
 			LogicalThreadContext.Properties.Remove(LogHelpers.SessionTokenLogKey);
 		}
-
-		private const string StopwatchName = "RequestDurationStopwatch";
-		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
 	}
 }

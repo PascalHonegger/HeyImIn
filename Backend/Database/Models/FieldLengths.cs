@@ -1,7 +1,7 @@
 ﻿namespace HeyImIn.Database.Models
 {
 	/// <summary>
-	///     Field lenghts used by the database
+	///     Field lengths used by the database
 	///     These values should be used in the backend & frontend validation
 	/// </summary>
 	public static class FieldLengths

@@ -39,10 +39,6 @@ $menu-margin: 6px;
 	min-width: 175px;
 }
 
-.smaller-menu {
-	font-size: small;
-}
-
 .nav-flex-div {
 	width: 100%;
 }
@@ -78,4 +74,8 @@ $content-xs-margin: 6px;
 
 .layout-wrapper {
 	min-height: 100vh;
+}
+
+.mat-icon {
+	vertical-align: middle;
 }

@@ -1,41 +1,41 @@
 ﻿using System;
 using System.Threading.Tasks;
-using System.Web.Http;
-using System.Web.Http.Description;
 using HeyImIn.Authentication;
+using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
+using HeyImIn.Shared;
 using HeyImIn.WebApplication.FrontendModels.ParameterTypes;
 using HeyImIn.WebApplication.FrontendModels.ResponseTypes;
 using HeyImIn.WebApplication.Helpers;
 using HeyImIn.WebApplication.WebApiComponents;
-using log4net;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace HeyImIn.WebApplication.Controllers
 {
-	public class SessionController : ApiController
+	[ApiController]
+	[Route("api/Session")]
+	public class SessionController : ControllerBase
 	{
-		public SessionController(IAuthenticationService authenticationService, ISessionService sessionService)
+		public SessionController(IAuthenticationService authenticationService, ISessionService sessionService, GetDatabaseContext getDatabaseContext, ILoggerFactory loggerFactory)
 		{
 			_authenticationService = authenticationService;
 			_sessionService = sessionService;
+			_getDatabaseContext = getDatabaseContext;
+			_auditLogger = loggerFactory.CreateAuditLogger();
 		}
 
 		/// <summary>
 		///     Tries to start a new session for the provided credentials
 		/// </summary>
 		/// <returns>The created <see cref="FrontendSession" /> containing user information</returns>
-		[HttpPost]
-		[ResponseType(typeof(FrontendSession))]
+		[HttpPost(nameof(StartSession))]
+		[ProducesResponseType(typeof(FrontendSession), 200)]
 		[AllowAnonymous]
-		public async Task<IHttpActionResult> StartSession([FromBody] StartSessionDto startSessionDto)
+		public async Task<IActionResult> StartSession(StartSessionDto startSessionDto)
 		{
-			// Validate parameters
-			if (!ModelState.IsValid || (startSessionDto == null))
-			{
-				return BadRequest();
-			}
-
-			var (authenticated, foundUser) = await _authenticationService.AuthenticateAsync(startSessionDto.Email, startSessionDto.Password);
+			(bool authenticated, User foundUser) = await _authenticationService.AuthenticateAsync(startSessionDto.Email, startSessionDto.Password);
 
 			if (!authenticated)
 			{
@@ -44,7 +44,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 			Guid sessionToken = await _sessionService.CreateSessionAsync(foundUser.Id, true);
 
-			_auditLog.InfoFormat("{0}(userId={1}): User logged in", nameof(StartSession), foundUser.Id);
+			_auditLogger.LogInformation("{0}(userId={1}): User logged in", nameof(StartSession), foundUser.Id);
 
 			return Ok(new FrontendSession(sessionToken, foundUser.Id, foundUser.FullName, foundUser.Email));
 		}
@@ -54,10 +54,10 @@ namespace HeyImIn.WebApplication.Controllers
 		/// </summary>
 		/// <param name="sessionToken">Unique session token</param>
 		/// <returns>The found <see cref="FrontendSession" /></returns>
-		[HttpGet]
-		[ResponseType(typeof(FrontendSession))]
+		[HttpGet(nameof(GetSession))]
+		[ProducesResponseType(typeof(FrontendSession), 200)]
 		[AllowAnonymous]
-		public async Task<IHttpActionResult> GetSession(Guid sessionToken)
+		public async Task<IActionResult> GetSession(Guid sessionToken)
 		{
 			Session session = await _sessionService.GetAndExtendSessionAsync(sessionToken);
 
@@ -66,28 +66,32 @@ namespace HeyImIn.WebApplication.Controllers
 				return Unauthorized();
 			}
 
-			return Ok(new FrontendSession(session.Token, session.UserId, session.User.FullName, session.User.Email));
+			IDatabaseContext context = _getDatabaseContext();
+			User user = await context.Users.FindAsync(session.UserId);
+
+			return Ok(new FrontendSession(session.Token, session.UserId, user.FullName, user.Email));
 		}
 
 		/// <summary>
 		///     Stops the active session => Log out and invalidate session
 		/// </summary>
-		[HttpPost]
-		[ResponseType(typeof(void))]
+		[HttpPost(nameof(StopActiveSession))]
+		[ProducesResponseType(typeof(void), 200)]
 		[AuthenticateUser]
-		public async Task<IHttpActionResult> StopActiveSession()
+		public async Task<IActionResult> StopActiveSession()
 		{
-			Guid token = Request.GetSessionToken();
+			Guid token = HttpContext.GetSessionToken();
 
 			await _sessionService.InvalidateSessionAsync(token);
 
-			_auditLog.InfoFormat("{0}(): User logged out", nameof(StopActiveSession));
+			_auditLogger.LogInformation("{0}(): User logged out", nameof(StopActiveSession));
 
 			return Ok();
 		}
 
 		private readonly IAuthenticationService _authenticationService;
 		private readonly ISessionService _sessionService;
-		private static readonly ILog _auditLog = LogHelpers.GetAuditLog();
+		private readonly GetDatabaseContext _getDatabaseContext;
+		private readonly ILogger _auditLogger;
 	}
 }

@@ -1,92 +1,96 @@
 ﻿using System;
-using System.Data.Entity;
-using System.Reflection;
 using System.Threading.Tasks;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
-using log4net;
+using HeyImIn.Shared;
+using Microsoft.Extensions.Logging;
 
 namespace HeyImIn.Authentication.Impl
 {
 	public class SessionService : ISessionService
 	{
-		public SessionService(GetDatabaseContext getDatabaseContext)
+		public SessionService(HeyImInConfiguration configuration, GetDatabaseContext getDatabaseContext, ILogger<SessionService> logger)
 		{
+			_inactiveSessionTimeout = configuration.Timeouts.InactiveSessionTimeout;
+			_unusedSessionExpirationTimeout = configuration.Timeouts.UnusedSessionExpirationTimeout;
+			_updateValidUntilTimeSpan = configuration.UpdateValidUntilTimeSpan;
 			_getDatabaseContext = getDatabaseContext;
+			_logger = logger;
 		}
 
 		public async Task<Session> GetAndExtendSessionAsync(Guid token)
 		{
-			using (IDatabaseContext context = _getDatabaseContext())
+			IDatabaseContext context = _getDatabaseContext();
+			Session session = await context.Sessions.FindAsync(token);
+
+			if ((session == null) || !IsValidSession(session))
 			{
-				Session session = await context.Sessions.Include(s => s.User).FirstOrDefaultAsync(s => s.Token == token);
+				return null;
+			}
 
-				if ((session == null) || !IsValidSession(session))
-				{
-					return null;
-				}
-
-				ActivateOrExtendSession(session);
+			if (!session.ValidUntil.HasValue || (DateTime.UtcNow - (session.ValidUntil.Value - _inactiveSessionTimeout) >= _updateValidUntilTimeSpan))
+			{
+				// Set new valid until date as the session has been used & not updated for some time
+				SetValidUntilDate(session);
 
 				await context.SaveChangesAsync();
-
-				return session;
 			}
+
+			return session;
 		}
 
 		public async Task<Guid> CreateSessionAsync(int userId, bool active)
 		{
-			using (IDatabaseContext context = _getDatabaseContext())
+			IDatabaseContext context = _getDatabaseContext();
+			var session = new Session
 			{
-				Session session = context.Sessions.Create();
+				UserId = userId,
+				Created = DateTime.UtcNow
+			};
 
-				session.UserId = userId;
-				session.Created = DateTime.UtcNow;
-
-				if (active)
-				{
-					ActivateOrExtendSession(session);
-				}
-
-				context.Sessions.Add(session);
-
-				await context.SaveChangesAsync();
-
-				_log.DebugFormat("{0}(userId={1}, active={2}): Added new session", nameof(CreateSessionAsync), userId, active);
-
-				return session.Token;
+			if (active)
+			{
+				SetValidUntilDate(session);
 			}
+
+			context.Sessions.Add(session);
+
+			await context.SaveChangesAsync();
+
+			_logger.LogDebug("{0}(userId={1}, active={2}): Added new session", nameof(CreateSessionAsync), userId, active);
+
+			return session.Token;
 		}
 
 		public async Task InvalidateSessionAsync(Guid token)
 		{
-			using (IDatabaseContext context = _getDatabaseContext())
+			IDatabaseContext context = _getDatabaseContext();
+			Session session = await context.Sessions.FindAsync(token);
+
+			if ((session == null) || !IsValidSession(session))
 			{
-				Session session = await context.Sessions.FindAsync(token);
-
-				if ((session == null) || !IsValidSession(session))
-				{
-					return;
-				}
-
-				session.ValidUntil = DateTime.UtcNow;
-
-				await context.SaveChangesAsync();
-
-				_log.DebugFormat("{0}(token={1}): Invalidated session", nameof(InvalidateSessionAsync), token);
+				return;
 			}
+
+			session.ValidUntil = DateTime.UtcNow;
+
+			await context.SaveChangesAsync();
+
+			_logger.LogDebug("{0}(token={1}): Invalidated session", nameof(InvalidateSessionAsync), token);
 		}
 
-		private static void ActivateOrExtendSession(Session session)
+		/// <summary>
+		///     This methods sets the <see cref="Session.ValidUntil" /> property, activating or extending it
+		/// </summary>
+		private void SetValidUntilDate(Session session)
 		{
-			// Set new valid until date as the session has been used
 			session.ValidUntil = DateTime.UtcNow + _inactiveSessionTimeout;
 		}
 
-		private static bool IsValidSession(Session session)
+		private bool IsValidSession(Session session)
 		{
-			return session.ValidUntil == null 
-				? DateTime.UtcNow - session.Created <= TimeSpan.FromDays(2)
+			return session.ValidUntil == null
+				? DateTime.UtcNow - session.Created <= _unusedSessionExpirationTimeout
 				: session.ValidUntil >= DateTime.UtcNow;
 		}
 
@@ -96,8 +100,18 @@ namespace HeyImIn.Authentication.Impl
 		/// <summary>
 		///     A session gets invalidated after this time period passed without any access to the session
 		/// </summary>
-		private static readonly TimeSpan _inactiveSessionTimeout = TimeSpan.FromHours(24);
+		private readonly TimeSpan _inactiveSessionTimeout;
 
-		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+		/// <summary>
+		///     A session gets invalidated after this time period passed without any access to the session
+		/// </summary>
+		private readonly TimeSpan _updateValidUntilTimeSpan;
+
+		/// <summary>
+		///     If a session is not accessed after this time, it expires and turns invalid
+		/// </summary>
+		private readonly TimeSpan _unusedSessionExpirationTimeout;
+
+		private readonly ILogger<SessionService> _logger;
 	}
 }

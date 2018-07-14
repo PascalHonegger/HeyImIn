@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using HeyImIn.Database.Models;
+﻿using HeyImIn.Database.Models;
 
 namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
 {
@@ -13,11 +11,9 @@ namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
 			LatestAppointmentInformation = latestAppointmentInformation;
 		}
 
-		public static EventOverviewInformation FromEvent(Event @event, int currentUserId)
+		public static EventOverviewInformation FromEvent(Event @event, Appointment firstUpcomingAppointment, int currentUserId)
 		{
 			ViewEventInformation viewEventInformation = ViewEventInformation.FromEvent(@event, currentUserId);
-
-			Appointment firstUpcomingAppointment = @event.Appointments.OrderBy(a => a.StartTime).FirstOrDefault(a => a.StartTime >= DateTime.UtcNow);
 
 			if (firstUpcomingAppointment == null)
 			{

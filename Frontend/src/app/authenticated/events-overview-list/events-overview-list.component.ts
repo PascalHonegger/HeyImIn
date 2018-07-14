@@ -1,4 +1,4 @@
-import { Component, Input, EventEmitter, Output } from '@angular/core';
+import { Component, Input, EventEmitter, Output, ChangeDetectionStrategy } from '@angular/core';
 import { ParticipateEventClient } from '../../shared/backend-clients/participate-event.client';
 import { EventOverviewInformation } from '../../shared/server-model/event-overview.model';
 import { AuthService } from '../../shared/services/auth.service';
@@ -8,7 +8,8 @@ import { MatDialog } from '@angular/material';
 @Component({
 	selector: 'events-overview-list',
 	styleUrls: ['./events-overview-list.component.scss'],
-	templateUrl: './events-overview-list.component.html'
+	templateUrl: './events-overview-list.component.html',
+	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EventsOverviewListComponent extends DetailOverviewBase {
 	@Input()
