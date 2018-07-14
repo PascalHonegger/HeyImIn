@@ -1,0 +1,4 @@
+[bugtraq]
+	url = https://github.com/PascalHonegger/HeyImIn/issues/%BUGID%
+	warnifnoissue = true
+	logregex = "\\(#(\\d+)\\)"
