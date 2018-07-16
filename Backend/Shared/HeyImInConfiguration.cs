@@ -19,6 +19,8 @@ namespace HeyImIn.Shared
 
 		public int MaxAmountOfAppointmentsPerDetailPage { get; set; } = 5;
 
+		public int BaseAmountOfChatMessagesPerDetailPage { get; set; } = 25;
+
 		public HeyImInTimeouts Timeouts { get; } = new HeyImInTimeouts();
 
 		public class HeyImInTimeouts

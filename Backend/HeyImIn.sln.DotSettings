@@ -656,6 +656,7 @@ $END$</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=F69AECD624B9E8468FFB6F1B638793AC/Text/@EntryValue">_log.InfoFormat("{0}(): $LOG_TEXT$", nameof($MEMBER_NAME$));&#xD;
 $END$</s:String>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=appsettings/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=informations/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=participations/@EntryIndexedValue">True</s:Boolean>
 	
 	
