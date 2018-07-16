@@ -190,17 +190,17 @@ namespace HeyImIn.WebApplication.Controllers
 				return BadRequest(RequestStringMessages.OrganizerRequired);
 			}
 
-			List<User> allParticipants = @event.EventParticipations.Select(e => e.Participant).ToList();
+			List<int> allParticipantIds = @event.EventParticipations.Select(e => e.ParticipantId).ToList();
 
 			List<AppointmentDetails> upcomingAppointments = @event.Appointments
 				.Where(a => a.StartTime >= DateTime.UtcNow)
 				.OrderBy(a => a.StartTime)
-				.Select(a => AppointmentDetails.FromAppointment(a, currentUserId, allParticipants))
+				.Select(a => AppointmentDetails.FromAppointment(a, allParticipantIds))
 				.ToList();
 
-			List<EventParticipantInformation> currentEventParticipation = @event.EventParticipations.Select(EventParticipantInformation.FromParticipation).ToList();
+			List<UserInformation> currentEventParticipation = @event.EventParticipations.Select(p => UserInformation.FromUserIncludingEmail(p.Participant)).ToList();
 
-			ViewEventInformation viewEventInformation = ViewEventInformation.FromEvent(@event, currentUserId);
+			ViewEventInformation viewEventInformation = ViewEventInformation.FromEvent(@event);
 
 			return Ok(new EditEventDetails(viewEventInformation, upcomingAppointments, currentEventParticipation));
 		}

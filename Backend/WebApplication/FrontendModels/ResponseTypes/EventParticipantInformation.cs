@@ -2,24 +2,29 @@
 
 namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
 {
-	public class EventParticipantInformation
+	public class UserInformation
 	{
-		public EventParticipantInformation(int participantId, string participantName, string participantEmail)
+		public UserInformation(int userId, string name, string email)
 		{
-			ParticipantId = participantId;
-			ParticipantName = participantName;
-			ParticipantEmail = participantEmail;
+			UserId = userId;
+			Name = name;
+			Email = email;
 		}
 
-		public static EventParticipantInformation FromParticipation(EventParticipation participation)
+		public static UserInformation FromUserIncludingEmail(User user)
 		{
-			return new EventParticipantInformation(participation.Participant.Id, participation.Participant.FullName, participation.Participant.Email);
+			return new UserInformation(user.Id, user.FullName, user.Email);
 		}
 
-		public int ParticipantId { get; }
+		public static UserInformation FromUserExcludingEmail(User user)
+		{
+			return new UserInformation(user.Id, user.FullName, null);
+		}
 
-		public string ParticipantName { get; }
+		public int UserId { get; }
 
-		public string ParticipantEmail { get; }
+		public string Name { get; }
+
+		public string Email { get; }
 	}
 }
