@@ -11,16 +11,16 @@ namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
 			LatestAppointmentInformation = latestAppointmentInformation;
 		}
 
-		public static EventOverviewInformation FromEvent(Event @event, Appointment firstUpcomingAppointment, int currentUserId)
+		public static EventOverviewInformation FromEvent(Event @event, Appointment firstUpcomingAppointment)
 		{
-			ViewEventInformation viewEventInformation = ViewEventInformation.FromEvent(@event, currentUserId);
+			ViewEventInformation viewEventInformation = ViewEventInformation.FromEvent(@event);
 
 			if (firstUpcomingAppointment == null)
 			{
 				return new EventOverviewInformation(@event.Id, viewEventInformation, null);
 			}
 
-			AppointmentInformation appointmentInformation = AppointmentInformation.FromAppointment(firstUpcomingAppointment, currentUserId, @event.EventParticipations.Count);
+			AppointmentInformation appointmentInformation = AppointmentInformation.FromAppointment(firstUpcomingAppointment);
 
 			return new EventOverviewInformation(@event.Id, viewEventInformation, appointmentInformation);
 		}

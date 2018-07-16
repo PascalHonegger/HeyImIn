@@ -12,15 +12,15 @@ namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
 			Participations = participations;
 		}
 
-		public static AppointmentDetails FromAppointment(Appointment appointment, int currentUserId, List<User> allParticipants)
+		public static AppointmentDetails FromAppointment(Appointment appointment, IEnumerable<int> allParticipantIds)
 		{
-			IEnumerable<AppointmentParticipationInformation> withAnswers = appointment.AppointmentParticipations.Select(p => new AppointmentParticipationInformation(p.Participant.FullName, p.Participant.Id, p.AppointmentParticipationAnswer));
+			IEnumerable<AppointmentParticipationInformation> withAnswers = appointment.AppointmentParticipations.Select(p => new AppointmentParticipationInformation(p.ParticipantId, p.AppointmentParticipationAnswer));
 
-			IEnumerable<User> otherParticipants = allParticipants.Except(appointment.AppointmentParticipations.Select(a => a.Participant));
-			IEnumerable<AppointmentParticipationInformation> noAnswers = otherParticipants.Select(p => new AppointmentParticipationInformation(p.FullName, p.Id, null));
+			IEnumerable<int> otherParticipantIds = allParticipantIds.Except(appointment.AppointmentParticipations.Select(a => a.ParticipantId));
+			IEnumerable<AppointmentParticipationInformation> noAnswers = otherParticipantIds.Select(id => new AppointmentParticipationInformation(id, null));
 
 			List<AppointmentParticipationInformation> participations = withAnswers.Concat(noAnswers).ToList();
-			AppointmentInformation appointmentInformation = AppointmentInformation.FromAppointment(appointment, currentUserId, allParticipants.Count);
+			AppointmentInformation appointmentInformation = AppointmentInformation.FromAppointment(appointment);
 
 			return new AppointmentDetails(appointmentInformation, participations);
 		}

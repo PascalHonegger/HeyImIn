@@ -67,7 +67,7 @@ namespace HeyImIn.WebApplication.Controllers
 			List<EventChatMessage> eventChatMessages = await chatMessagesQuery
 				.OrderByDescending(c => c.SentDate)
 				.Take(_baseAmountOfChatMessagesPerDetailPage)
-				.Select(m => new EventChatMessage(m.Id, m.Author.FullName, m.Content, m.SentDate))
+				.Select(m => new EventChatMessage(m.Id, m.AuthorId, m.Content, m.SentDate))
 				.ToListAsync();
 
 			if (!providedAlreadyLoadedMessageSentDate)
@@ -95,10 +95,10 @@ namespace HeyImIn.WebApplication.Controllers
 		public async Task<IActionResult> SendChatMessage(SendMessageDto sendMessageDto)
 		{
 			IDatabaseContext context = _getDatabaseContext();
-			User currentUser = await HttpContext.GetCurrentUserAsync(context);
+			int currentUserId = HttpContext.GetUserId();
 
 			List<EventParticipation> eventParticipations = await context.EventParticipations.Where(e => e.EventId == sendMessageDto.EventId).ToListAsync();
-			EventParticipation currentUserParticipation = eventParticipations.FirstOrDefault(e => e.ParticipantId == currentUser.Id);
+			EventParticipation currentUserParticipation = eventParticipations.FirstOrDefault(e => e.ParticipantId == currentUserId);
 
 			if (currentUserParticipation == null)
 			{
@@ -107,7 +107,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 			var message = new ChatMessage
 			{
-				Author = currentUser,
+				AuthorId = currentUserId,
 				EventId = sendMessageDto.EventId,
 				Content = sendMessageDto.Content,
 				SentDate = DateTime.UtcNow
@@ -123,7 +123,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 			// TODO Push-Notifications eventParticipations.Where(e => e.ParticipantId != currentUserId).ForEach(p => SendNotification(p));
 
-			return Ok(new EventChatMessage(message.Id, currentUser.FullName, message.Content, message.SentDate));
+			return Ok(new EventChatMessage(message.Id, currentUserId, message.Content, message.SentDate));
 		}
 
 		private readonly INotificationService _notificationService;
