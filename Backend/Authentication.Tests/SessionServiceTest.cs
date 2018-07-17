@@ -103,7 +103,7 @@ namespace HeyImIn.Authentication.Tests
 		[Fact]
 		public async Task GetSession_GivenValidSession_ExtendsSession()
 		{
-			_configuration.UpdateValidUntilTimeSpan = TimeSpan.Zero;
+			_configuration.TimeSpans.UpdateValidUntilTimeSpan = TimeSpan.Zero;
 			(GetDatabaseContext getContext, SessionService sessionService) = SetupSessionService();
 			Guid sessionToken;
 
@@ -144,10 +144,10 @@ namespace HeyImIn.Authentication.Tests
 		[Fact]
 		public async Task GetSession_GivenValidSessionWhichWasRecentlyUpdated_SessionUnchanged()
 		{
-			_configuration.UpdateValidUntilTimeSpan = TimeSpan.FromHours(1);
+			_configuration.TimeSpans.UpdateValidUntilTimeSpan = TimeSpan.FromHours(1);
 			(GetDatabaseContext getContext, SessionService sessionService) = SetupSessionService();
 			Guid sessionToken;
-			DateTime originalSessionValidUntil = DateTime.UtcNow + _configuration.Timeouts.InactiveSessionTimeout;
+			DateTime originalSessionValidUntil = DateTime.UtcNow + _configuration.TimeSpans.InactiveSessionTimeout;
 
 			// Arrange
 			using (IDatabaseContext context = getContext())
@@ -178,7 +178,7 @@ namespace HeyImIn.Authentication.Tests
 		[Fact]
 		public async Task GetSession_GivenInvalidSession_SessionUnchanged()
 		{
-			_configuration.UpdateValidUntilTimeSpan = TimeSpan.Zero;
+			_configuration.TimeSpans.UpdateValidUntilTimeSpan = TimeSpan.Zero;
 			(GetDatabaseContext getContext, SessionService sessionService) = SetupSessionService();
 			Session invalidUserSession;
 
@@ -214,7 +214,7 @@ namespace HeyImIn.Authentication.Tests
 		[Fact]
 		public async Task GetSession_GivenExpiredUnusedSession_SessionUnchanged()
 		{
-			_configuration.UpdateValidUntilTimeSpan = TimeSpan.Zero;
+			_configuration.TimeSpans.UpdateValidUntilTimeSpan = TimeSpan.Zero;
 			(GetDatabaseContext getContext, SessionService sessionService) = SetupSessionService();
 			Session invalidUserSession;
 
@@ -225,7 +225,7 @@ namespace HeyImIn.Authentication.Tests
 
 				invalidUserSession = new Session
 				{
-					Created = DateTime.UtcNow - _configuration.Timeouts.UnusedSessionExpirationTimeout,
+					Created = DateTime.UtcNow - _configuration.TimeSpans.UnusedSessionExpirationTimeout,
 					ValidUntil = null,
 					User = userEntry.Entity
 				};

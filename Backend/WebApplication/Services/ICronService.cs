@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Threading;
+using System.Threading.Tasks;
 
 namespace HeyImIn.WebApplication.Services
 {
@@ -10,7 +11,7 @@ namespace HeyImIn.WebApplication.Services
 		/// <summary>
 		///     Runs the cron service
 		/// </summary>
-		Task RunAsync();
+		Task RunAsync(CancellationToken token);
 
 		/// <summary>
 		///     A name describing this service
