@@ -254,7 +254,7 @@ namespace HeyImIn.Database.Migrations
             modelBuilder.Entity("HeyImIn.Database.Models.ChatMessage", b =>
                 {
                     b.HasOne("HeyImIn.Database.Models.User", "Author")
-                        .WithMany()
+                        .WithMany("ChatMessages")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade);
 

@@ -92,7 +92,7 @@ namespace HeyImIn.WebApplication.Services.Impl
 		/// </summary>
 		private async Task ExecuteCronJobsAsync(IEnumerable<ICronService> cronRunners, CancellationToken token)
 		{
-			_logger.LogDebug("{0}(): Running Cron jobs", nameof(ExecuteCronJobsAsync));
+			_logger.LogInformation("{0}(): Running cron jobs", nameof(ExecuteCronJobsAsync));
 
 			var cronStopwatch = new Stopwatch();
 

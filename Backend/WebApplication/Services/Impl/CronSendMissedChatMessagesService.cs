@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using HeyImIn.Database.Context;
-using HeyImIn.Database.Models;
 using HeyImIn.MailNotifier;
 using HeyImIn.MailNotifier.Models;
 using HeyImIn.Shared;
@@ -30,6 +29,8 @@ namespace HeyImIn.WebApplication.Services.Impl
 			IDatabaseContext context = _getDatabaseContext();
 
 			DateTime maxAge = DateTime.UtcNow - _minimumChatMessageNotificationTimeSpan;
+
+			// TODO This query for some reason causes a log warning => Investigate, maybe fixed with future release
 
 			var chatMessagesToNotifyAbout = await context.EventParticipations
 				.Select(ep => new

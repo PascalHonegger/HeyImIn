@@ -34,6 +34,8 @@ namespace HeyImIn.Database.Models
 
 		public virtual ICollection<Session> Sessions { get; set; }
 
+		public virtual ICollection<ChatMessage> ChatMessages { get; set; }
+
 		public virtual ICollection<PasswordReset> PasswordResets { get; set; }
 
 		public virtual ICollection<Event> OrganizedEvents { get; set; }
