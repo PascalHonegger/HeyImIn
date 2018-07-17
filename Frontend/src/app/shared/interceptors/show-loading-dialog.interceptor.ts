@@ -16,7 +16,7 @@ import { LoadingDialogComponent } from '../loading-dialog/loading-dialog.compone
  */
 @Injectable({ providedIn: 'root' })
 export class ShowLoadingDialogInterceptor implements HttpInterceptor {
-	private currentlyOpenedDialog: MatDialogRef<LoadingDialogComponent>;
+	private currentlyOpenedDialog?: MatDialogRef<LoadingDialogComponent>;
 
 	private runningRequestsSource: Subject<number> = new Subject<number>();
 

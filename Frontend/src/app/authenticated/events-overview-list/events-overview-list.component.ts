@@ -13,7 +13,7 @@ import { MatDialog } from '@angular/material';
 })
 export class EventsOverviewListComponent extends DetailOverviewBase {
 	@Input()
-	public events: EventOverviewInformation[];
+	public events: EventOverviewInformation[] = [];
 
 	@Output()
 	public eventChanged: EventEmitter<any> = new EventEmitter();
@@ -24,7 +24,7 @@ export class EventsOverviewListComponent extends DetailOverviewBase {
 		super(eventServer, dialog, authService);
 	}
 
-	public getEventId(index: number, event: EventOverviewInformation) {
+	public getEventId(_index: number, event: EventOverviewInformation) {
 		return event.eventId;
 	}
 

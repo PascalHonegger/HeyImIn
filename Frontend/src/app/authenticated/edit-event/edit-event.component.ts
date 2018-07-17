@@ -38,7 +38,7 @@ export class EditEventComponent {
 					route.params.subscribe(params => this.eventId = +params['id']);
 				}
 
-	public getAppointmentId(index: number, appointment: AppointmentDetails) {
+	public getAppointmentId(_index: number, appointment: AppointmentDetails) {
 		return appointment.appointmentInformation.appointmentId;
 	}
 

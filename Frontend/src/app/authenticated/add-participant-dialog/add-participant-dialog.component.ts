@@ -19,7 +19,7 @@ export class AddParticipantDialogComponent {
 	}
 
 	public parseAndReturnEmails() {
-		const matches = this.inputEmails.match(AddParticipantDialogComponent.regexPattern);
+		const matches = this.inputEmails.match(AddParticipantDialogComponent.regexPattern) || [];
 		this.dialogRef.close(matches);
 	}
 }
