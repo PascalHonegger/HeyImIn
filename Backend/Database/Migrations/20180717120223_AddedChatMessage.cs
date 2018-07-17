@@ -8,10 +8,11 @@ namespace HeyImIn.Database.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "LastReadMessageId",
+            migrationBuilder.AddColumn<DateTime>(
+                name: "LastReadMessageSentDate",
                 table: "EventParticipations",
-                nullable: true);
+                nullable: false,
+                defaultValue: new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified));
 
             migrationBuilder.CreateTable(
                 name: "ChatMessages",
@@ -42,11 +43,6 @@ namespace HeyImIn.Database.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_EventParticipations_LastReadMessageId",
-                table: "EventParticipations",
-                column: "LastReadMessageId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ChatMessages_AuthorId",
                 table: "ChatMessages",
                 column: "AuthorId");
@@ -60,31 +56,15 @@ namespace HeyImIn.Database.Migrations
                 name: "IX_ChatMessages_SentDate",
                 table: "ChatMessages",
                 column: "SentDate");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_EventParticipations_ChatMessages_LastReadMessageId",
-                table: "EventParticipations",
-                column: "LastReadMessageId",
-                principalTable: "ChatMessages",
-                principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_EventParticipations_ChatMessages_LastReadMessageId",
-                table: "EventParticipations");
-
             migrationBuilder.DropTable(
                 name: "ChatMessages");
 
-            migrationBuilder.DropIndex(
-                name: "IX_EventParticipations_LastReadMessageId",
-                table: "EventParticipations");
-
             migrationBuilder.DropColumn(
-                name: "LastReadMessageId",
+                name: "LastReadMessageSentDate",
                 table: "EventParticipations");
         }
     }

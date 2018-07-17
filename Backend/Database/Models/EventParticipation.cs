@@ -38,13 +38,11 @@ namespace HeyImIn.Database.Models
 		/// </summary>
 		public bool SendLastMinuteChangesEmail { get; set; } = true;
 
-		public virtual ChatMessage LastReadMessage { get; set; }
-
 		/// <summary>
 		///     The latest message which the <see cref="Participant"/> has probably read
 		///     It is assumed that messages prior to this one have also been read
 		/// </summary>
-		[ForeignKey(nameof(LastReadMessage))]
-		public int? LastReadMessageId { get; set; }
+		[Required]
+		public DateTime LastReadMessageSentDate { get; set; }
 	}
 }

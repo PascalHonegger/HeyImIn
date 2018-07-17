@@ -50,7 +50,6 @@ namespace HeyImIn.Database.Context.Impl
 			modelBuilder.Entity<EventParticipation>().HasIndex(e => new { e.ParticipantId, e.EventId }).IsUnique();
 
 			modelBuilder.Entity<ChatMessage>().HasIndex(c => c.SentDate);
-			modelBuilder.Entity<ChatMessage>().HasMany(c => c.EventParticipations).WithOne(p => p.LastReadMessage).OnDelete(DeleteBehavior.Cascade);
 		}
 
 		public virtual DbSet<User> Users { get; set; }
