@@ -11,9 +11,9 @@ namespace HeyImIn.Authentication.Impl
 	{
 		public SessionService(HeyImInConfiguration configuration, GetDatabaseContext getDatabaseContext, ILogger<SessionService> logger)
 		{
-			_inactiveSessionTimeout = configuration.Timeouts.InactiveSessionTimeout;
-			_unusedSessionExpirationTimeout = configuration.Timeouts.UnusedSessionExpirationTimeout;
-			_updateValidUntilTimeSpan = configuration.UpdateValidUntilTimeSpan;
+			_inactiveSessionTimeout = configuration.TimeSpans.InactiveSessionTimeout;
+			_unusedSessionExpirationTimeout = configuration.TimeSpans.UnusedSessionExpirationTimeout;
+			_updateValidUntilTimeSpan = configuration.TimeSpans.UpdateValidUntilTimeSpan;
 			_getDatabaseContext = getDatabaseContext;
 			_logger = logger;
 		}

@@ -175,7 +175,7 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 			using (IDatabaseContext context = getContext())
 			{
 				User john = ContextUtilities.CreateJohnDoe();
-				var reset = new PasswordReset { Requested = DateTime.UtcNow - _configuration.Timeouts.PasswordResetTimeout, User = john, Used = true };
+				var reset = new PasswordReset { Requested = DateTime.UtcNow - _configuration.TimeSpans.PasswordResetTimeout, User = john, Used = true };
 				context.PasswordResets.Add(reset);
 
 				await context.SaveChangesAsync();

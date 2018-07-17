@@ -23,7 +23,7 @@ namespace HeyImIn.WebApplication.Controllers
 		{
 			_passwordService = passwordService;
 			_notificationService = notificationService;
-			_resetTokenValidTimeSpan = configuration.Timeouts.PasswordResetTimeout;
+			_resetTokenValidTimeSpan = configuration.TimeSpans.PasswordResetTimeout;
 			_getDatabaseContext = getDatabaseContext;
 			_logger = logger;
 		}

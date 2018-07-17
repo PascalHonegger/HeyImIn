@@ -83,9 +83,11 @@ namespace HeyImIn.WebApplication
 			// Register custom types
 			services
 				.AddSingleton(c => configuration)
+				.AddSingleton<Microsoft.Extensions.Hosting.IHostedService, CronBackgroundService>()
 				.AddScoped<IDatabaseContext, HeyImInDatabaseContext>() // Redirect interface to class
 				.AddTransient<ISendGridClient>(c => new SendGridClient(sendGridApiKey))
-				.AddTransient<ICronService, CronSendNotificationsService>()
+				.AddTransient<ICronService, CronSendReminderAndSummaryService>()
+				.AddTransient<ICronService, CronSendMissedChatMessagesService>()
 				.AddTransient<GetDatabaseContext>(c => c.GetRequiredService<IDatabaseContext>);
 		}
 
