@@ -15,7 +15,7 @@ import { tap } from 'rxjs/operators';
 })
 export class MainLayoutComponent {
 	@Input()
-	public links: Link[];
+	public links: Link[] = [];
 
 	public updateAvailable$: Observable<boolean>;
 

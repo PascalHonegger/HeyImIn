@@ -7,7 +7,7 @@ import { EventOverview } from '../../shared/server-model/event-overview.model';
 	templateUrl: './events-overview.component.html'
 })
 export class EventsOverviewComponent {
-	public eventOverview: EventOverview;
+	public eventOverview: EventOverview | null = null;
 
 	constructor(private server: ParticipateEventClient) {
 		this.loadEventOverview();
