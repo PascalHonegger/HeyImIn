@@ -31,14 +31,21 @@ namespace HeyImIn.WebApplication.Controllers
 		}
 
 		/// <summary>
-		///     
+		///     Load a subset of <see cref="EventChatMessage" /> for a specified <see cref="Event" />.
+		///     You can call this method again providing a <paramref name="lastLoadedMessageSentDate" /> to load the next chunk of
+		///     messages.
 		/// </summary>
-		/// <param name="eventId"></param>
-		/// <param name="lastLoadedMessageId"></param>
-		/// <returns></returns>
+		/// <param name="eventId">The <see cref="Event.Id" /></param>
+		/// <param name="lastLoadedMessageSentDate">
+		///     Null or the latest <see cref="EventChatMessage.SentDate" /> received when previously calling
+		///     this method
+		/// </param>
+		/// <returns>
+		///     <see cref="EventChatMessages" />
+		/// </returns>
 		[HttpGet(nameof(GetChatMessages))]
 		[ProducesResponseType(typeof(EventChatMessages), 200)]
-		public async Task<IActionResult> GetChatMessages(int eventId, int? lastLoadedMessageId = null)
+		public async Task<IActionResult> GetChatMessages(int eventId, DateTime? lastLoadedMessageSentDate = null)
 		{
 			IDatabaseContext context = _getDatabaseContext();
 			int currentUserId = HttpContext.GetUserId();
@@ -51,12 +58,12 @@ namespace HeyImIn.WebApplication.Controllers
 			}
 
 			List<ChatMessage> chatMessages;
-			if (lastLoadedMessageId.HasValue)
+			if (lastLoadedMessageSentDate.HasValue)
 			{
 				chatMessages = await context.ChatMessages
 					.Where(c => c.EventId == eventId)
+					.Where(c => c.SentDate > lastLoadedMessageSentDate)
 					.OrderByDescending(c => c.SentDate)
-					.SkipWhile(c => c.Id != lastLoadedMessageId.Value)
 					.Take(_baseAmountOfChatMessagesPerDetailPage)
 					.ToListAsync();
 			}
@@ -71,7 +78,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 			List<EventChatMessage> eventChatMessages = chatMessages.Select(m => new EventChatMessage(m.AuthorId, m.Content, m.SentDate)).ToList();
 
-			if (lastLoadedMessageId == null)
+			if (lastLoadedMessageSentDate == null)
 			{
 				DateTime? lastReadMessageSentDate = chatMessages.FirstOrDefault()?.SentDate;
 
@@ -84,13 +91,11 @@ namespace HeyImIn.WebApplication.Controllers
 				}
 			}
 
-			int? newLastLoadedMessageId = chatMessages.LastOrDefault()?.Id;
-
-			return Ok(new EventChatMessages(eventChatMessages, chatMessages.Count == _baseAmountOfChatMessagesPerDetailPage, newLastLoadedMessageId));
+			return Ok(new EventChatMessages(eventChatMessages, chatMessages.Count == _baseAmountOfChatMessagesPerDetailPage));
 		}
 
 		/// <summary>
-		///     Configures the enabled notifications of the current user for the specified event
+		///     Sends a <see cref="ChatMessage" /> to an <see cref="Event" />
 		/// </summary>
 		[HttpPost(nameof(SendChatMessage))]
 		[ProducesResponseType(typeof(void), 200)]

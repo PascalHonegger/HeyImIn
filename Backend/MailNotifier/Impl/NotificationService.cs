@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using HeyImIn.Authentication;
 using HeyImIn.Database.Models;
@@ -96,7 +97,6 @@ namespace HeyImIn.MailNotifier.Impl
 				.Where(a => a.AppointmentParticipationAnswer == AppointmentParticipationAnswer.Accepted)
 				.Select(a => $"- {a.Participant.FullName}"));
 		}
-
 		private readonly IMailSender _mailSender;
 
 		/// <summary>
@@ -282,6 +282,41 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{@event.Id}{a
 			}
 
 			_logger.LogInformation("{0}(): Sent {1} notifications about a change of the event {2}", nameof(NotifyEventUpdatedAsync), @event.EventParticipations.Count, @event.Id);
+		}
+
+		public async Task NotifyUnreadChatMessagesAsync(ChatMessagesNotificationInformation chatMessagesInformation)
+		{
+			string unreadMessagesSubject = $"Ungelesene Nachrichten im Event '{chatMessagesInformation.EventTitle}'";
+
+			var messageBodyBuilder = new StringBuilder();
+			messageBodyBuilder.AppendLine($"Folgenden Nachrichten wurden im Event '{chatMessagesInformation.EventTitle}' versendet:");
+
+
+			const string ChatMessageSeparator = "------------------------------";
+
+			messageBodyBuilder.AppendLine(ChatMessageSeparator);
+
+			foreach (ChatMessageNotificationInformation chatMessage in chatMessagesInformation.Messages)
+			{
+				DateTime sentDate = TargetTimeZone(chatMessage.SentDate);
+				messageBodyBuilder.AppendLine($"*** {sentDate:g} – {chatMessage.AuthorName}");
+				messageBodyBuilder.AppendLine(chatMessage.Content);
+
+				messageBodyBuilder.AppendLine(ChatMessageSeparator);
+			}
+
+			string authTokenSuffix = await CreateAuthTokenSuffixAsync(chatMessagesInformation.Participant.Id);
+
+			string message = $@"Hallo {chatMessagesInformation.Participant.FullName}
+
+{messageBodyBuilder}
+
+Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{chatMessagesInformation.EventId}{authTokenSuffix} ansehen.";
+
+
+			await _mailSender.SendMailAsync(chatMessagesInformation.Participant.Email, unreadMessagesSubject, message);
+
+			_logger.LogInformation("{0}(): Sent {1} missed chat messages of the event {2}", nameof(NotifyEventUpdatedAsync), chatMessagesInformation.Messages.Count, chatMessagesInformation.EventId);
 		}
 
 		public async Task SendLastMinuteChangeIfRequiredAsync(Appointment appointment)
