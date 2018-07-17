@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HeyImIn.Database.Migrations
 {
     [DbContext(typeof(HeyImInDatabaseContext))]
-    [Migration("20180715134138_AddedChatMessage")]
+    [Migration("20180717120223_AddedChatMessage")]
     partial class AddedChatMessage
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -150,7 +150,7 @@ namespace HeyImIn.Database.Migrations
 
                     b.Property<int>("EventId");
 
-                    b.Property<int?>("LastReadMessageId");
+                    b.Property<DateTime>("LastReadMessageSentDate");
 
                     b.Property<int>("ParticipantId");
 
@@ -163,8 +163,6 @@ namespace HeyImIn.Database.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("EventId");
-
-                    b.HasIndex("LastReadMessageId");
 
                     b.HasIndex("ParticipantId", "EventId")
                         .IsUnique();
@@ -290,11 +288,6 @@ namespace HeyImIn.Database.Migrations
                         .WithMany("EventParticipations")
                         .HasForeignKey("EventId")
                         .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("HeyImIn.Database.Models.ChatMessage", "LastReadMessage")
-                        .WithMany("EventParticipations")
-                        .HasForeignKey("LastReadMessageId")
-                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("HeyImIn.Database.Models.User", "Participant")
                         .WithMany("EventParticipations")

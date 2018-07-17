@@ -64,8 +64,8 @@ namespace HeyImIn.WebApplication.Tests.Services
 
 				var @event = new Event
 				{
-					Title = "Upcomming event",
-					Description = "An event with upcomming appointments",
+					Title = "Upcoming event",
+					Description = "An event with upcoming appointments",
 					MeetingPlace = "Somewhere",
 					Organizer = john,
 					ReminderTimeWindowInHours = ReminderTimeWindowInHours,
@@ -96,7 +96,7 @@ namespace HeyImIn.WebApplication.Tests.Services
 			}
 		}
 
-		private (CronSendNotificationsService service, Mock<AssertingNotificationService> notificationServiceMock) CreateService(GetDatabaseContext getContext)
+		private static (CronSendNotificationsService service, Mock<AssertingNotificationService> notificationServiceMock) CreateService(GetDatabaseContext getContext)
 		{
 			var notificationServiceMock = new Mock<AssertingNotificationService>(MockBehavior.Strict);
 			var service = new CronSendNotificationsService(notificationServiceMock.Object, getContext);

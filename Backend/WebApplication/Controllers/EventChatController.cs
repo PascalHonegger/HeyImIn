@@ -74,10 +74,15 @@ namespace HeyImIn.WebApplication.Controllers
 
 			if (lastLoadedMessageId == null)
 			{
-				int? lastReadMessageId = chatMessages.FirstOrDefault()?.Id;
-				// The user loaded the latest messages => Assume he also read them 
-				eventParticipation.LastReadMessageId = lastReadMessageId;
-				await context.SaveChangesAsync();
+				DateTime? lastReadMessageSentDate = chatMessages.FirstOrDefault()?.SentDate;
+
+				if (lastReadMessageSentDate.HasValue && (eventParticipation.LastReadMessageSentDate != lastReadMessageSentDate.Value))
+				{
+					_logger.LogDebug("{0}(): Automatically marking loaded messages as read", nameof(GetChatMessages));
+					// The user loaded the latest messages => Assume he also read them
+					eventParticipation.LastReadMessageSentDate = lastReadMessageSentDate.Value;
+					await context.SaveChangesAsync();
+				}
 			}
 
 			int? newLastLoadedMessageId = chatMessages.LastOrDefault()?.Id;

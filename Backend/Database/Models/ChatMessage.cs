@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -35,7 +34,5 @@ namespace HeyImIn.Database.Models
 		[Required]
 		[MaxLength(FieldLengths.ChatMessageMaxLength)]
 		public string Content { get; set; }
-
-		public virtual ICollection<EventParticipation> EventParticipations { get; set; }
 	}
 }
