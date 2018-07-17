@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HeyImIn.Database.Migrations
 {
     [DbContext(typeof(HeyImInDatabaseContext))]
-    [Migration("20180717120223_AddedChatMessage")]
+    [Migration("20180717191152_AddedChatMessage")]
     partial class AddedChatMessage
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -256,7 +256,7 @@ namespace HeyImIn.Database.Migrations
             modelBuilder.Entity("HeyImIn.Database.Models.ChatMessage", b =>
                 {
                     b.HasOne("HeyImIn.Database.Models.User", "Author")
-                        .WithMany()
+                        .WithMany("ChatMessages")
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade);
 
