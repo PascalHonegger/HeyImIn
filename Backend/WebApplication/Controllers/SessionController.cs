@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using HeyImIn.Authentication;
 using HeyImIn.Database.Context;
@@ -10,6 +11,7 @@ using HeyImIn.WebApplication.Helpers;
 using HeyImIn.WebApplication.WebApiComponents;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace HeyImIn.WebApplication.Controllers
@@ -67,7 +69,7 @@ namespace HeyImIn.WebApplication.Controllers
 			}
 
 			IDatabaseContext context = _getDatabaseContext();
-			User user = await context.Users.FindAsync(session.UserId);
+			var user = await context.Users.Select(u => new { u.Id, u.FullName, u.Email }).FirstOrDefaultAsync(u => u.Id == session.UserId);
 
 			return Ok(new FrontendSession(session.Token, session.UserId, user.FullName, user.Email));
 		}

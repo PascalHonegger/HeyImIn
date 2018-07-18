@@ -4,7 +4,7 @@ namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
 {
 	public class NotificationConfigurationResponse : NotificationConfiguration
 	{
-		private NotificationConfigurationResponse(bool sendReminderEmail, bool sendSummaryEmail, bool sendLastMinuteChangesEmail)
+		public NotificationConfigurationResponse(bool sendReminderEmail, bool sendSummaryEmail, bool sendLastMinuteChangesEmail)
 		{
 			SendReminderEmail = sendReminderEmail;
 			SendSummaryEmail = sendSummaryEmail;

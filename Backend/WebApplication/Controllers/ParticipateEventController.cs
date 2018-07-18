@@ -43,42 +43,46 @@ namespace HeyImIn.WebApplication.Controllers
 		public async Task<IActionResult> GetOverview()
 		{
 			IDatabaseContext context = _getDatabaseContext();
+			context.WithTrackingBehavior(QueryTrackingBehavior.NoTracking);
+
 			int currentUserId = HttpContext.GetUserId();
 
-			List<(Event @event, Appointment upcomingAppointment)> yourEvents = await GetAndFilterEvents(
+			List<EventOverviewInformation> yourEvents = await GetAndFilterEvents(
 				e => (e.OrganizerId == currentUserId) || e.EventParticipations.Select(ep => ep.ParticipantId).Contains(currentUserId));
-			List<(Event @event, Appointment upcomingAppointment)> publicEvents = await GetAndFilterEvents(e => !e.IsPrivate && (e.OrganizerId != currentUserId) && !e.EventParticipations.Select(ep => ep.ParticipantId).Contains(currentUserId));
+			List<EventOverviewInformation> publicEvents = await GetAndFilterEvents(e => !e.IsPrivate && (e.OrganizerId != currentUserId) && !e.EventParticipations.Select(ep => ep.ParticipantId).Contains(currentUserId));
 
 			List<EventOverviewInformation> yourEventInformations = yourEvents
-				.Select(e => EventOverviewInformation.FromEvent(e.@event, e.upcomingAppointment))
 				.OrderBy(e => e.LatestAppointmentInformation?.StartTime ?? DateTime.MaxValue)
 				.ToList();
 			List<EventOverviewInformation> publicEventInformations = publicEvents
-				.Select(e => EventOverviewInformation.FromEvent(e.@event, e.upcomingAppointment))
 				.OrderBy(e => e.LatestAppointmentInformation?.StartTime ?? DateTime.MaxValue)
 				.ToList();
 
 			return Ok(new EventOverview(yourEventInformations, publicEventInformations));
 
-			async Task<List<(Event, Appointment upcomingAppointment)>> GetAndFilterEvents(Expression<Func<Event, bool>> eventFilter)
+			async Task<List<EventOverviewInformation>> GetAndFilterEvents(Expression<Func<Event, bool>> eventFilter)
 			{
-				var loadedEvents = await context.Events
+				return await context.Events
 					.Where(eventFilter)
-					.Include(e => e.EventParticipations)
-						.ThenInclude(ep => ep.Participant)
-					.Include(e => e.Organizer)
-					.Select(e => new
-					{
-						@event = e,
-						appointment = e.Appointments
-							.AsQueryable()
-							.Include(a => a.AppointmentParticipations)
+					.Select(e => new EventOverviewInformation(
+						e.Id,
+						new ViewEventInformation(
+							e.MeetingPlace,
+							e.Description,
+							e.IsPrivate,
+							e.Title,
+							e.SummaryTimeWindowInHours,
+							e.ReminderTimeWindowInHours,
+							new UserInformation(e.OrganizerId, e.Organizer.FullName, null),
+							e.EventParticipations.Select(ep => new UserInformation(ep.ParticipantId, ep.Participant.FullName, null)).ToList()), 
+						e.Appointments
+							.Where(a => a.StartTime >= DateTime.UtcNow)
 							.OrderBy(a => a.StartTime)
-							.FirstOrDefault(a => a.StartTime >= DateTime.UtcNow)
-					})
+							.Select(a => new AppointmentInformation(a.Id, a.StartTime))
+							.FirstOrDefault()
+					))
 					.ToListAsync();
-
-				return loadedEvents.Select(e => ValueTuple.Create(e.@event, e.appointment)).ToList();			}
+			}
 		}
 
 		/// <summary>
@@ -96,52 +100,50 @@ namespace HeyImIn.WebApplication.Controllers
 		public async Task<IActionResult> GetDetails(int eventId)
 		{
 			IDatabaseContext context = _getDatabaseContext();
-			Event @event = await context.Events
-				.Include(e => e.Organizer)
-				.Include(e => e.EventParticipations)
-					.ThenInclude(p => p.Participant)
-				.FirstOrDefaultAsync(e => e.Id == eventId);
+			context.WithTrackingBehavior(QueryTrackingBehavior.NoTracking);
+			int currentUserId = HttpContext.GetUserId();
+
+			EventDetails @event = await context.Events
+				.Where(e => e.Id == eventId)
+				.Select(e => new EventDetails(
+					new ViewEventInformation(
+						e.MeetingPlace,
+						e.Description,
+						e.IsPrivate,
+						e.Title,
+						e.SummaryTimeWindowInHours,
+						e.ReminderTimeWindowInHours,
+						new UserInformation(e.OrganizerId, e.Organizer.FullName, null),
+						e.EventParticipations.Select(ep => new UserInformation(ep.ParticipantId, ep.Participant.FullName, null)).ToList()), 
+					e.Appointments
+						.Where(a => a.StartTime >= DateTime.UtcNow)
+						.OrderBy(a => a.StartTime)
+						.Take(_maxShownAppointmentsPerEvent)
+						.Select(a => new AppointmentDetails(
+							new AppointmentInformation(a.Id, a.StartTime),
+							a.AppointmentParticipations
+								.Select(ap => new AppointmentParticipationInformation(ap.ParticipantId, ap.AppointmentParticipationAnswer))
+								.ToList()))
+						.ToList(),
+					e.EventParticipations
+						.Where(ep => ep.ParticipantId == currentUserId)
+						.Select(ep => new NotificationConfigurationResponse(ep.SendReminderEmail, ep.SendSummaryEmail, ep.SendLastMinuteChangesEmail))
+						.FirstOrDefault()))
+				.SingleOrDefaultAsync();
 
 			if (@event == null)
 			{
 				return NotFound();
 			}
 
-			int currentUserId = HttpContext.GetUserId();
+			bool currentUserDoesParticipate = @event.Information.Participants.Any(e => e.UserId == currentUserId);
 
-			bool currentUserDoesParticipate = @event.EventParticipations.Any(e => e.ParticipantId == currentUserId);
-
-			if (!currentUserDoesParticipate && @event.IsPrivate && (@event.OrganizerId != currentUserId))
+			if (!currentUserDoesParticipate && @event.Information.IsPrivate && (@event.Information.Organizer.UserId != currentUserId))
 			{
 				return BadRequest(RequestStringMessages.InvitationRequired);
 			}
 
-			List<int> allParticipantIds = @event.EventParticipations.Select(e => e.ParticipantId).ToList();
-
-			List<Appointment> appointments = await context.Appointments
-				.Include(a => a.AppointmentParticipations)
-				.Where(a => a.StartTime >= DateTime.UtcNow)
-				.OrderBy(a => a.StartTime)
-				.Take(_maxShownAppointmentsPerEvent)
-				.ToListAsync();
-
-			List<AppointmentDetails> upcomingAppointments = appointments
-				.Select(a => AppointmentDetails.FromAppointment(a, allParticipantIds))
-				.ToList();
-
-			EventParticipation currentEventParticipation = @event.EventParticipations.FirstOrDefault(e => e.ParticipantId == currentUserId);
-
-
-			NotificationConfigurationResponse notificationConfigurationResponse = null;
-
-			if (currentEventParticipation != null)
-			{
-				notificationConfigurationResponse = NotificationConfigurationResponse.FromParticipation(currentEventParticipation);
-			}
-
-			ViewEventInformation viewEventInformation = ViewEventInformation.FromEvent(@event);
-
-			return Ok(new EventDetails(viewEventInformation, upcomingAppointments, notificationConfigurationResponse));
+			return Ok(@event);
 		}
 
 		/// <summary>

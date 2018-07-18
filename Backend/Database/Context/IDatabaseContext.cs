@@ -24,6 +24,12 @@ namespace HeyImIn.Database.Context
 
 		void DiscardChanges();
 
+		/// <summary>
+		///     The tracking behavior, for more see <see cref="QueryTrackingBehavior" />
+		/// </summary>
+		/// <param name="trackingBehavior">The tracking behavior to use for this context</param>
+		void WithTrackingBehavior(QueryTrackingBehavior trackingBehavior);
+
 		// Main tables
 		DbSet<User> Users { get; }
 

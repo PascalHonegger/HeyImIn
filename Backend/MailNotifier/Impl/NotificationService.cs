@@ -298,23 +298,27 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{@event.Id}{a
 
 			foreach (ChatMessageNotificationInformation chatMessage in chatMessagesInformation.Messages)
 			{
+				string authorName = chatMessagesInformation.RelevantUserData.First(u => u.id == chatMessage.AuthorId).fullName;
+
 				DateTime sentDate = TargetTimeZone(chatMessage.SentDate);
-				messageBodyBuilder.AppendLine($"*** {sentDate:g} – {chatMessage.AuthorName}");
+				messageBodyBuilder.AppendLine($"*** {sentDate:g} – {authorName}");
 				messageBodyBuilder.AppendLine(chatMessage.Content);
 
 				messageBodyBuilder.AppendLine(ChatMessageSeparator);
 			}
 
-			string authTokenSuffix = await CreateAuthTokenSuffixAsync(chatMessagesInformation.Participant.Id);
+			string authTokenSuffix = await CreateAuthTokenSuffixAsync(chatMessagesInformation.ParticipantId);
 
-			string message = $@"Hallo {chatMessagesInformation.Participant.FullName}
+			var (_, participantName, participantEmail) = chatMessagesInformation.RelevantUserData.First(u => u.id == chatMessagesInformation.ParticipantId);
+
+			string message = $@"Hallo {participantName}
 
 {messageBodyBuilder}
 
 Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{chatMessagesInformation.EventId}{authTokenSuffix} ansehen.";
 
 
-			await _mailSender.SendMailAsync(chatMessagesInformation.Participant.Email, unreadMessagesSubject, message);
+			await _mailSender.SendMailAsync(participantEmail, unreadMessagesSubject, message);
 
 			_logger.LogInformation("{0}(): Sent {1} missed chat messages of the event {2}", nameof(NotifyEventUpdatedAsync), chatMessagesInformation.Messages.Count, chatMessagesInformation.EventId);
 		}

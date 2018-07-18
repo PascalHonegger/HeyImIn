@@ -5,6 +5,21 @@ namespace HeyImIn.WebApplication.FrontendModels
 {
 	public class GeneralEventInformation
 	{
+		public GeneralEventInformation()
+		{
+			
+		}
+
+		public GeneralEventInformation(string title, string meetingPlace, string description, bool isPrivate, int reminderTimeWindowInHours, int summaryTimeWindowInHours)
+		{
+			Title = title;
+			MeetingPlace = meetingPlace;
+			Description = description;
+			IsPrivate = isPrivate;
+			ReminderTimeWindowInHours = reminderTimeWindowInHours;
+			SummaryTimeWindowInHours = summaryTimeWindowInHours;
+		}
+
 		[Required]
 		[MaxLength(FieldLengths.TitleMaxLength)]
 		public string Title { get; set; }
