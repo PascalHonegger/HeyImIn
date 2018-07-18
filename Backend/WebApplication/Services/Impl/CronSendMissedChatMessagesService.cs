@@ -17,22 +17,20 @@ namespace HeyImIn.WebApplication.Services.Impl
 	/// </summary>
 	public class CronSendMissedChatMessagesService : ICronService
 	{
-		public CronSendMissedChatMessagesService(INotificationService notificationService, HeyImInConfiguration configuration, GetDatabaseContext getDatabaseContext)
+		public CronSendMissedChatMessagesService(INotificationService notificationService, HeyImInConfiguration configuration, IDatabaseContext context)
 		{
 			_notificationService = notificationService;
 			_minimumChatMessageNotificationTimeSpan = configuration.TimeSpans.MinimumChatMessageNotificationTimeSpan;
-			_getDatabaseContext = getDatabaseContext;
+			_context = context;
 		}
 
 		public async Task RunAsync(CancellationToken token)
 		{
-			IDatabaseContext context = _getDatabaseContext();
-
 			DateTime maxAge = DateTime.UtcNow - _minimumChatMessageNotificationTimeSpan;
 
 			// TODO This query for some reason causes a log warning => Investigate, maybe fixed with future release
 
-			var chatMessagesToNotifyAbout = await context.EventParticipations
+			var chatMessagesToNotifyAbout = await _context.EventParticipations
 				.Select(ep => new
 				{
 					participation = ep,
@@ -58,13 +56,13 @@ namespace HeyImIn.WebApplication.Services.Impl
 			}
 
 			// Save sent chat messages
-			await context.SaveChangesAsync(token);
+			await _context.SaveChangesAsync(token);
 		}
 
 		public string DescriptiveName { get; } = "SendMissedChatMessagesCron";
 
 		private readonly INotificationService _notificationService;
-		private readonly GetDatabaseContext _getDatabaseContext;
+		private readonly IDatabaseContext _context;
 		private readonly TimeSpan _minimumChatMessageNotificationTimeSpan;
 	}
 }

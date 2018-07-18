@@ -165,7 +165,7 @@ namespace HeyImIn.WebApplication.Tests.Services
 		private static (CronSendMissedChatMessagesService service, Mock<AssertingNotificationService> notificationServiceMock) CreateService(GetDatabaseContext getContext)
 		{
 			var notificationServiceMock = new Mock<AssertingNotificationService>(MockBehavior.Strict);
-			var service = new CronSendMissedChatMessagesService(notificationServiceMock.Object, new HeyImInConfiguration(), getContext);
+			var service = new CronSendMissedChatMessagesService(notificationServiceMock.Object, new HeyImInConfiguration(), getContext());
 			return (service, notificationServiceMock);
 		}
 	}

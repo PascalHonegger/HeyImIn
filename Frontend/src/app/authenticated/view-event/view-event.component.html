@@ -57,19 +57,29 @@
 				</ng-template>
 			</mat-card-content>
 		</mat-card>
-		<mat-card *ngIf="eventDetails.information.currentUserDoesParticipate">
-			<mat-card-header>
-				<mat-card-title>Notifikationen</mat-card-title>
-			</mat-card-header>
-			<mat-card-content>
-				<edit-notifications #editNotifications [notifications]="eventDetails.notificationConfigurationResponse" [eventInfo]="eventDetails.information"></edit-notifications>
-			</mat-card-content>
-			<mat-card-actions>
-				<button mat-raised-button [disabled]="!editNotifications.formValid" (click)="setNotifications(editNotifications.updatedNotifications)" color="primary" type="button">
-					Speichern
-				</button>
-			</mat-card-actions>
-		</mat-card>
+		<ng-container *ngIf="eventDetails.information.currentUserDoesParticipate">
+			<mat-card>
+				<mat-card-header>
+					<mat-card-title>Notifikationen</mat-card-title>
+				</mat-card-header>
+				<mat-card-content>
+					<edit-notifications #editNotifications [notifications]="eventDetails.notificationConfigurationResponse" [eventInfo]="eventDetails.information"></edit-notifications>
+				</mat-card-content>
+				<mat-card-actions>
+					<button mat-raised-button [disabled]="!editNotifications.formValid" (click)="setNotifications(editNotifications.updatedNotifications)" color="primary" type="button">
+						Speichern
+					</button>
+				</mat-card-actions>
+			</mat-card>
+			<mat-card>
+				<mat-card-header>
+					<mat-card-title>Event-Chat</mat-card-title>
+				</mat-card-header>
+				<mat-card-content>
+					<event-chat [eventId]="eventId"></event-chat>
+				</mat-card-content>
+			</mat-card>
+		</ng-container>
 	</div>
 </ng-container>
 <ng-template #noEventDataTemplate>

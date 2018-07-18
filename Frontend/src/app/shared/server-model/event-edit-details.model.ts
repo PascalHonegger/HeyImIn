@@ -14,7 +14,7 @@ export interface AppointmentDetails {
 
 export interface AppointmentInformation {
 	appointmentId: number;
-	startTime: Date;
+	startTime: Date | string;
 	currentResponse?: AppointmentParticipationAnswer;
 	acceptedParticipants: number;
 	declinedParticipants: number;

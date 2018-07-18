@@ -18,7 +18,7 @@ import { LoadingDialogComponent } from '../loading-dialog/loading-dialog.compone
 export class ShowLoadingDialogInterceptor implements HttpInterceptor {
 	private currentlyOpenedDialog?: MatDialogRef<LoadingDialogComponent>;
 
-	private runningRequestsSource: Subject<number> = new Subject<number>();
+	private runningRequestsSource = new Subject<number>();
 
 	private _runningRequests = 0;
 	private get runningRequests(): number {
@@ -33,7 +33,7 @@ export class ShowLoadingDialogInterceptor implements HttpInterceptor {
 		this.runningRequestsSource
 			.pipe(
 				map(value => value > 0),
-				debounceTime(400),
+				debounceTime(500),
 				distinctUntilChanged()
 			)
 			.subscribe(

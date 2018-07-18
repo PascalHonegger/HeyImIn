@@ -1,7 +1,7 @@
 <h2 mat-dialog-title>Termine hinzufügen</h2>
 <mat-dialog-content>
 	<mat-form-field fxFlex>
-		<textarea matInput matTextareaAutosize [(ngModel)]="inputDates" required [formControl]="datesCtrl"></textarea>
+		<textarea matInput matTextareaAutosize required [formControl]="datesCtrl"></textarea>
 		<mat-placeholder>Bsp. {{exampleDate}}</mat-placeholder>
 		<mat-hint align="end">Mehrere Termine durch Zeilenumbruch trennen</mat-hint>
 		<mat-error *ngIf="!datesCtrl.valid">
@@ -11,5 +11,5 @@
 </mat-dialog-content>
 <mat-dialog-actions>
 	<button mat-raised-button mat-dialog-close>Abbrechen</button>
-	<button mat-raised-button (click)="parseAndReturnDates()" color="primary">Hinzufügen</button>
+	<button mat-raised-button (click)="parseAndReturnDates()" color="primary" [disabled]="!datesCtrl.valid">Hinzufügen</button>
 </mat-dialog-actions>

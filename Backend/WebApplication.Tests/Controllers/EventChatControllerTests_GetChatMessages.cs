@@ -5,6 +5,7 @@ using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
 using HeyImIn.Database.Tests;
 using HeyImIn.WebApplication.Controllers;
+using HeyImIn.WebApplication.FrontendModels.ParameterTypes;
 using HeyImIn.WebApplication.FrontendModels.ResponseTypes;
 using HeyImIn.WebApplication.Helpers;
 using Microsoft.AspNetCore.Mvc;
@@ -40,7 +41,7 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 			// Act
 			(EventChatController eventChatController, _) = CreateController(getContext, johnDoeId);
 
-			IActionResult response = await eventChatController.GetChatMessages(eventId);
+			IActionResult response = await eventChatController.GetChatMessages(new GetChatMessagesDto { EventId = eventId });
 
 			// Assert
 			Assert.IsType<BadRequestObjectResult>(response);
@@ -106,7 +107,7 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 			// Act
 			(EventChatController eventChatController, _) = CreateController(getContext, johnDoeId);
 
-			IActionResult response = await eventChatController.GetChatMessages(eventId);
+			IActionResult response = await eventChatController.GetChatMessages(new GetChatMessagesDto { EventId = eventId });
 
 			// Assert
 			Assert.IsType<OkObjectResult>(response);
@@ -164,7 +165,7 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 			// Act & Assert
 			(EventChatController eventChatController, _) = CreateController(getContext, johnDoeId);
 
-			IActionResult firstResponse = await eventChatController.GetChatMessages(eventId);
+			IActionResult firstResponse = await eventChatController.GetChatMessages(new GetChatMessagesDto { EventId = eventId });
 			Assert.IsType<OkObjectResult>(firstResponse);
 			var firstOkObjectResult = (OkObjectResult)firstResponse;
 			var firstEventChatMessages = firstOkObjectResult.Value as EventChatMessages;
@@ -172,8 +173,9 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 			Assert.True(firstEventChatMessages.PossiblyMoreMessages);
 			Assert.Equal(amountOfChatMessages, firstEventChatMessages.Messages.Count);
 			DateTime earliestDate = firstEventChatMessages.Messages.Min(m => m.SentDate);
+			Assert.Equal(earliestDate, firstEventChatMessages.Messages.Last().SentDate);
 
-			IActionResult secondResponse = await eventChatController.GetChatMessages(eventId, earliestDate);
+			IActionResult secondResponse = await eventChatController.GetChatMessages(new GetChatMessagesDto { EventId = eventId, EarliestLoadedMessageSentDate = earliestDate});
 			Assert.IsType<OkObjectResult>(secondResponse);
 			var secondOkObjectResult = (OkObjectResult)secondResponse;
 			var secondEventChatMessages = secondOkObjectResult.Value as EventChatMessages;
