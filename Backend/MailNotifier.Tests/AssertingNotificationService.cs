@@ -150,14 +150,13 @@ namespace HeyImIn.MailNotifier.Tests
 		public virtual Task NotifyUnreadChatMessagesAsync(ChatMessagesNotificationInformation chatMessageInformation)
 		{
 			Assert.NotNull(chatMessageInformation);
+			Assert.NotNull(chatMessageInformation.RelevantUserData);
 			Assert.NotNull(chatMessageInformation.EventTitle);
-			Assert.NotNull(chatMessageInformation.Participant);
 			Assert.NotNull(chatMessageInformation.Messages);
 
 			foreach (ChatMessageNotificationInformation chatMessage in chatMessageInformation.Messages)
 			{
 				Assert.NotNull(chatMessage);
-				Assert.NotNull(chatMessage.AuthorName);
 				Assert.NotNull(chatMessage.Content);
 			}
 

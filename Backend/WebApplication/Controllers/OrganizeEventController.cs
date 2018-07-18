@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HeyImIn.Database.Context;
@@ -168,41 +167,34 @@ namespace HeyImIn.WebApplication.Controllers
 		public async Task<IActionResult> GetEditDetails(int eventId)
 		{
 			IDatabaseContext context = _getDatabaseContext();
-			Event @event = await context.Events
-				.Include(e => e.EventParticipations)
-					.ThenInclude(ep => ep.Participant)
-				.Include(e => e.Appointments)
-					.ThenInclude(ap => ap.AppointmentParticipations)
-				.Include(e => e.Organizer)
-				.FirstOrDefaultAsync(e => e.Id == eventId);
+			context.WithTrackingBehavior(QueryTrackingBehavior.NoTracking);
+
+			int currentUserId = HttpContext.GetUserId();
+
+			EditEventDetails @event = await context.Events
+				.Where(e => (e.Id == eventId) && (e.OrganizerId == currentUserId))
+				.Select(e => new EditEventDetails(
+					new GeneralEventInformation(e.Title, e.MeetingPlace, e.Description, e.IsPrivate, e.ReminderTimeWindowInHours, e.SummaryTimeWindowInHours),
+					e.Appointments
+						.Where(a => a.StartTime >= DateTime.UtcNow)
+						.OrderBy(a => a.StartTime)
+						.Select(a => new AppointmentDetails(
+							new AppointmentInformation(a.Id, a.StartTime),
+							a.AppointmentParticipations
+								.Select(ap => new AppointmentParticipationInformation(ap.ParticipantId, ap.AppointmentParticipationAnswer))
+								.ToList()))
+						.ToList(),
+					e.EventParticipations
+						.Select(ep => new UserInformation(ep.ParticipantId, ep.Participant.FullName, ep.Participant.Email))
+						.ToList()))
+				.SingleOrDefaultAsync();
 
 			if (@event == null)
 			{
 				return NotFound();
 			}
 
-			int currentUserId = HttpContext.GetUserId();
-
-			if (@event.OrganizerId != currentUserId)
-			{
-				_logger.LogInformation("{0}(): Tried to edit event {1}, which he's not organizing", nameof(GetEditDetails), @event.Id);
-
-				return BadRequest(RequestStringMessages.OrganizerRequired);
-			}
-
-			List<int> allParticipantIds = @event.EventParticipations.Select(e => e.ParticipantId).ToList();
-
-			List<AppointmentDetails> upcomingAppointments = @event.Appointments
-				.Where(a => a.StartTime >= DateTime.UtcNow)
-				.OrderBy(a => a.StartTime)
-				.Select(a => AppointmentDetails.FromAppointment(a, allParticipantIds))
-				.ToList();
-
-			List<UserInformation> currentEventParticipation = @event.EventParticipations.Select(p => UserInformation.FromUserIncludingEmail(p.Participant)).ToList();
-
-			ViewEventInformation viewEventInformation = ViewEventInformation.FromEvent(@event);
-
-			return Ok(new EditEventDetails(viewEventInformation, upcomingAppointments, currentEventParticipation));
+			return Ok(@event);
 		}
 
 		private readonly INotificationService _notificationService;

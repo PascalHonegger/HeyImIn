@@ -37,6 +37,11 @@ namespace HeyImIn.Database.Context.Impl
 				.ForEach(e => e.State = EntityState.Detached);
 		}
 
+		public void WithTrackingBehavior(QueryTrackingBehavior trackingBehavior)
+		{
+			ChangeTracker.QueryTrackingBehavior = trackingBehavior;
+		}
+
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
