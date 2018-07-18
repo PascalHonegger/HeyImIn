@@ -22,6 +22,8 @@ namespace HeyImIn.Database.Context
 
 		void Migrate(ILoggerFactory loggerFactory);
 
+		void DiscardChanges();
+
 		// Main tables
 		DbSet<User> Users { get; }
 

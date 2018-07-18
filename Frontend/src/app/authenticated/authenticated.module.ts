@@ -21,6 +21,7 @@ import { EventsOverviewListComponent } from './events-overview-list/events-overv
 import { EventInfoDisplayComponent } from './event-info-display/event-info-display.component';
 import { ManageEventParticipantsTableComponent } from './manage-event-participants-table/manage-event-participants-table.component';
 import { AppointmentParticipationSummaryComponent } from './appointment-participation-summary/appointment-participation-summary.component';
+import { EventChatComponent } from './event-chat/event-chat.component';
 
 // Other
 import { AuthenticatedLayoutComponent } from './authenticated-layout/authenticated-layout.component';
@@ -48,7 +49,8 @@ const components = [
 	EventsOverviewListComponent,
 	EventInfoDisplayComponent,
 	ManageEventParticipantsTableComponent,
-	AppointmentParticipationSummaryComponent
+	AppointmentParticipationSummaryComponent,
+	EventChatComponent
 ];
 
 @NgModule({

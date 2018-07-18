@@ -5,6 +5,7 @@ export class Constants {
 
 
 	// The following constants are based on the Backend FieldLenghts.cs
+	public static readonly chatMessageMaxLength = 250;
 	public static readonly userFullNameMaxLength = 40;
 	public static readonly userEmailMaxLength = 40;
 	public static readonly userPasswordHashMaxLength = 60;

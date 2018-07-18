@@ -100,7 +100,7 @@ namespace HeyImIn.WebApplication.Tests.Services
 		private static (CronSendReminderAndSummaryService service, Mock<AssertingNotificationService> notificationServiceMock) CreateService(GetDatabaseContext getContext)
 		{
 			var notificationServiceMock = new Mock<AssertingNotificationService>(MockBehavior.Strict);
-			var service = new CronSendReminderAndSummaryService(notificationServiceMock.Object, getContext);
+			var service = new CronSendReminderAndSummaryService(notificationServiceMock.Object, getContext());
 			return (service, notificationServiceMock);
 		}
 

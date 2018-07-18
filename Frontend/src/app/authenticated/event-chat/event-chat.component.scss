@@ -1,0 +1,9 @@
+.chat-messages-container {
+	// TODO? max-height: 60vh;
+	overflow-y: auto;
+}
+
+.chat-message {
+	margin: 5px;
+	white-space: pre-line;
+}

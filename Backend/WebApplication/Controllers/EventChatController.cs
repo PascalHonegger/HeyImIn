@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using HeyImIn.Database.Context;
+﻿using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
 using HeyImIn.MailNotifier;
 using HeyImIn.Shared;
@@ -13,6 +9,10 @@ using HeyImIn.WebApplication.WebApiComponents;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace HeyImIn.WebApplication.Controllers
 {
@@ -32,48 +32,47 @@ namespace HeyImIn.WebApplication.Controllers
 
 		/// <summary>
 		///     Load a subset of <see cref="EventChatMessage" /> for a specified <see cref="Event" />.
-		///     You can call this method again providing a <paramref name="earliestLoadedMessageSentDate" /> to load the next chunk of
+		///     You can call this method again providing a <see cref="GetChatMessagesDto.EarliestLoadedMessageSentDate" /> to load the next chunk of
 		///     messages.
 		/// </summary>
-		/// <param name="eventId">The <see cref="Event.Id" /></param>
-		/// <param name="earliestLoadedMessageSentDate">
-		///     Null or the earliest <see cref="EventChatMessage.SentDate" /> received when previously calling
-		///     this method
-		/// </param>
+		/// <param name="getChatMessagesDto"><see cref="GetChatMessagesDto"/></param>
 		/// <returns>
 		///     <see cref="EventChatMessages" />
 		/// </returns>
-		[HttpGet(nameof(GetChatMessages))]
+		[HttpPost(nameof(GetChatMessages))]
 		[ProducesResponseType(typeof(EventChatMessages), 200)]
-		public async Task<IActionResult> GetChatMessages(int eventId, DateTime? earliestLoadedMessageSentDate = null)
+		public async Task<IActionResult> GetChatMessages(GetChatMessagesDto getChatMessagesDto)
 		{
 			IDatabaseContext context = _getDatabaseContext();
 			int currentUserId = HttpContext.GetUserId();
 
-			EventParticipation eventParticipation = await context.EventParticipations.FirstOrDefaultAsync(ep => (ep.EventId == eventId) && (ep.ParticipantId == currentUserId));
+			EventParticipation eventParticipation = await context.EventParticipations.FirstOrDefaultAsync(ep => (ep.EventId == getChatMessagesDto.EventId) && (ep.ParticipantId == currentUserId));
 
 			if (eventParticipation == null)
 			{
 				return BadRequest(RequestStringMessages.UserNotPartOfEvent);
 			}
 
-			IQueryable<ChatMessage> chatMessagesQuery = context.ChatMessages.Where(c => c.EventId == eventId);
+			IQueryable<ChatMessage> chatMessagesQuery = context.ChatMessages
+				.Where(c => c.EventId == getChatMessagesDto.EventId);
 
-			if (earliestLoadedMessageSentDate.HasValue)
+			bool providedAlreadyLoadedMessageSentDate = getChatMessagesDto.EarliestLoadedMessageSentDate.HasValue;
+			if (providedAlreadyLoadedMessageSentDate)
 			{
-				chatMessagesQuery = chatMessagesQuery.Where(c => c.SentDate < earliestLoadedMessageSentDate);
+				DateTime dateValue = getChatMessagesDto.EarliestLoadedMessageSentDate.Value;
+
+				chatMessagesQuery = chatMessagesQuery.Where(c => c.SentDate < dateValue);
 			}
 
-			List<ChatMessage> chatMessages = await chatMessagesQuery
+			List<EventChatMessage> eventChatMessages = await chatMessagesQuery
 				.OrderByDescending(c => c.SentDate)
 				.Take(_baseAmountOfChatMessagesPerDetailPage)
+				.Select(m => new EventChatMessage(m.Id, m.Author.FullName, m.Content, m.SentDate))
 				.ToListAsync();
 
-			List<EventChatMessage> eventChatMessages = chatMessages.Select(m => new EventChatMessage(m.AuthorId, m.Content, m.SentDate)).ToList();
-
-			if (earliestLoadedMessageSentDate == null)
+			if (!providedAlreadyLoadedMessageSentDate)
 			{
-				DateTime? lastReadMessageSentDate = chatMessages.FirstOrDefault()?.SentDate;
+				DateTime? lastReadMessageSentDate = eventChatMessages.FirstOrDefault()?.SentDate;
 
 				if (lastReadMessageSentDate.HasValue && (eventParticipation.LastReadMessageSentDate != lastReadMessageSentDate.Value))
 				{
@@ -84,21 +83,22 @@ namespace HeyImIn.WebApplication.Controllers
 				}
 			}
 
-			return Ok(new EventChatMessages(eventChatMessages, chatMessages.Count == _baseAmountOfChatMessagesPerDetailPage));
+			return Ok(new EventChatMessages(eventChatMessages, eventChatMessages.Count == _baseAmountOfChatMessagesPerDetailPage));
 		}
 
 		/// <summary>
 		///     Sends a <see cref="ChatMessage" /> to an <see cref="Event" />
 		/// </summary>
+		/// <returns>The newly added <see cref="EventChatMessage"/></returns>
 		[HttpPost(nameof(SendChatMessage))]
-		[ProducesResponseType(typeof(void), 200)]
+		[ProducesResponseType(typeof(EventChatMessage), 200)]
 		public async Task<IActionResult> SendChatMessage(SendMessageDto sendMessageDto)
 		{
 			IDatabaseContext context = _getDatabaseContext();
-			int currentUserId = HttpContext.GetUserId();
+			User currentUser = await HttpContext.GetCurrentUserAsync(context);
 
 			List<EventParticipation> eventParticipations = await context.EventParticipations.Where(e => e.EventId == sendMessageDto.EventId).ToListAsync();
-			EventParticipation currentUserParticipation = eventParticipations.FirstOrDefault(e => e.ParticipantId == currentUserId);
+			EventParticipation currentUserParticipation = eventParticipations.FirstOrDefault(e => e.ParticipantId == currentUser.Id);
 
 			if (currentUserParticipation == null)
 			{
@@ -107,7 +107,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 			var message = new ChatMessage
 			{
-				AuthorId = currentUserId,
+				Author = currentUser,
 				EventId = sendMessageDto.EventId,
 				Content = sendMessageDto.Content,
 				SentDate = DateTime.UtcNow
@@ -123,7 +123,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 			// TODO Push-Notifications eventParticipations.Where(e => e.ParticipantId != currentUserId).ForEach(p => SendNotification(p));
 
-			return Ok();
+			return Ok(new EventChatMessage(message.Id, currentUser.FullName, message.Content, message.SentDate));
 		}
 
 		private readonly INotificationService _notificationService;

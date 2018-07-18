@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using HeyImIn.Database.Context;
 using HeyImIn.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -77,7 +78,8 @@ namespace HeyImIn.WebApplication.Services.Impl
 				using (IServiceScope serviceScope = _serviceScopeFactory.CreateScope())
 				{
 					var cronRunners = serviceScope.ServiceProvider.GetRequiredService<IEnumerable<ICronService>>();
-					await ExecuteCronJobsAsync(cronRunners, stoppingToken);
+					var context = serviceScope.ServiceProvider.GetRequiredService<IDatabaseContext>();
+					await ExecuteCronJobsAsync(cronRunners, context, stoppingToken);
 				}
 
 				await Task.Delay(_cronHandlerTimeSpan, stoppingToken);
@@ -90,7 +92,7 @@ namespace HeyImIn.WebApplication.Services.Impl
 		///     Runs all cron-jobs
 		///     Catches and logs exceptions thrown by the <see cref="ICronService.RunAsync" /> method
 		/// </summary>
-		private async Task ExecuteCronJobsAsync(IEnumerable<ICronService> cronRunners, CancellationToken token)
+		private async Task ExecuteCronJobsAsync(IEnumerable<ICronService> cronRunners, IDatabaseContext context, CancellationToken token)
 		{
 			_logger.LogInformation("{0}(): Running cron jobs", nameof(ExecuteCronJobsAsync));
 
@@ -111,6 +113,8 @@ namespace HeyImIn.WebApplication.Services.Impl
 				}
 				finally
 				{
+					// Ensure no broken / partially saved changes affect the other cron runners
+					context.DiscardChanges();
 					cronStopwatch.Stop();
 					_logger.LogDebug("{0}(): Finished running '{1}', duration = {2:g}", nameof(ExecuteCronJobsAsync), cronService.DescriptiveName, cronStopwatch.Elapsed);
 				}

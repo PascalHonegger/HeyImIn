@@ -55,6 +55,11 @@ namespace HeyImIn.MailNotifier.Tests
 			Assert.NotNull(appointment);
 			Assert.NotNull(appointment.Event);
 			Assert.NotNull(appointment.Event.EventParticipations);
+			foreach (EventParticipation eventEventParticipation in appointment.Event.EventParticipations)
+			{
+				Assert.NotNull(eventEventParticipation);
+				Assert.NotNull(eventEventParticipation.Participant);
+			}
 			Assert.NotNull(appointment.AppointmentParticipations);
 			foreach (AppointmentParticipation appointmentParticipation in appointment.AppointmentParticipations)
 			{

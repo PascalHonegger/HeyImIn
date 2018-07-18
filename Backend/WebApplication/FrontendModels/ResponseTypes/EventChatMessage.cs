@@ -4,14 +4,16 @@ namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
 {
 	public class EventChatMessage
 	{
-		public EventChatMessage(int authorId, string content, DateTime sentDate)
+		public EventChatMessage(int id, string authorName, string content, DateTime sentDate)
 		{
-			AuthorId = authorId;
+			AuthorName = authorName;
 			Content = content;
 			SentDate = sentDate;
+			Id = id;
 		}
 
-		public int AuthorId { get; }
+		public int Id { get; }
+		public string AuthorName { get; } // TODO Keep redundant information to a minimum
 		public string Content { get; }
 		public DateTime SentDate { get; }
 	}

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using HeyImIn.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -14,8 +15,6 @@ namespace HeyImIn.Database.Context.Impl
 		public HeyImInDatabaseContext(DbContextOptions<HeyImInDatabaseContext> options) : base(options)
 		{
 		}
-
-		// Main tables
 		public void Migrate(ILoggerFactory loggerFactory)
 		{
 			ILogger<HeyImInDatabaseContext> logger = loggerFactory.CreateLogger<HeyImInDatabaseContext>();
@@ -27,6 +26,15 @@ namespace HeyImIn.Database.Context.Impl
 			Database.Migrate();
 
 			logger.LogInformation("{0}(): Applied migrations", nameof(Migrate));
+		}
+
+		public void DiscardChanges()
+		{
+			// Thanks to https://stackoverflow.com/a/42885424
+			ChangeTracker.Entries()
+				.Where(e => e.Entity != null)
+				.ToList()
+				.ForEach(e => e.State = EntityState.Detached);
 		}
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -52,6 +60,8 @@ namespace HeyImIn.Database.Context.Impl
 			modelBuilder.Entity<ChatMessage>().HasIndex(c => c.SentDate);
 			modelBuilder.Entity<ChatMessage>().HasOne(c => c.Author).WithMany(a => a.ChatMessages).OnDelete(DeleteBehavior.Cascade);
 		}
+
+		// Main tables
 
 		public virtual DbSet<User> Users { get; set; }
 
