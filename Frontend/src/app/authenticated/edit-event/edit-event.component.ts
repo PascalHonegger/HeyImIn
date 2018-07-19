@@ -4,11 +4,13 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { AreYouSureDialogComponent } from '../../shared/are-you-sure-dialog/are-you-sure-dialog.component';
 import { OrganizeAppointmentClient } from '../../shared/backend-clients/organize-appointment.client';
 import { OrganizeEventClient } from '../../shared/backend-clients/organize-event.client';
-import { EditEventDetails, AppointmentDetails } from '../../shared/server-model/event-edit-details.model';
-import { GeneralEventInfo } from '../../shared/server-model/general-event-info.model';
 import { AddAppointmentsDialogComponent } from '../add-appointments-dialog/add-appointments-dialog.component';
 import { AddParticipantDialogComponent } from '../add-participant-dialog/add-participant-dialog.component';
 import { InviteToEventClient } from '../../shared/backend-clients/invite-to-event.client';
+import { AppointmentDetails } from '../../shared/server-model/appointment-details.model';
+import { GeneralEventInformation } from '../../shared/server-model/general-event-information.model';
+import { EditEventDetails } from '../../shared/server-model/edit-event-details.model';
+import { AppointmentParticipationAnswer } from '../../shared/server-model/appointment-participation-answer.model';
 
 @Component({
 	styleUrls: ['./edit-event.component.scss'],
@@ -39,10 +41,18 @@ export class EditEventComponent {
 				}
 
 	public getAppointmentId(_index: number, appointment: AppointmentDetails) {
-		return appointment.appointmentInformation.appointmentId;
+		return appointment.appointmentId;
 	}
 
-	public saveEvent(newEventInfo: GeneralEventInfo) {
+	public setNewAnswer(appointment: AppointmentDetails,
+		participantId: number,
+		response: AppointmentParticipationAnswer) {
+		appointment.participations = appointment.participations
+			.filter(p => p.participantId !== participantId)
+			.concat([{ participantId, response }]);
+	}
+
+	public saveEvent(newEventInfo: GeneralEventInformation) {
 		this.organizeEventServer
 			.updateEventInfo(this.eventId, newEventInfo)
 			.subscribe(() => {
@@ -113,7 +123,7 @@ export class EditEventComponent {
 					() => {
 						// Remove appointment from local list
 						this.eventDetails.upcomingAppointments =
-							this.eventDetails.upcomingAppointments.filter(u => u.appointmentInformation.appointmentId !== appointmentId);
+							this.eventDetails.upcomingAppointments.filter(u => u.appointmentId !== appointmentId);
 					}
 				);
 			}

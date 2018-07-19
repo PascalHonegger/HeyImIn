@@ -12,7 +12,7 @@ import { MatDialog, MatDialogRef, MatSnackBar } from '@angular/material';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
-import { AuthService } from './../services/auth.service';
+import { AuthService } from '../services/auth.service';
 import { ErrorDialogComponent } from '../error-dialog/error-dialog.component';
 
 /**
@@ -29,6 +29,7 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
 			tap(() => undefined, (event) => {
 				if (event instanceof HttpErrorResponse) {
 					if (event.status === 0) {
+						console.warn(event);
 						// Display a toast when the server couldn't be reached
 						this.snackBar.open('Mutterschiff konnte nicht erreicht werden', 'Ok');
 						return;

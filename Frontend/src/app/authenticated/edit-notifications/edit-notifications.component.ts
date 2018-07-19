@@ -1,7 +1,7 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { GeneralEventInfo } from '../../shared/server-model/general-event-info.model';
 import { NotificationConfiguration } from '../../shared/server-model/notification-configuration.model';
+import { GeneralEventInformation } from '../../shared/server-model/general-event-information.model';
 
 @Component({
 	selector: 'edit-notifications',
@@ -13,7 +13,7 @@ export class EditNotificationsComponent {
 	public form: FormGroup;
 
 	@Input()
-	public eventInfo: GeneralEventInfo;
+	public eventInfo: GeneralEventInformation;
 
 	private _notifications: NotificationConfiguration;
 	public get notifications(): NotificationConfiguration {

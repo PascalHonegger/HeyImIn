@@ -53,10 +53,10 @@ namespace HeyImIn.WebApplication.Controllers
 			List<EventOverviewInformation> publicEvents = await GetAndFilterEvents(e => !e.IsPrivate && (e.OrganizerId != currentUserId) && !e.EventParticipations.Select(ep => ep.ParticipantId).Contains(currentUserId));
 
 			List<EventOverviewInformation> yourEventInformations = yourEvents
-				.OrderBy(e => e.LatestAppointmentInformation?.StartTime ?? DateTime.MaxValue)
+				.OrderBy(e => e.LatestAppointmentDetails?.StartTime ?? DateTime.MaxValue)
 				.ToList();
 			List<EventOverviewInformation> publicEventInformations = publicEvents
-				.OrderBy(e => e.LatestAppointmentInformation?.StartTime ?? DateTime.MaxValue)
+				.OrderBy(e => e.LatestAppointmentDetails?.StartTime ?? DateTime.MaxValue)
 				.ToList();
 
 			return Ok(new EventOverview(yourEventInformations, publicEventInformations));
@@ -79,7 +79,12 @@ namespace HeyImIn.WebApplication.Controllers
 						e.Appointments
 							.Where(a => a.StartTime >= DateTime.UtcNow)
 							.OrderBy(a => a.StartTime)
-							.Select(a => new AppointmentInformation(a.Id, a.StartTime))
+							.Select(a => new AppointmentDetails(
+								a.Id,
+								a.StartTime,
+								a.AppointmentParticipations
+									.Select(ap => new AppointmentParticipationInformation(ap.ParticipantId, ap.AppointmentParticipationAnswer))
+									.ToList()))
 							.FirstOrDefault()
 					))
 					.ToListAsync();
@@ -121,7 +126,8 @@ namespace HeyImIn.WebApplication.Controllers
 						.OrderBy(a => a.StartTime)
 						.Take(_maxShownAppointmentsPerEvent)
 						.Select(a => new AppointmentDetails(
-							new AppointmentInformation(a.Id, a.StartTime),
+							a.Id,
+							a.StartTime,
 							a.AppointmentParticipations
 								.Select(ap => new AppointmentParticipationInformation(ap.ParticipantId, ap.AppointmentParticipationAnswer))
 								.ToList()))

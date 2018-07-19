@@ -1,4 +1,4 @@
-export interface GeneralEventInfo {
+export interface GeneralEventInformation {
 	title: string;
 	meetingPlace: string;
 	description: string;

@@ -1,17 +1,17 @@
-<mat-table [dataSource]="dataSource" matSort>
+<mat-table [dataSource]="dataSource" matSort [trackBy]="getUserId">
 	<!-- Name Column -->
-	<ng-container matColumnDef="participantName">
+	<ng-container matColumnDef="name">
 		<mat-header-cell *matHeaderCellDef mat-sort-header>Name</mat-header-cell>
 		<mat-cell *matCellDef="let element">
-			{{element.participantName}}
+			{{element.name}}
 		</mat-cell>
 	</ng-container>
 
 	<!-- Email Column -->
-	<ng-container matColumnDef="participantEmail">
+	<ng-container matColumnDef="email">
 		<mat-header-cell *matHeaderCellDef mat-sort-header>E-Mail-Adresse</mat-header-cell>
 		<mat-cell *matCellDef="let element">
-			{{element.participantEmail}}
+			{{element.email}}
 		</mat-cell>
 	</ng-container>
 
@@ -19,7 +19,7 @@
 	<ng-container matColumnDef="action">
 		<mat-header-cell *matHeaderCellDef>Aktion</mat-header-cell>
 		<mat-cell *matCellDef="let element">
-			<button mat-button color="warn" (click)="removeFromEvent(element.participantId)">Entfernen</button>
+			<button mat-button color="warn" (click)="removeFromEvent(element.userId)">Entfernen</button>
 		</mat-cell>
 	</ng-container>
 

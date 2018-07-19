@@ -1,6 +1,4 @@
-﻿using HeyImIn.Database.Models;
-
-namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
+﻿namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
 {
 	public class NotificationConfigurationResponse : NotificationConfiguration
 	{
@@ -9,11 +7,6 @@ namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
 			SendReminderEmail = sendReminderEmail;
 			SendSummaryEmail = sendSummaryEmail;
 			SendLastMinuteChangesEmail = sendLastMinuteChangesEmail;
-		}
-
-		public static NotificationConfigurationResponse FromParticipation(EventParticipation participation)
-		{
-			return new NotificationConfigurationResponse(participation.SendReminderEmail, participation.SendSummaryEmail, participation.SendLastMinuteChangesEmail);
 		}
 	}
 }

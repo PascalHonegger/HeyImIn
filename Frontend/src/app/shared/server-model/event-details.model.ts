@@ -1,9 +1,9 @@
-import { AppointmentDetails } from './event-edit-details.model';
-import { ViewEventInformation } from './view-event-information.model';
+﻿import { ViewEventInformation } from './view-event-information.model';
+import { AppointmentDetails } from './appointment-details.model';
 import { NotificationConfiguration } from './notification-configuration.model';
 
 export interface EventDetails {
 	information: ViewEventInformation;
-	upcomingAppointments: AppointmentDetails[];
+	upcomingAppointments: ReadonlyArray<AppointmentDetails>;
 	notificationConfigurationResponse: NotificationConfiguration;
 }

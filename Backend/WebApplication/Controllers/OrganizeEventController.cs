@@ -183,7 +183,8 @@ namespace HeyImIn.WebApplication.Controllers
 						.Where(a => a.StartTime >= DateTime.UtcNow)
 						.OrderBy(a => a.StartTime)
 						.Select(a => new AppointmentDetails(
-							new AppointmentInformation(a.Id, a.StartTime),
+							a.Id,
+							a.StartTime,
 							a.AppointmentParticipations
 								.Select(ap => new AppointmentParticipationInformation(ap.ParticipantId, ap.AppointmentParticipationAnswer))
 								.ToList()))

@@ -4,25 +4,25 @@
 			<mat-panel-title fxFlex.xs="grow">
 				{{event.viewEventInformation.title}}
 			</mat-panel-title>
-			<ng-container *ngIf="event.latestAppointmentInformation">
+			<ng-container *ngIf="event.latestAppointmentDetails">
 				<mat-panel-description fxFlex="nogrow" fxLayoutAlign="stretch center" fxLayoutGap.gt-xs="20px">
-					<appointment-participation-summary fxHide.lt-md [appointment]="event.latestAppointmentInformation" orientation="row"></appointment-participation-summary>
+					<appointment-participation-summary [eventParticipants]="event.viewEventInformation.participants" [givenAnswers]="event.latestAppointmentDetails.participations" orientation="row"></appointment-participation-summary>
 
-					<div>{{event.latestAppointmentInformation.startTime | date:'short'}}</div>
-					<appointment-participation [readonly]="false" [currentResponse]="event.latestAppointmentInformation.currentResponse"
-						[participantId]="currentUserId" [appointmentId]="event.latestAppointmentInformation.appointmentId"
+					<div>{{event.latestAppointmentDetails.startTime | date:'short'}}</div>
+					<appointment-participation [readonly]="false" [currentResponse]="getCurrentResponse(event.latestAppointmentDetails)"
+						[participantId]="currentSession.userId" [appointmentId]="event.latestAppointmentDetails.appointmentId"
 						(selectedNewResponse)="eventChanged.emit()"></appointment-participation>
 				</mat-panel-description>
 			</ng-container>
 		</mat-expansion-panel-header>
 		<ng-template matExpansionPanelContent>
 			<div fxLayoutGap="20px">
-				<appointment-participation-summary *ngIf="event.latestAppointmentInformation" fxHide.gt-sm [appointment]="event.latestAppointmentInformation" orientation="row"></appointment-participation-summary>
+				<appointment-participation-summary *ngIf="event.latestAppointmentInformation" fxHide.gt-sm [eventParticipants]="event.viewEventInformation.participants" [givenAnswers]="event.latestAppointmentDetails.participations" orientation="row"></appointment-participation-summary>
 				<event-info-display [info]="event.viewEventInformation"></event-info-display>
 			</div>
 		</ng-template>
 		<mat-action-row fxLayoutGap="10px">
-			<ng-container *ngIf="event.viewEventInformation.currentUserDoesParticipate; else notParticipatingTemplate">
+			<ng-container *ngIf="currentUserDoesParticipate(event); else notParticipatingTemplate">
 				<button mat-raised-button (click)="leaveEvent(event.eventId)" color="warn" type="button">
 					Verlassen
 				</button>
@@ -35,7 +35,7 @@
 			<button mat-raised-button color="primary" [routerLink]="['/ViewEvent', event.eventId]">
 				Details
 			</button>
-			<button mat-raised-button color="primary" [routerLink]="['/EditEvent', event.eventId]" *ngIf="event.viewEventInformation.organizerId === currentUserId">
+			<button mat-raised-button color="primary" [routerLink]="['/EditEvent', event.eventId]" *ngIf="event.viewEventInformation.organizerId === currentSession.userId">
 				Editieren
 			</button>
 		</mat-action-row>
