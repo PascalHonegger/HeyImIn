@@ -18,6 +18,7 @@ namespace HeyImIn.WebApplication.Controllers
 {
 	[AuthenticateUser]
 	[ApiController]
+	[ApiVersion(ApiVersions.Version2_0)]
 	[Route("api/EventChat")]
 	public class EventChatController : ControllerBase
 	{

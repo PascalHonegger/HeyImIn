@@ -18,6 +18,8 @@ namespace HeyImIn.WebApplication.Controllers
 {
 	[AuthenticateUser]
 	[ApiController]
+	[ApiVersion(ApiVersions.Version2_0)]
+	[ApiVersion(ApiVersions.Version1_1, Deprecated = true)]
 	[Route("api/OrganizeAppointment")]
 	public class OrganizeAppointmentController : ControllerBase
 	{

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using HeyImIn.Database.Context;
@@ -20,6 +21,8 @@ namespace HeyImIn.WebApplication.Controllers
 {
 	[AuthenticateUser]
 	[ApiController]
+	[ApiVersion(ApiVersions.Version2_0)]
+	[ApiVersion(ApiVersions.Version1_1, Deprecated = true)]
 	[Route("api/OrganizeEvent")]
 	public class OrganizeEventController : ControllerBase
 	{
@@ -160,9 +163,10 @@ namespace HeyImIn.WebApplication.Controllers
 		///     <see cref="Event.Id" />
 		/// </param>
 		/// <returns>
-		///     <see cref="EditEventDetails" />
+		///     <see cref="FrontendModels.ResponseTypes.EditEventDetails" />
 		/// </returns>
 		[HttpGet(nameof(GetEditDetails))]
+		[MapToApiVersion(ApiVersions.Version2_0)]
 		[ProducesResponseType(typeof(EditEventDetails), 200)]
 		public async Task<IActionResult> GetEditDetails(int eventId)
 		{
@@ -195,6 +199,49 @@ namespace HeyImIn.WebApplication.Controllers
 			}
 
 			return Ok(@event);
+		}
+
+		[HttpGet(nameof(GetEditDetails))]
+		[MapToApiVersion(ApiVersions.Version1_1)]
+		[ProducesResponseType(typeof(FrontendModels.ResponseTypes_Fallback.EditEventDetails), 200)]
+		public async Task<IActionResult> GetEditDetailsFallback(int eventId)
+		{
+			IDatabaseContext context = _getDatabaseContext();
+			Event @event = await context.Events
+				.Include(e => e.EventParticipations)
+				.ThenInclude(ep => ep.Participant)
+				.Include(e => e.Appointments)
+				.ThenInclude(ap => ap.AppointmentParticipations)
+				.Include(e => e.Organizer)
+				.FirstOrDefaultAsync(e => e.Id == eventId);
+
+			if (@event == null)
+			{
+				return NotFound();
+			}
+
+			int currentUserId = HttpContext.GetUserId();
+
+			if (@event.OrganizerId != currentUserId)
+			{
+				_logger.LogInformation("{0}(): Tried to edit event {1}, which he's not organizing", nameof(GetEditDetails), @event.Id);
+
+				return BadRequest(RequestStringMessages.OrganizerRequired);
+			}
+
+			List<User> allParticipants = @event.EventParticipations.Select(e => e.Participant).ToList();
+
+			List<FrontendModels.ResponseTypes_Fallback.AppointmentDetails> upcomingAppointments = @event.Appointments
+				.Where(a => a.StartTime >= DateTime.UtcNow)
+				.OrderBy(a => a.StartTime)
+				.Select(a => FrontendModels.ResponseTypes_Fallback.AppointmentDetails.FromAppointment(a, currentUserId, allParticipants))
+				.ToList();
+
+			List<FrontendModels.ResponseTypes_Fallback.EventParticipantInformation> currentEventParticipation = @event.EventParticipations.Select(FrontendModels.ResponseTypes_Fallback.EventParticipantInformation.FromParticipation).ToList();
+
+			FrontendModels.ResponseTypes_Fallback.ViewEventInformation viewEventInformation = FrontendModels.ResponseTypes_Fallback.ViewEventInformation.FromEvent(@event, currentUserId);
+
+			return Ok(new FrontendModels.ResponseTypes_Fallback.EditEventDetails(viewEventInformation, upcomingAppointments, currentEventParticipation));
 		}
 
 		private readonly INotificationService _notificationService;

@@ -7,8 +7,8 @@ using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
 using HeyImIn.MailNotifier;
 using HeyImIn.Shared;
+using HeyImIn.WebApplication.FrontendModels.ResponseTypes_Fallback;
 using HeyImIn.WebApplication.FrontendModels.ParameterTypes;
-using HeyImIn.WebApplication.FrontendModels.ResponseTypes;
 using HeyImIn.WebApplication.Helpers;
 using HeyImIn.WebApplication.WebApiComponents;
 using Microsoft.AspNetCore.Mvc;
@@ -19,11 +19,11 @@ namespace HeyImIn.WebApplication.Controllers
 {
 	[AuthenticateUser]
 	[ApiController]
-	[ApiVersion(ApiVersions.Version2_0)]
+	[ApiVersion(ApiVersions.Version1_1, Deprecated = true)]
 	[Route("api/ParticipateEvent")]
-	public class ParticipateEventController : ControllerBase
+	public class ParticipateEventControllerFallback : ControllerBase
 	{
-		public ParticipateEventController(INotificationService notificationService, HeyImInConfiguration configuration, GetDatabaseContext getDatabaseContext, ILogger<ParticipateEventController> logger, ILoggerFactory loggerFactory)
+		public ParticipateEventControllerFallback(INotificationService notificationService, HeyImInConfiguration configuration, GetDatabaseContext getDatabaseContext, ILogger<ParticipateEventController> logger, ILoggerFactory loggerFactory)
 		{
 			_notificationService = notificationService;
 			_maxShownAppointmentsPerEvent = configuration.MaxAmountOfAppointmentsPerDetailPage;
@@ -44,45 +44,46 @@ namespace HeyImIn.WebApplication.Controllers
 		public async Task<IActionResult> GetOverview()
 		{
 			IDatabaseContext context = _getDatabaseContext();
-			context.WithTrackingBehavior(QueryTrackingBehavior.NoTracking);
-
 			int currentUserId = HttpContext.GetUserId();
 
-			List<EventOverviewInformation> yourEvents = await GetAndFilterEvents(
+			List<(Event @event, Appointment upcommingAppointment)> yourEvents = await GetAndFilterEvents(
 				e => (e.OrganizerId == currentUserId) || e.EventParticipations.Select(ep => ep.ParticipantId).Contains(currentUserId));
-			List<EventOverviewInformation> publicEvents = await GetAndFilterEvents(e => !e.IsPrivate && (e.OrganizerId != currentUserId) && !e.EventParticipations.Select(ep => ep.ParticipantId).Contains(currentUserId));
+			List<(Event @event, Appointment upcommingAppointment)> publicEvents = await GetAndFilterEvents(e => !e.IsPrivate && (e.OrganizerId != currentUserId) && !e.EventParticipations.Select(ep => ep.ParticipantId).Contains(currentUserId));
 
 			List<EventOverviewInformation> yourEventInformations = yourEvents
+				.Select(e => EventOverviewInformation.FromEvent(e.@event, e.upcommingAppointment, currentUserId))
 				.OrderBy(e => e.LatestAppointmentInformation?.StartTime ?? DateTime.MaxValue)
 				.ToList();
 			List<EventOverviewInformation> publicEventInformations = publicEvents
+				.Select(e => EventOverviewInformation.FromEvent(e.@event, e.upcommingAppointment, currentUserId))
 				.OrderBy(e => e.LatestAppointmentInformation?.StartTime ?? DateTime.MaxValue)
 				.ToList();
 
 			return Ok(new EventOverview(yourEventInformations, publicEventInformations));
 
-			async Task<List<EventOverviewInformation>> GetAndFilterEvents(Expression<Func<Event, bool>> eventFilter)
+			async Task<List<(Event @event, Appointment upcommingAppointment)>> GetAndFilterEvents(Expression<Func<Event, bool>> eventFilter)
 			{
-				return await context.Events
+				List<Event> databaseResult = await context.Events
 					.Where(eventFilter)
-					.Select(e => new EventOverviewInformation(
-						e.Id,
-						new ViewEventInformation(
-							e.MeetingPlace,
-							e.Description,
-							e.IsPrivate,
-							e.Title,
-							e.SummaryTimeWindowInHours,
-							e.ReminderTimeWindowInHours,
-							new UserInformation(e.OrganizerId, e.Organizer.FullName, null),
-							e.EventParticipations.Select(ep => new UserInformation(ep.ParticipantId, ep.Participant.FullName, null)).ToList()), 
-						e.Appointments
-							.Where(a => a.StartTime >= DateTime.UtcNow)
-							.OrderBy(a => a.StartTime)
-							.Select(a => new AppointmentInformation(a.Id, a.StartTime))
-							.FirstOrDefault()
-					))
+					.Include(e => e.EventParticipations)
+					.Include(e => e.Organizer)
 					.ToListAsync();
+
+				var result = new List<(Event @event, Appointment upcommingAppointment)>();
+
+				foreach (Event @event in databaseResult)
+				{
+					Appointment upcomingAppointment = await context.Entry(@event)
+						.Collection(e => e.Appointments)
+						.Query()
+						.Include(a => a.AppointmentParticipations)
+						.OrderBy(a => a.StartTime)
+						.FirstOrDefaultAsync(a => a.StartTime >= DateTime.UtcNow);
+
+					result.Add((@event, upcomingAppointment));
+				}
+
+				return result;
 			}
 		}
 
@@ -101,50 +102,51 @@ namespace HeyImIn.WebApplication.Controllers
 		public async Task<IActionResult> GetDetails(int eventId)
 		{
 			IDatabaseContext context = _getDatabaseContext();
-			context.WithTrackingBehavior(QueryTrackingBehavior.NoTracking);
-			int currentUserId = HttpContext.GetUserId();
-
-			EventDetails @event = await context.Events
-				.Where(e => e.Id == eventId)
-				.Select(e => new EventDetails(
-					new ViewEventInformation(
-						e.MeetingPlace,
-						e.Description,
-						e.IsPrivate,
-						e.Title,
-						e.SummaryTimeWindowInHours,
-						e.ReminderTimeWindowInHours,
-						new UserInformation(e.OrganizerId, e.Organizer.FullName, null),
-						e.EventParticipations.Select(ep => new UserInformation(ep.ParticipantId, ep.Participant.FullName, null)).ToList()), 
-					e.Appointments
-						.Where(a => a.StartTime >= DateTime.UtcNow)
-						.OrderBy(a => a.StartTime)
-						.Take(_maxShownAppointmentsPerEvent)
-						.Select(a => new AppointmentDetails(
-							new AppointmentInformation(a.Id, a.StartTime),
-							a.AppointmentParticipations
-								.Select(ap => new AppointmentParticipationInformation(ap.ParticipantId, ap.AppointmentParticipationAnswer))
-								.ToList()))
-						.ToList(),
-					e.EventParticipations
-						.Where(ep => ep.ParticipantId == currentUserId)
-						.Select(ep => new NotificationConfigurationResponse(ep.SendReminderEmail, ep.SendSummaryEmail, ep.SendLastMinuteChangesEmail))
-						.FirstOrDefault()))
-				.SingleOrDefaultAsync();
+			Event @event = await context.Events
+				.Include(e => e.Organizer)
+				.Include(e => e.EventParticipations)
+				.ThenInclude(p => p.Participant)
+				.FirstOrDefaultAsync(e => e.Id == eventId);
 
 			if (@event == null)
 			{
 				return NotFound();
 			}
 
-			bool currentUserDoesParticipate = @event.Information.Participants.Any(e => e.UserId == currentUserId);
+			int currentUserId = HttpContext.GetUserId();
 
-			if (!currentUserDoesParticipate && @event.Information.IsPrivate && (@event.Information.Organizer.UserId != currentUserId))
+			ViewEventInformation viewEventInformation = ViewEventInformation.FromEvent(@event, currentUserId);
+
+			if (!viewEventInformation.CurrentUserDoesParticipate && @event.IsPrivate && (@event.OrganizerId != currentUserId))
 			{
 				return BadRequest(RequestStringMessages.InvitationRequired);
 			}
 
-			return Ok(@event);
+			List<User> allParticipants = @event.EventParticipations.Select(e => e.Participant).ToList();
+
+			List<Appointment> appointments = await context.Appointments
+				.Include(a => a.AppointmentParticipations)
+				.ThenInclude(ap => ap.Participant)
+				.Where(a => a.StartTime >= DateTime.UtcNow)
+				.OrderBy(a => a.StartTime)
+				.Take(_maxShownAppointmentsPerEvent)
+				.ToListAsync();
+
+			List<AppointmentDetails> upcomingAppointments = appointments
+				.Select(a => AppointmentDetails.FromAppointment(a, currentUserId, allParticipants))
+				.ToList();
+
+			EventParticipation currentEventParticipation = @event.EventParticipations.FirstOrDefault(e => e.ParticipantId == currentUserId);
+
+
+			NotificationConfigurationResponse notificationConfigurationResponse = null;
+
+			if (currentEventParticipation != null)
+			{
+				notificationConfigurationResponse = NotificationConfigurationResponse.FromParticipation(currentEventParticipation);
+			}
+
+			return Ok(new EventDetails(viewEventInformation, upcomingAppointments, notificationConfigurationResponse));
 		}
 
 		/// <summary>

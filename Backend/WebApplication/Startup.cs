@@ -10,6 +10,7 @@ using HeyImIn.Database.Context.Impl;
 using HeyImIn.MailNotifier;
 using HeyImIn.Shared;
 using HeyImIn.WebApplication.Controllers;
+using HeyImIn.WebApplication.Helpers;
 using HeyImIn.WebApplication.Services;
 using HeyImIn.WebApplication.Services.Impl;
 using HeyImIn.WebApplication.WebApiComponents;
@@ -18,6 +19,7 @@ using log4net.Util;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -61,6 +63,18 @@ namespace HeyImIn.WebApplication
 					options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
 					options.SerializerSettings.DateParseHandling = DateParseHandling.DateTime;
 					options.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
+				});
+
+			services.AddApiVersioning(
+				options =>
+				{
+					options.ReportApiVersions = false;
+					options.ErrorResponses = new ApiVersionErrorResponseProvider();
+					options.ApiVersionReader = new QueryStringApiVersionReader("api-version");
+
+					// Version 1.1.0 was the latest release prior to API versioning
+					options.DefaultApiVersion = ApiVersion.Parse(ApiVersions.Version1_1);
+					options.AssumeDefaultVersionWhenUnspecified = true;
 				});
 
 			// Register all services as their matching interface
