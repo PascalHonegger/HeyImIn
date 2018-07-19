@@ -17,6 +17,8 @@ namespace HeyImIn.WebApplication.Controllers
 {
 	[AuthenticateUser]
 	[ApiController]
+	[ApiVersion(ApiVersions.Version2_0)]
+	[ApiVersion(ApiVersions.Version1_1, Deprecated = true)]
 	[Route("api/InviteToEvent")]
 	public class InviteToEventController : ControllerBase
 	{
@@ -39,6 +41,8 @@ namespace HeyImIn.WebApplication.Controllers
 			Event @event = await context.Events
 				.Include(e => e.Organizer)
 				.Include(e => e.EventInvitations)
+				.Include(e => e.EventParticipations)
+					.ThenInclude(ep => ep.Participant)
 				.FirstOrDefaultAsync(e => e.Id == inviteParticipantsDto.EventId);
 
 			if (@event == null)

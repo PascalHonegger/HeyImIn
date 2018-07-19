@@ -27,6 +27,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
 import { AppendSessionTokenInterceptor } from './interceptors/append-session-token.interceptor';
 import { ShowLoadingDialogInterceptor } from './interceptors/show-loading-dialog.interceptor';
 import { ErrorHandlerInterceptor } from './interceptors/error-handler.interceptor';
+import { AppendApiVersionInterceptor } from './interceptors/append-api-version.interceptor';
 
 // Dialogs
 import { ErrorDialogComponent } from './error-dialog/error-dialog.component';
@@ -113,6 +114,11 @@ export class SharedModule {
 				{
 					provide: HTTP_INTERCEPTORS,
 					useClass: ErrorHandlerInterceptor,
+					multi: true
+				},
+				{
+					provide: HTTP_INTERCEPTORS,
+					useClass: AppendApiVersionInterceptor,
 					multi: true
 				}
 			]
