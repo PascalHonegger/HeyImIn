@@ -1,6 +1,6 @@
-export interface EventChatMessage {
+﻿export interface EventChatMessage {
 	id: number;
-	authorName: string;
+	authorId: number;
 	content: string;
-	sentDate: Date | string;
+	sentDate: Date;
 }

@@ -1,7 +1,7 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Constants } from '../../shared/constants';
-import { GeneralEventInfo } from '../../shared/server-model/general-event-info.model';
+import { GeneralEventInformation } from '../../shared/server-model/general-event-information.model';
 
 @Component({
 	selector: 'edit-general-event-info',
@@ -12,13 +12,13 @@ import { GeneralEventInfo } from '../../shared/server-model/general-event-info.m
 export class EditGeneralEventInfoComponent {
 	public form: FormGroup;
 
-	private _eventInfo: GeneralEventInfo;
-	public get eventInfo(): GeneralEventInfo {
+	private _eventInfo: GeneralEventInformation;
+	public get eventInfo(): GeneralEventInformation {
 		return this._eventInfo;
 	}
 
 	@Input()
-	public set eventInfo(info: GeneralEventInfo) {
+	public set eventInfo(info: GeneralEventInformation) {
 		this._eventInfo = info;
 
 		this.form.reset({
@@ -35,7 +35,7 @@ export class EditGeneralEventInfoComponent {
 		return this.form.valid && this.form.dirty;
 	}
 
-	public get updatedEventInfo(): GeneralEventInfo {
+	public get updatedEventInfo(): GeneralEventInformation {
 		return {
 			title: this.form.get('titleCtrl').value,
 			meetingPlace: this.form.get('meetingPlaceCtrl').value,

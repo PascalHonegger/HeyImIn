@@ -1,8 +1,7 @@
-import { GeneralEventInfo } from './general-event-info.model';
+﻿import { GeneralEventInformation } from './general-event-information.model';
+import { UserInformation } from './user-information.model';
 
-export interface ViewEventInformation extends GeneralEventInfo {
-	organizerId: number;
-	organizerName: string;
-	totalParticipants: number;
-	currentUserDoesParticipate: boolean;
+export interface ViewEventInformation extends GeneralEventInformation {
+	organizer: UserInformation;
+	participants: ReadonlyArray<UserInformation>;
 }

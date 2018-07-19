@@ -276,7 +276,7 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 				Assert.Single(loadedEvents);
 				EventOverviewInformation loadedYourEvent = loadedEvents[0];
 				Assert.Equal(expectedEvent.Id, loadedYourEvent.EventId);
-				Assert.Equal(expectedDateTime, loadedYourEvent.LatestAppointmentInformation.StartTime);
+				Assert.Equal(expectedDateTime, loadedYourEvent.LatestAppointmentDetails.StartTime);
 			}
 		}
 
@@ -329,7 +329,7 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 			EventOverviewInformation loadedYourEvent = eventOverview.YourEvents[0];
 			Assert.Equal(yourEvent.Id, loadedYourEvent.EventId);
 			// TODO Assert.Equal(4, loadedYourEvent.ViewEventInformation.TotalParticipants);
-			Assert.NotNull(loadedYourEvent.LatestAppointmentInformation);
+			Assert.NotNull(loadedYourEvent.LatestAppointmentDetails);
 			// TODO Assert.Equal(1, loadedYourEvent.LatestAppointmentInformation.AcceptedParticipants);
 			// TODO Assert.Equal(1, loadedYourEvent.LatestAppointmentInformation.DeclinedParticipants);
 			// TODO Assert.Equal(2, loadedYourEvent.LatestAppointmentInformation.NotAnsweredParticipants);

@@ -1,23 +1,23 @@
 <div fxLayout.lt-sm="column" fxLayout.gt-sm="row">
 	<div fxFlex="nogrow" class="sum-container" ngClass.gt-xs="large-sum-container">
-		<appointment-participation-summary [appointment]="appointment" orientation="column"></appointment-participation-summary>
+		<appointment-participation-summary [eventParticipants]="eventParticipants" [givenAnswers]="givenAnswers" orientation="column"></appointment-participation-summary>
 	</div>
-	<mat-table class="mat-elevation-z2" fxFlex [dataSource]="dataSource" matSort>
+	<mat-table class="mat-elevation-z2" fxFlex [dataSource]="dataSource" matSort [trackBy]="getUserId">
 		<!-- Name Column -->
-		<ng-container matColumnDef="participantName">
+		<ng-container matColumnDef="name">
 			<mat-header-cell *matHeaderCellDef mat-sort-header>Teilnehmer</mat-header-cell>
 			<mat-cell *matCellDef="let element">
-				{{element.participantName}}
+				{{element.name}}
 			</mat-cell>
 		</ng-container>
 
 		<!-- Response Column -->
 		<ng-container matColumnDef="response">
-			<mat-header-cell *matHeaderCellDef mat-sort-header>Antwort</mat-header-cell>
+			<mat-header-cell *matHeaderCellDef>Antwort</mat-header-cell>
 			<mat-cell *matCellDef="let element">
-				<appointment-participation [readonly]="!isOrganizingEvent && element.participantId !== currentUserId" [currentResponse]="element.response"
-				[appointmentId]="appointment.appointmentId" [participantId]="element.participantId"
-				(selectedNewResponse)="updatedResponse.emit()"></appointment-participation>
+				<appointment-participation [readonly]="!isOrganizingEvent && element.userId !== currentUserId" [currentResponse]="findGivenAnswer(element.userId)"
+				[appointmentId]="appointment.appointmentId" [participantId]="element.userId"
+				(selectedNewResponse)="setResponse(element.userId, $event)"></appointment-participation>
 			</mat-cell>
 		</ng-container>
 	

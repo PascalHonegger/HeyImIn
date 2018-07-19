@@ -2,14 +2,14 @@
 	<div fxFlex.gt-xs="noshrink" fxFlex.xs="initial" fxLayout="column" fxLayoutGap="5px">
 		<div>
 			<b>Organisator</b>
-			<div>{{info.organizerName}}</div>
+			<div>{{info.organizer.name}}</div>
 		</div>
 		<div>
 			<b>Treffpunkt</b>
 			<div>{{info.meetingPlace}}</div>
 		</div>
-		<div>
-			<b>{{info.totalParticipants}} Teilnehmer</b>
+		<div *ngIf="info.participants">
+			<b>{{info.participants.length}} Teilnehmer</b>
 		</div>
 	</div>
 	<div fxFlex.gt-xs="1 1 auto" fxFlex.xs="initial" fxLayout="column">

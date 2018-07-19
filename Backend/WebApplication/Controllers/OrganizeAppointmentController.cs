@@ -163,7 +163,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 			bool changingOtherUser = currentUser != userToSetResponseFor;
 
-			bool userIsPartOfEvent = appointment.Event.EventParticipations.Select(e => e.ParticipantId).Contains(userToSetResponseFor.Id);
+			bool userIsPartOfEvent = appointment.Event.EventParticipations.Any(e => e.ParticipantId == userToSetResponseFor.Id);
 
 			if (changingOtherUser)
 			{
@@ -189,7 +189,7 @@ namespace HeyImIn.WebApplication.Controllers
 				return BadRequest(RequestStringMessages.InvitationRequired);
 			}
 
-			AppointmentParticipation appointmentParticipation = appointment.AppointmentParticipations.FirstOrDefault(e => e.Participant == userToSetResponseFor);
+			AppointmentParticipation appointmentParticipation = appointment.AppointmentParticipations.FirstOrDefault(e => e.ParticipantId == userToSetResponseFor.Id);
 
 			if (appointmentParticipation == null)
 			{

@@ -83,8 +83,18 @@ namespace HeyImIn.WebApplication.Controllers
 					await context.SaveChangesAsync();
 				}
 			}
+			List<int> allAuthorIds = eventChatMessages
+				.Select(c => c.AuthorId)
+				.Distinct()
+				.ToList();
 
-			return Ok(new EventChatMessages(eventChatMessages, eventChatMessages.Count == _baseAmountOfChatMessagesPerDetailPage));
+			List<UserInformation> authorInformations = await context.Users
+				.Where(u => allAuthorIds.Contains(u.Id))
+				.Select(u => new UserInformation(u.Id, u.FullName, u.Email))
+				.ToListAsync();
+
+
+			return Ok(new EventChatMessages(eventChatMessages, eventChatMessages.Count == _baseAmountOfChatMessagesPerDetailPage, authorInformations));
 		}
 
 		/// <summary>

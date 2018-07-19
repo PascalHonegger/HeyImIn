@@ -6,7 +6,8 @@ import { ParticipateEventClient } from '../../shared/backend-clients/participate
 import { EventDetails } from '../../shared/server-model/event-details.model';
 import { NotificationConfiguration } from '../../shared/server-model/notification-configuration.model';
 import { DetailOverviewBase } from '../detail-overview-base';
-import { AppointmentDetails } from '../../shared/server-model/event-edit-details.model';
+import { AppointmentDetails } from '../../shared/server-model/appointment-details.model';
+import { AppointmentParticipationAnswer } from '../../shared/server-model/appointment-participation-answer.model';
 
 @Component({
 	styleUrls: ['./view-event.component.scss'],
@@ -37,7 +38,7 @@ export class ViewEventComponent extends DetailOverviewBase {
 				}
 
 	public getAppointmentId(_index: number, appointment: AppointmentDetails) {
-		return appointment.appointmentInformation.appointmentId;
+		return appointment.appointmentId;
 	}
 
 	public async leaveEvent() {
@@ -47,7 +48,7 @@ export class ViewEventComponent extends DetailOverviewBase {
 
 	public async joinEvent() {
 		await this.joinEventAsync(this.eventId);
-		this.loadEventDetails();
+		this.eventDetails.information.participants = this.eventDetails.information.participants.concat([this.currentUserInformation]);
 	}
 
 	public setNotifications(notifications: NotificationConfiguration) {
@@ -60,8 +61,30 @@ export class ViewEventComponent extends DetailOverviewBase {
 		this.eventServer.getDetails(this.eventId).subscribe(
 			detail => {
 				this.eventDetails = detail;
-				this.isOrganizingEvent = this.currentUserId === detail.information.organizerId;
+				this.isOrganizingEvent = this.currentSession.userId === detail.information.organizer.userId;
 			},
 			err => this.eventDetails = null);
+	}
+
+	public setNewAnswer(appointment: AppointmentDetails,
+						participantId: number,
+						response: AppointmentParticipationAnswer) {
+		if (!this.currentUserDoesParticipate) {
+			// We could theoretically optimize this, but too much effort regarding change detection
+			this.loadEventDetails();
+			return;
+
+			// This can logically only happen to the current user
+			// Also add the user to the event participations
+			// this.eventDetails.information.participants = this.eventDetails.information.participants.concat([this.currentUserInformation]);
+		}
+
+		appointment.participations = appointment.participations
+			.filter(p => p.participantId !== participantId)
+			.concat([{ participantId, response }]);
+	}
+
+	public get currentUserDoesParticipate() {
+		return this.eventDetails && this.eventDetails.information.participants.some(p => p.userId === this.currentSession.userId);
 	}
 }
