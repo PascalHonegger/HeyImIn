@@ -16,7 +16,7 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 	public partial class ParticipateEventControllerTests
 	{
 		[Fact]
-		public async Task JoinEvent_GivenNonParticipatingUser_UserCanJoin()
+		public async Task JoinEvent_GivenNotParticipatingUser_UserCanJoin()
 		{
 			GetDatabaseContext getContext = ContextUtilities.CreateInMemoryContext(_output);
 			int johnDoeId;

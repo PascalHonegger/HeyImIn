@@ -12,24 +12,28 @@ export class AuthService {
 	 */
 	public urlAfterLogin = '/';
 
-	private _sessionToken: string;
+	private _sessionToken: string | null = null;
 	private _session: FrontendSession = null;
 
 	constructor(private server: SessionClient) {
 		this._sessionToken = localStorage.getItem(sessionTokenStorageKey) || '';
 	}
 
-	public get sessionToken(): string {
+	public get sessionToken(): string | null {
 		return this._sessionToken;
 	}
 
-	public set sessionToken(value: string) {
+	public set sessionToken(value: string | null) {
 		if (this._sessionToken === value) {
 			return;
 		}
 
 		this._sessionToken = value;
-		localStorage.setItem(sessionTokenStorageKey, value);
+		if (value) {
+			localStorage.setItem(sessionTokenStorageKey, value);
+		} else {
+			localStorage.removeItem(sessionTokenStorageKey);
+		}
 	}
 
 	public get session(): FrontendSession | null {
@@ -109,7 +113,7 @@ export class AuthService {
 	 * Deletes the lcaolly saved information about the session, effectively logging the user out
 	 */
 	public clearLocalSession() {
-		this._sessionToken = '';
+		this._sessionToken = null;
 		sessionStorage.removeItem(sessionTokenStorageKey);
 	}
 }

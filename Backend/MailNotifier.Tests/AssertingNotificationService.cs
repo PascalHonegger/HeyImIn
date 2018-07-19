@@ -55,6 +55,11 @@ namespace HeyImIn.MailNotifier.Tests
 			Assert.NotNull(appointment);
 			Assert.NotNull(appointment.Event);
 			Assert.NotNull(appointment.Event.EventParticipations);
+			foreach (EventParticipation eventEventParticipation in appointment.Event.EventParticipations)
+			{
+				Assert.NotNull(eventEventParticipation);
+				Assert.NotNull(eventEventParticipation.Participant);
+			}
 			Assert.NotNull(appointment.AppointmentParticipations);
 			foreach (AppointmentParticipation appointmentParticipation in appointment.AppointmentParticipations)
 			{
@@ -137,6 +142,23 @@ namespace HeyImIn.MailNotifier.Tests
 			{
 				Assert.NotNull(participation);
 				Assert.NotNull(participation.Participant);
+			}
+
+			return Task.CompletedTask;
+		}
+
+		public virtual Task NotifyUnreadChatMessagesAsync(ChatMessagesNotificationInformation chatMessageInformation)
+		{
+			Assert.NotNull(chatMessageInformation);
+			Assert.NotNull(chatMessageInformation.EventTitle);
+			Assert.NotNull(chatMessageInformation.Participant);
+			Assert.NotNull(chatMessageInformation.Messages);
+
+			foreach (ChatMessageNotificationInformation chatMessage in chatMessageInformation.Messages)
+			{
+				Assert.NotNull(chatMessage);
+				Assert.NotNull(chatMessage.AuthorName);
+				Assert.NotNull(chatMessage.Content);
 			}
 
 			return Task.CompletedTask;

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using HeyImIn.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -14,8 +15,6 @@ namespace HeyImIn.Database.Context.Impl
 		public HeyImInDatabaseContext(DbContextOptions<HeyImInDatabaseContext> options) : base(options)
 		{
 		}
-
-		// Main tables
 		public void Migrate(ILoggerFactory loggerFactory)
 		{
 			ILogger<HeyImInDatabaseContext> logger = loggerFactory.CreateLogger<HeyImInDatabaseContext>();
@@ -29,6 +28,15 @@ namespace HeyImIn.Database.Context.Impl
 			logger.LogInformation("{0}(): Applied migrations", nameof(Migrate));
 		}
 
+		public void DiscardChanges()
+		{
+			// Thanks to https://stackoverflow.com/a/42885424
+			ChangeTracker.Entries()
+				.Where(e => e.Entity != null)
+				.ToList()
+				.ForEach(e => e.State = EntityState.Detached);
+		}
+
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
@@ -39,6 +47,7 @@ namespace HeyImIn.Database.Context.Impl
 			modelBuilder.Entity<User>().HasMany(u => u.OrganizedEvents).WithOne(p => p.Organizer).OnDelete(DeleteBehavior.Restrict);
 
 			modelBuilder.Entity<Event>().HasMany(e => e.EventInvitations).WithOne(p => p.Event).OnDelete(DeleteBehavior.Cascade);
+			modelBuilder.Entity<Event>().HasMany(e => e.ChatMessages).WithOne(p => p.Event).OnDelete(DeleteBehavior.Cascade);
 			modelBuilder.Entity<Event>().HasMany(e => e.EventParticipations).WithOne(p => p.Event).OnDelete(DeleteBehavior.Restrict);
 			modelBuilder.Entity<Event>().HasMany(e => e.Appointments).WithOne(p => p.Event).OnDelete(DeleteBehavior.Restrict);
 
@@ -48,9 +57,11 @@ namespace HeyImIn.Database.Context.Impl
 
 			modelBuilder.Entity<EventParticipation>().HasIndex(e => new { e.ParticipantId, e.EventId }).IsUnique();
 
-			// TODO Add all relations
-			// TODO Cleanup delete code?
+			modelBuilder.Entity<ChatMessage>().HasIndex(c => c.SentDate);
+			modelBuilder.Entity<ChatMessage>().HasOne(c => c.Author).WithMany(a => a.ChatMessages).OnDelete(DeleteBehavior.Cascade);
 		}
+
+		// Main tables
 
 		public virtual DbSet<User> Users { get; set; }
 
@@ -59,6 +70,8 @@ namespace HeyImIn.Database.Context.Impl
 		public virtual DbSet<Event> Events { get; set; }
 
 		public virtual DbSet<Session> Sessions { get; set; }
+
+		public virtual DbSet<ChatMessage> ChatMessages { get; set; }
 
 		// Many-To-Many relation tables
 		public virtual DbSet<AppointmentParticipation> AppointmentParticipations { get; set; }

@@ -45,22 +45,22 @@ namespace HeyImIn.WebApplication.Controllers
 			IDatabaseContext context = _getDatabaseContext();
 			int currentUserId = HttpContext.GetUserId();
 
-			List<(Event @event, Appointment upcommingAppointment)> yourEvents = await GetAndFilterEvents(
+			List<(Event @event, Appointment upcomingAppointment)> yourEvents = await GetAndFilterEvents(
 				e => (e.OrganizerId == currentUserId) || e.EventParticipations.Select(ep => ep.ParticipantId).Contains(currentUserId));
-			List<(Event @event, Appointment upcommingAppointment)> publicEvents = await GetAndFilterEvents(e => !e.IsPrivate && (e.OrganizerId != currentUserId) && !e.EventParticipations.Select(ep => ep.ParticipantId).Contains(currentUserId));
+			List<(Event @event, Appointment upcomingAppointment)> publicEvents = await GetAndFilterEvents(e => !e.IsPrivate && (e.OrganizerId != currentUserId) && !e.EventParticipations.Select(ep => ep.ParticipantId).Contains(currentUserId));
 
 			List<EventOverviewInformation> yourEventInformations = yourEvents
-				.Select(e => EventOverviewInformation.FromEvent(e.@event, e.upcommingAppointment, currentUserId))
+				.Select(e => EventOverviewInformation.FromEvent(e.@event, e.upcomingAppointment, currentUserId))
 				.OrderBy(e => e.LatestAppointmentInformation?.StartTime ?? DateTime.MaxValue)
 				.ToList();
 			List<EventOverviewInformation> publicEventInformations = publicEvents
-				.Select(e => EventOverviewInformation.FromEvent(e.@event, e.upcommingAppointment, currentUserId))
+				.Select(e => EventOverviewInformation.FromEvent(e.@event, e.upcomingAppointment, currentUserId))
 				.OrderBy(e => e.LatestAppointmentInformation?.StartTime ?? DateTime.MaxValue)
 				.ToList();
 
 			return Ok(new EventOverview(yourEventInformations, publicEventInformations));
 
-			async Task<List<(Event @event, Appointment upcommingAppointment)>> GetAndFilterEvents(Expression<Func<Event, bool>> eventFilter)
+			async Task<List<(Event @event, Appointment upcomingAppointment)>> GetAndFilterEvents(Expression<Func<Event, bool>> eventFilter)
 			{
 				List<Event> databaseResult = await context.Events
 					.Where(eventFilter)
@@ -68,7 +68,7 @@ namespace HeyImIn.WebApplication.Controllers
 					.Include(e => e.Organizer)
 					.ToListAsync();
 
-				var result = new List<(Event @event, Appointment upcommingAppointment)>();
+				var result = new List<(Event @event, Appointment upcomingAppointment)>();
 
 				foreach (Event @event in databaseResult)
 				{

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
@@ -13,9 +14,9 @@ using Xunit.Abstractions;
 
 namespace HeyImIn.WebApplication.Tests.Services
 {
-	public class CronSendNotificationsServiceTests : TestBase
+	public class CronSendReminderAndSummaryServiceTests : TestBase
 	{
-		public CronSendNotificationsServiceTests(ITestOutputHelper output) : base(output)
+		public CronSendReminderAndSummaryServiceTests(ITestOutputHelper output) : base(output)
 		{
 		}
 
@@ -28,9 +29,9 @@ namespace HeyImIn.WebApplication.Tests.Services
 			Appointment appointment = await CreateTestDataAsync(getContext, DateTime.UtcNow + TimeSpan.FromHours(ReminderTimeWindowInHours));
 
 			// Act
-			(CronSendNotificationsService service, Mock<AssertingNotificationService> notificationServiceMock) = CreateService(getContext);
+			(CronSendReminderAndSummaryService service, Mock<AssertingNotificationService> notificationServiceMock) = CreateService(getContext);
 			notificationServiceMock.Setup(n => n.SendAndUpdateRemindersAsync(It.Is<Appointment>(a => a.Id == appointment.Id))).CallBase();
-			await service.RunAsync();
+			await service.RunAsync(CancellationToken.None);
 
 			// Assert
 			notificationServiceMock.Verify(n => n.SendAndUpdateRemindersAsync(It.Is<Appointment>(a => a.Id == appointment.Id)), Times.Once);
@@ -45,10 +46,10 @@ namespace HeyImIn.WebApplication.Tests.Services
 			Appointment appointment = await CreateTestDataAsync(getContext, DateTime.UtcNow + TimeSpan.FromHours(SummaryTimeWindowInHours));
 
 			// Act
-			(CronSendNotificationsService service, Mock<AssertingNotificationService> notificationServiceMock) = CreateService(getContext);
+			(CronSendReminderAndSummaryService service, Mock<AssertingNotificationService> notificationServiceMock) = CreateService(getContext);
 			notificationServiceMock.Setup(n => n.SendAndUpdateRemindersAsync(It.Is<Appointment>(a => a.Id == appointment.Id))).CallBase();
 			notificationServiceMock.Setup(n => n.SendAndUpdateSummariesAsync(It.Is<Appointment>(a => a.Id == appointment.Id))).CallBase();
-			await service.RunAsync();
+			await service.RunAsync(CancellationToken.None);
 
 			// Assert
 			notificationServiceMock.Verify(n => n.SendAndUpdateRemindersAsync(It.Is<Appointment>(a => a.Id == appointment.Id)), Times.Once);
@@ -64,8 +65,8 @@ namespace HeyImIn.WebApplication.Tests.Services
 
 				var @event = new Event
 				{
-					Title = "Upcomming event",
-					Description = "An event with upcomming appointments",
+					Title = "Upcoming event",
+					Description = "An event with upcoming appointments",
 					MeetingPlace = "Somewhere",
 					Organizer = john,
 					ReminderTimeWindowInHours = ReminderTimeWindowInHours,
@@ -96,10 +97,10 @@ namespace HeyImIn.WebApplication.Tests.Services
 			}
 		}
 
-		private (CronSendNotificationsService service, Mock<AssertingNotificationService> notificationServiceMock) CreateService(GetDatabaseContext getContext)
+		private static (CronSendReminderAndSummaryService service, Mock<AssertingNotificationService> notificationServiceMock) CreateService(GetDatabaseContext getContext)
 		{
 			var notificationServiceMock = new Mock<AssertingNotificationService>(MockBehavior.Strict);
-			var service = new CronSendNotificationsService(notificationServiceMock.Object, getContext);
+			var service = new CronSendReminderAndSummaryService(notificationServiceMock.Object, getContext());
 			return (service, notificationServiceMock);
 		}
 

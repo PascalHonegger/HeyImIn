@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 using HeyImIn.Authentication;
@@ -58,6 +59,8 @@ namespace HeyImIn.WebApplication
 					options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
 					// Convert all times to UTC
 					options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
+					options.SerializerSettings.DateParseHandling = DateParseHandling.DateTime;
+					options.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
 				});
 
 			// Register all services as their matching interface
@@ -83,15 +86,22 @@ namespace HeyImIn.WebApplication
 			// Register custom types
 			services
 				.AddSingleton(c => configuration)
+				.AddSingleton<Microsoft.Extensions.Hosting.IHostedService, CronBackgroundService>()
 				.AddScoped<IDatabaseContext, HeyImInDatabaseContext>() // Redirect interface to class
 				.AddTransient<ISendGridClient>(c => new SendGridClient(sendGridApiKey))
-				.AddTransient<ICronService, CronSendNotificationsService>()
+				.AddTransient<ICronService, CronSendReminderAndSummaryService>()
+				.AddTransient<ICronService, CronSendMissedChatMessagesService>()
 				.AddTransient<GetDatabaseContext>(c => c.GetRequiredService<IDatabaseContext>);
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		public void Configure(IApplicationBuilder app, IApplicationLifetime lifetime, IHostingEnvironment env, ILoggerFactory loggerFactory, GetDatabaseContext contextFunc)
 		{
+			// Ensure swiss german date format is used
+			var cultureInfo = new CultureInfo("de-CH");
+			CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+			CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
+
 			if (env.IsDevelopment())
 			{
 				app.UseDeveloperExceptionPage();

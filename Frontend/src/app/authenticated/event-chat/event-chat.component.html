@@ -1,0 +1,30 @@
+<div fxLayout="column" fxLayoutGap="20px">
+	<div fxLayout="row" fxLayoutGap="20px">
+		<mat-form-field fxFlex>
+			<textarea matInput matTextareaAutosize required placeholder="Hinterlasse eine Nachricht" [formControl]="chatMessageCtrl"></textarea>
+			<mat-hint align="end">{{chatMessageCtrl.value.length}} / 250</mat-hint>
+			<mat-error *ngIf="chatMessageCtrl.hasError('required') || chatMessageCtrl.hasError('max')">
+				Bitte geben Sie eine Nachricht mit maximal 250 Zeichen ein
+			</mat-error>
+		</mat-form-field>
+		<button mat-icon-button color="accent" [disabled]="!chatMessageCtrl.valid" (click)="sendChatMessage()">
+			<mat-icon aria-label="Senden">send</mat-icon>
+		</button>
+	</div>
+	<div class="chat-messages-container" fxLayout="column">
+		<mat-card *ngFor="let message of chatMessages | async; trackBy: getChatMessageId" class="chat-message">
+			<mat-card-header>
+				<!-- TODO Profile picture
+					<img mat-card-avatar [src]="authorProfilePicture"></img>
+				-->
+				<mat-card-subtitle>
+					{{message.authorName}} @ {{message.sentDate | date:'medium'}}
+				</mat-card-subtitle>
+			</mat-card-header>
+			<mat-card-content>
+				{{message.content}}
+			</mat-card-content>
+		</mat-card>
+		<button mat-button color="primary" (click)="loadPreviousChatMessages()" *ngIf="hasMoreMessages | async">Frühere Nachrichten laden</button>
+	</div>
+</div>

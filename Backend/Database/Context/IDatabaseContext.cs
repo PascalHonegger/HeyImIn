@@ -22,6 +22,8 @@ namespace HeyImIn.Database.Context
 
 		void Migrate(ILoggerFactory loggerFactory);
 
+		void DiscardChanges();
+
 		// Main tables
 		DbSet<User> Users { get; }
 
@@ -30,6 +32,8 @@ namespace HeyImIn.Database.Context
 		DbSet<Event> Events { get; }
 
 		DbSet<Session> Sessions { get; }
+
+		DbSet<ChatMessage> ChatMessages { get; set; }
 
 		// Many-To-Many relation tables
 		DbSet<AppointmentParticipation> AppointmentParticipations { get; }

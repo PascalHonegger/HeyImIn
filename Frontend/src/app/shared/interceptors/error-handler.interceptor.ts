@@ -20,7 +20,7 @@ import { ErrorDialogComponent } from '../error-dialog/error-dialog.component';
  */
 @Injectable({ providedIn: 'root' })
 export class ErrorHandlerInterceptor implements HttpInterceptor {
-	private currentlyOpenedDialog: MatDialogRef<ErrorDialogComponent>;
+	private currentlyOpenedDialog?: MatDialogRef<ErrorDialogComponent>;
 
 	constructor(private auth: AuthService, private router: Router, private dialog: MatDialog, private snackBar: MatSnackBar) {}
 
@@ -55,7 +55,7 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
 						return;
 					}
 
-					if (this.currentlyOpenedDialog) {
+					if (this.currentlyOpenedDialog !== undefined) {
 						// Prevent dialog spam
 						this.currentlyOpenedDialog.close();
 					}
