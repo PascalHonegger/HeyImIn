@@ -35,7 +35,7 @@
 			<button mat-raised-button color="primary" [routerLink]="['/ViewEvent', event.eventId]">
 				Details
 			</button>
-			<button mat-raised-button color="primary" [routerLink]="['/EditEvent', event.eventId]" *ngIf="event.viewEventInformation.organizerId === currentSession.userId">
+			<button mat-raised-button color="primary" [routerLink]="['/EditEvent', event.eventId]" *ngIf="event.viewEventInformation.organizer.userId === currentSession.userId">
 				Editieren
 			</button>
 		</mat-action-row>
