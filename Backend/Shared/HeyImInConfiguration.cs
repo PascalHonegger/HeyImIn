@@ -15,15 +15,24 @@ namespace HeyImIn.Shared
 
 		public int PasswordHashWorkFactor { get; set; } = 10;
 
-		public TimeSpan UpdateValidUntilTimeSpan { get; set; } = TimeSpan.FromMinutes(5);
-
 		public int MaxAmountOfAppointmentsPerDetailPage { get; set; } = 5;
 
-		public HeyImInTimeouts Timeouts { get; } = new HeyImInTimeouts();
+		public int BaseAmountOfChatMessagesPerDetailPage { get; set; } = 25;
 
-		public class HeyImInTimeouts
+		public HeyImInTimeSpans TimeSpans { get; } = new HeyImInTimeSpans();
+
+		public class HeyImInTimeSpans
 		{
-			public TimeSpan InactiveSessionTimeout { get; set; } = TimeSpan.FromHours(2);
+			// Intervals
+			public TimeSpan CronHandlerInterval { get; set; } = TimeSpan.FromMinutes(5);
+
+			// TimeSpans
+			public TimeSpan UpdateValidUntilTimeSpan { get; set; } = TimeSpan.FromMinutes(5);
+
+			public TimeSpan MinimumChatMessageNotificationTimeSpan { get; set; } = TimeSpan.FromMinutes(5);
+
+			// Timeouts
+			public TimeSpan InactiveSessionTimeout { get; set; } = TimeSpan.FromDays(7);
 
 			public TimeSpan UnusedSessionExpirationTimeout { get; set; } = TimeSpan.FromDays(2);
 

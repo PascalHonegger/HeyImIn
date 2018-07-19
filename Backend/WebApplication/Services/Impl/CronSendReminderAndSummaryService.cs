@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
@@ -11,19 +12,18 @@ using Microsoft.EntityFrameworkCore;
 namespace HeyImIn.WebApplication.Services.Impl
 {
 	/// <summary>
-	///     Sends time based notifications like reminders and summaries
+	///     Sends notifications for reminders and summaries, which are dependent on the current time
 	/// </summary>
-	public class CronSendNotificationsService : ICronService
+	public class CronSendReminderAndSummaryService : ICronService
 	{
-		public CronSendNotificationsService(INotificationService notificationService, GetDatabaseContext getDatabaseContext)
+		public CronSendReminderAndSummaryService(INotificationService notificationService, IDatabaseContext context)
 		{
 			_notificationService = notificationService;
-			_getDatabaseContext = getDatabaseContext;
+			_context = context;
 		}
 
-		public async Task RunAsync()
+		public async Task RunAsync(CancellationToken token)
 		{
-			IDatabaseContext context = _getDatabaseContext();
 			List<Appointment> appointmentsWithPossibleReminders = await GetFutureAppointmentsAsync(a => a.StartTime.AddHours(-a.Event.ReminderTimeWindowInHours) <= DateTime.UtcNow);
 			List<Appointment> appointmentsWithPossibleSummaries = await GetFutureAppointmentsAsync(a => a.StartTime.AddHours(-a.Event.SummaryTimeWindowInHours) <= DateTime.UtcNow);
 
@@ -38,24 +38,25 @@ namespace HeyImIn.WebApplication.Services.Impl
 			}
 
 			// Save sent reminders & summaries
-			await context.SaveChangesAsync();
+			await _context.SaveChangesAsync(token);
 
 			async Task<List<Appointment>> GetFutureAppointmentsAsync(Expression<Func<Appointment, bool>> additionalAppointmentFilter)
 			{
-				return await context.Appointments
+				return await _context.Appointments
 					.Include(a => a.Event)
 						.ThenInclude(e => e.EventParticipations)
+							.ThenInclude(ep => ep.Participant)
 					.Include(a => a.AppointmentParticipations)
 						.ThenInclude(ap => ap.Participant)
 					.Where(a => a.StartTime >= DateTime.UtcNow)
 					.Where(additionalAppointmentFilter)
-					.ToListAsync();
+					.ToListAsync(token);
 			}
 		}
 
-		public string DescriptiveName { get; } = "SendNotificationCron";
+		public string DescriptiveName { get; } = "SendReminderAndSummaryCron";
 
 		private readonly INotificationService _notificationService;
-		private readonly GetDatabaseContext _getDatabaseContext;
+		private readonly IDatabaseContext _context;
 	}
 }

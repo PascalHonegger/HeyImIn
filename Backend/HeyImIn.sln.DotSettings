@@ -482,7 +482,7 @@
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=04B22F03145331458873ABF56DEDBC88/Scope/=2C285F182AC98D44B0B4F29D4D2149EC/Type/@EntryValue">InCSharpStatement</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=04B22F03145331458873ABF56DEDBC88/Shortcut/@EntryValue">logTrace</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=04B22F03145331458873ABF56DEDBC88/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=04B22F03145331458873ABF56DEDBC88/Text/@EntryValue">_log.TraceFormat("{0}(): $LOG_TEXT$", nameof($MEMBER_NAME$));&#xD;
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=04B22F03145331458873ABF56DEDBC88/Text/@EntryValue">_logger.LogTrace("{0}(): $LOG_TEXT$", nameof($MEMBER_NAME$));&#xD;
 $END$</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=35F3A021746C7543B80EEB14E9F3DF09/@KeyIndexDefined">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=35F3A021746C7543B80EEB14E9F3DF09/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
@@ -494,27 +494,11 @@ $END$</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=35F3A021746C7543B80EEB14E9F3DF09/Scope/=B68999B9D6B43E47A02B22C12A54C3CC/Type/@EntryValue">InCSharpTypeMember</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=35F3A021746C7543B80EEB14E9F3DF09/Shortcut/@EntryValue">addTest</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=35F3A021746C7543B80EEB14E9F3DF09/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=35F3A021746C7543B80EEB14E9F3DF09/Text/@EntryValue">		[Test]&#xD;
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=35F3A021746C7543B80EEB14E9F3DF09/Text/@EntryValue">		[Fact]&#xD;
 		public void $NAME$Test()&#xD;
 		{&#xD;
 			$END$&#xD;
 		}</s:String>
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5C49536877A85846B71C62DB5D342D9F/@KeyIndexDefined">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5C49536877A85846B71C62DB5D342D9F/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5C49536877A85846B71C62DB5D342D9F/Field/=LOG_005FTEXT/@KeyIndexDefined">True</s:Boolean>
@@ -530,28 +514,8 @@ $END$</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5C49536877A85846B71C62DB5D342D9F/Scope/=2C285F182AC98D44B0B4F29D4D2149EC/Type/@EntryValue">InCSharpStatement</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5C49536877A85846B71C62DB5D342D9F/Shortcut/@EntryValue">logError</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5C49536877A85846B71C62DB5D342D9F/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5C49536877A85846B71C62DB5D342D9F/Text/@EntryValue">_log.ErrorFormat("{0}(): $LOG_TEXT$", nameof($MEMBER_NAME$));&#xD;
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=5C49536877A85846B71C62DB5D342D9F/Text/@EntryValue">_logger.LogError("{0}(): $LOG_TEXT$", nameof($MEMBER_NAME$));&#xD;
 $END$</s:String>
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=61612E9255FDB241AECC587052E97576/@KeyIndexDefined">True</s:Boolean>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=61612E9255FDB241AECC587052E97576/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=61612E9255FDB241AECC587052E97576/Description/@EntryValue">Declare Logger</s:String>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=61612E9255FDB241AECC587052E97576/Reformat/@EntryValue">True</s:Boolean>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=61612E9255FDB241AECC587052E97576/Scope/=B68999B9D6B43E47A02B22C12A54C3CC/@KeyIndexDefined">True</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=61612E9255FDB241AECC587052E97576/Scope/=B68999B9D6B43E47A02B22C12A54C3CC/CustomProperties/=minimumLanguageVersion/@EntryIndexedValue">2.0</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=61612E9255FDB241AECC587052E97576/Scope/=B68999B9D6B43E47A02B22C12A54C3CC/Type/@EntryValue">InCSharpTypeMember</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=61612E9255FDB241AECC587052E97576/Shortcut/@EntryValue">logDeclaration</s:String>
-	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=61612E9255FDB241AECC587052E97576/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=61612E9255FDB241AECC587052E97576/Text/@EntryValue">private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);&#xD;
-</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=80D7194767ABEF47B919B34B89C0B510/@KeyIndexDefined">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=80D7194767ABEF47B919B34B89C0B510/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=80D7194767ABEF47B919B34B89C0B510/Field/=LOG_005FTEXT/@KeyIndexDefined">True</s:Boolean>
@@ -565,22 +529,10 @@ $END$</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=80D7194767ABEF47B919B34B89C0B510/Scope/=2C285F182AC98D44B0B4F29D4D2149EC/@KeyIndexDefined">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=80D7194767ABEF47B919B34B89C0B510/Scope/=2C285F182AC98D44B0B4F29D4D2149EC/CustomProperties/=minimumLanguageVersion/@EntryIndexedValue">2.0</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=80D7194767ABEF47B919B34B89C0B510/Scope/=2C285F182AC98D44B0B4F29D4D2149EC/Type/@EntryValue">InCSharpStatement</s:String>
-	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=80D7194767ABEF47B919B34B89C0B510/Shortcut/@EntryValue">logFatal</s:String>
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=80D7194767ABEF47B919B34B89C0B510/Shortcut/@EntryValue">logCritical</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=80D7194767ABEF47B919B34B89C0B510/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=80D7194767ABEF47B919B34B89C0B510/Text/@EntryValue">_log.FatalFormat("{0}(): $LOG_TEXT$", nameof($MEMBER_NAME$));&#xD;
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=80D7194767ABEF47B919B34B89C0B510/Text/@EntryValue">_logger.LogCritical("{0}(): $LOG_TEXT$", nameof($MEMBER_NAME$));&#xD;
 $END$</s:String>
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9F2FED6C448DCB4A9E013867E6C0D1DF/@KeyIndexDefined">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9F2FED6C448DCB4A9E013867E6C0D1DF/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9F2FED6C448DCB4A9E013867E6C0D1DF/Field/=LOG_005FTEXT/@KeyIndexDefined">True</s:Boolean>
@@ -596,31 +548,8 @@ $END$</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9F2FED6C448DCB4A9E013867E6C0D1DF/Scope/=2C285F182AC98D44B0B4F29D4D2149EC/Type/@EntryValue">InCSharpStatement</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9F2FED6C448DCB4A9E013867E6C0D1DF/Shortcut/@EntryValue">logWarning</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9F2FED6C448DCB4A9E013867E6C0D1DF/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9F2FED6C448DCB4A9E013867E6C0D1DF/Text/@EntryValue">_log.WarningFormat("{0}(): $LOG_TEXT$", nameof($MEMBER_NAME$));&#xD;
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=9F2FED6C448DCB4A9E013867E6C0D1DF/Text/@EntryValue">_logger.LogWarning("{0}(): $LOG_TEXT$", nameof($MEMBER_NAME$));&#xD;
 $END$</s:String>
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E8271C09602F43498A651D49EA353ADE/@KeyIndexDefined">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E8271C09602F43498A651D49EA353ADE/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E8271C09602F43498A651D49EA353ADE/Field/=LOG_005FTEXT/@KeyIndexDefined">True</s:Boolean>
@@ -636,7 +565,7 @@ $END$</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E8271C09602F43498A651D49EA353ADE/Scope/=2C285F182AC98D44B0B4F29D4D2149EC/Type/@EntryValue">InCSharpStatement</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E8271C09602F43498A651D49EA353ADE/Shortcut/@EntryValue">logDebug</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E8271C09602F43498A651D49EA353ADE/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E8271C09602F43498A651D49EA353ADE/Text/@EntryValue">_log.DebugFormat("{0}(): $LOG_TEXT$", nameof($MEMBER_NAME$));&#xD;
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E8271C09602F43498A651D49EA353ADE/Text/@EntryValue">_logger.LogDebug("{0}(): $LOG_TEXT$", nameof($MEMBER_NAME$));&#xD;
 $END$</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=F69AECD624B9E8468FFB6F1B638793AC/@KeyIndexDefined">True</s:Boolean>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=F69AECD624B9E8468FFB6F1B638793AC/Applicability/=Live/@EntryIndexedValue">True</s:Boolean>
@@ -653,18 +582,9 @@ $END$</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=F69AECD624B9E8468FFB6F1B638793AC/Scope/=2C285F182AC98D44B0B4F29D4D2149EC/Type/@EntryValue">InCSharpStatement</s:String>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=F69AECD624B9E8468FFB6F1B638793AC/Shortcut/@EntryValue">logInfo</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=F69AECD624B9E8468FFB6F1B638793AC/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
-	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=F69AECD624B9E8468FFB6F1B638793AC/Text/@EntryValue">_log.InfoFormat("{0}(): $LOG_TEXT$", nameof($MEMBER_NAME$));&#xD;
+	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=F69AECD624B9E8468FFB6F1B638793AC/Text/@EntryValue">_logger.LogInformation("{0}(): $LOG_TEXT$", nameof($MEMBER_NAME$));&#xD;
 $END$</s:String>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=appsettings/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=informations/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=participations/@EntryIndexedValue">True</s:Boolean>
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	</wpf:ResourceDictionary>
+</wpf:ResourceDictionary>

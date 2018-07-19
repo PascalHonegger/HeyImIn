@@ -25,9 +25,9 @@ export class ManageEventParticipantsTableComponent implements AfterViewInit {
 
 	private _participants: EventParticipantInformation[];
 	@Input()
-	public set participants(v: EventParticipantInformation[]) {
-		this._participants = v;
-		this.dataSource = new MatTableDataSource(v);
+	public set participants(participants: EventParticipantInformation[]) {
+		this._participants = participants;
+		this.dataSource = new MatTableDataSource(participants);
 		this.dataSource.sort = this.sort;
 	}
 	public get participants(): EventParticipantInformation[] {

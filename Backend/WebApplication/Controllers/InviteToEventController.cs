@@ -23,7 +23,7 @@ namespace HeyImIn.WebApplication.Controllers
 		public InviteToEventController(INotificationService notificationService, HeyImInConfiguration configuration, GetDatabaseContext getDatabaseContext, ILogger<InviteToEventController> logger)
 		{
 			_notificationService = notificationService;
-			_inviteTimeout = configuration.Timeouts.InviteTimeout;
+			_inviteTimeout = configuration.TimeSpans.InviteTimeout;
 			_getDatabaseContext = getDatabaseContext;
 			_logger = logger;
 		}

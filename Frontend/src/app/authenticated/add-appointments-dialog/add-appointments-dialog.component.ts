@@ -15,9 +15,9 @@ export class AddAppointmentsDialogComponent {
 
 	private static readonly dateFormat = 'dd.MM.yyyy HH:mm';
 
-	public inputDates = '';
-	public exampleDate: string;
-	public datesCtrl = new FormControl('', [Validators.required, Validators.pattern(AddAppointmentsDialogComponent.multiLineRegexPattern)]);
+	public readonly exampleDate: string;
+	public readonly datesCtrl = new FormControl('',
+		[Validators.required, Validators.pattern(AddAppointmentsDialogComponent.multiLineRegexPattern)]);
 
 	constructor(private dialogRef: MatDialogRef<AddAppointmentsDialogComponent, Date[]>) {
 		const tomorrow = addDays(new Date(), 1);
@@ -26,7 +26,8 @@ export class AddAppointmentsDialogComponent {
 	}
 
 	public parseAndReturnDates() {
-		const matches = this.inputDates.match(AddAppointmentsDialogComponent.regexPattern);
+		const inputDates: string = this.datesCtrl.value;
+		const matches = inputDates.match(AddAppointmentsDialogComponent.regexPattern) || [];
 		const parsedDates = matches.map(match => parse(match, AddAppointmentsDialogComponent.dateFormat, new Date()));
 		this.dialogRef.close(parsedDates);
 	}

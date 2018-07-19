@@ -79,5 +79,11 @@ namespace HeyImIn.MailNotifier
 		/// </summary>
 		/// <param name="event">Event which got updated</param>
 		Task NotifyEventUpdatedAsync(Event @event);
+
+		/// <summary>
+		///     Sends an email with all missed chat messages to a single user
+		/// </summary>
+		/// <param name="chatMessageInformation">User, event and the corresponding chat messages</param>
+		Task NotifyUnreadChatMessagesAsync(ChatMessagesNotificationInformation chatMessageInformation);
 	}
 }

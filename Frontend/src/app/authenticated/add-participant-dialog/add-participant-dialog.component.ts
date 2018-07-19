@@ -12,14 +12,15 @@ export class AddParticipantDialogComponent {
 	private static readonly regexPattern = new RegExp(AddParticipantDialogComponent.simpleMailPattern, 'g');
 	private static readonly multiLineRegexPattern = new RegExp(`^(${AddParticipantDialogComponent.simpleMailPattern}\\s?)+$`);
 
-	public inputEmails = '';
-	public emailsCtrl = new FormControl('', [Validators.required, Validators.pattern(AddParticipantDialogComponent.multiLineRegexPattern)]);
+	public readonly emailsCtrl = new FormControl('',
+		[Validators.required, Validators.pattern(AddParticipantDialogComponent.multiLineRegexPattern)]);
 
 	constructor(private dialogRef: MatDialogRef<AddParticipantDialogComponent, string[]>) {
 	}
 
 	public parseAndReturnEmails() {
-		const matches = this.inputEmails.match(AddParticipantDialogComponent.regexPattern);
+		const inputEmails: string = this.emailsCtrl.value;
+		const matches = inputEmails.match(AddParticipantDialogComponent.regexPattern) || [];
 		this.dialogRef.close(matches);
 	}
 }

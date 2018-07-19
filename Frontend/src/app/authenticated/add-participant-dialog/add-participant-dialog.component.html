@@ -1,7 +1,7 @@
 <h2 mat-dialog-title>Teilnehmer einladen</h2>
 <mat-dialog-content>
 	<mat-form-field fxFlex>
-		<textarea matInput matTextareaAutosize [(ngModel)]="inputEmails" required [formControl]="emailsCtrl"></textarea>
+		<textarea matInput matTextareaAutosize required [formControl]="emailsCtrl"></textarea>
 		<mat-placeholder>Bsp. max.muster@email.ch</mat-placeholder>
 		<mat-hint align="end">Mehrere E-Mail-Adressen durch Zeilenumbruch trennen</mat-hint>
 		<mat-error *ngIf="!emailsCtrl.valid">
@@ -11,5 +11,5 @@
 </mat-dialog-content>
 <mat-dialog-actions>
 	<button mat-raised-button mat-dialog-close>Abbrechen</button>
-	<button mat-raised-button (click)="parseAndReturnEmails()" color="primary">Einladen</button>
+	<button mat-raised-button (click)="parseAndReturnEmails()" color="primary" [disabled]="!emailsCtrl.valid">Einladen</button>
 </mat-dialog-actions>

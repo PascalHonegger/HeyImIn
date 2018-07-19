@@ -68,5 +68,7 @@ namespace HeyImIn.Database.Models
 		public virtual ICollection<EventParticipation> EventParticipations { get; set; }
 
 		public virtual ICollection<EventInvitation> EventInvitations { get; set; }
+
+		public virtual ICollection<ChatMessage> ChatMessages { get; set; }
 	}
 }

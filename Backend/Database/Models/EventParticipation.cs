@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HeyImIn.Database.Models
@@ -36,5 +37,12 @@ namespace HeyImIn.Database.Models
 		///     summary was sent)
 		/// </summary>
 		public bool SendLastMinuteChangesEmail { get; set; } = true;
+
+		/// <summary>
+		///     The latest message which the <see cref="Participant"/> has probably read
+		///     It is assumed that messages prior to this one have also been read
+		/// </summary>
+		[Required]
+		public DateTime LastReadMessageSentDate { get; set; }
 	}
 }
