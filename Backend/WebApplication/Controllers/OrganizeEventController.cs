@@ -92,6 +92,7 @@ namespace HeyImIn.WebApplication.Controllers
 			Event @event = await context.Events
 				.Include(e => e.Organizer)
 				.Include(e => e.EventParticipations)
+					.ThenInclude(ep => ep.Participant)
 				.FirstOrDefaultAsync(e => e.Id == updatedEventInfoDto.EventId);
 
 			if (@event == null)
