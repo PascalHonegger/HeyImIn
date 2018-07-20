@@ -28,8 +28,6 @@ namespace HeyImIn.WebApplication.Services.Impl
 		{
 			DateTime maxAge = DateTime.UtcNow - _minimumChatMessageNotificationTimeSpan;
 
-			// TODO This query for some reason causes a log warning => Investigate, maybe fixed with future release
-
 			var chatMessagesToNotifyAbout = await _context.EventParticipations
 				.Select(ep => new
 				{
@@ -56,7 +54,7 @@ namespace HeyImIn.WebApplication.Services.Impl
 			foreach (var chatMessage in chatMessagesToNotifyAbout)
 			{
 				List<ChatMessageNotificationInformation> messages = chatMessage.messages.ToList();
-				await _notificationService.NotifyUnreadChatMessagesAsync(new ChatMessagesNotificationInformation(chatMessage.eventId, chatMessage.eventTitle, chatMessage.participation.EventId, messages, relevantUsers));
+				await _notificationService.NotifyUnreadChatMessagesAsync(new ChatMessagesNotificationInformation(chatMessage.eventId, chatMessage.eventTitle, chatMessage.participation.ParticipantId, messages, relevantUsers));
 
 				chatMessage.participation.LastReadMessageSentDate = messages[0].SentDate;
 			}

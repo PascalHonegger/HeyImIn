@@ -6,7 +6,7 @@
 			</mat-panel-title>
 			<ng-container *ngIf="event.latestAppointmentDetails">
 				<mat-panel-description fxFlex="nogrow" fxLayoutAlign="stretch center" fxLayoutGap.gt-xs="20px">
-					<appointment-participation-summary [eventParticipants]="event.viewEventInformation.participants" [givenAnswers]="event.latestAppointmentDetails.participations" orientation="row"></appointment-participation-summary>
+					<appointment-participation-summary fxHide.lt-md [eventParticipants]="event.viewEventInformation.participants" [givenAnswers]="event.latestAppointmentDetails.participations" orientation="row"></appointment-participation-summary>
 
 					<div>{{event.latestAppointmentDetails.startTime | date:'short'}}</div>
 					<appointment-participation [readonly]="false" [currentResponse]="getCurrentResponse(event.latestAppointmentDetails)"

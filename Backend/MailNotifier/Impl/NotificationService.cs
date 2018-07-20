@@ -289,8 +289,8 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{@event.Id}{a
 			string unreadMessagesSubject = $"Ungelesene Nachrichten im Event '{chatMessagesInformation.EventTitle}'";
 
 			var messageBodyBuilder = new StringBuilder();
-			messageBodyBuilder.AppendLine($"Folgenden Nachrichten wurden im Event '{chatMessagesInformation.EventTitle}' versendet:");
-
+			messageBodyBuilder.AppendLine($"Folgende Nachrichten wurden im Event '{chatMessagesInformation.EventTitle}' versendet:");
+			messageBodyBuilder.AppendLine();
 
 			const string ChatMessageSeparator = "------------------------------";
 
@@ -301,15 +301,20 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{@event.Id}{a
 				string authorName = chatMessagesInformation.RelevantUserData.First(u => u.id == chatMessage.AuthorId).fullName;
 
 				DateTime sentDate = TargetTimeZone(chatMessage.SentDate);
-				messageBodyBuilder.AppendLine($"*** {sentDate:g} – {authorName}");
-				messageBodyBuilder.AppendLine(chatMessage.Content);
 
-				messageBodyBuilder.AppendLine(ChatMessageSeparator);
+				messageBodyBuilder.Append(
+$@"
+*{sentDate:g} – {authorName}*
+
+{chatMessage.Content}
+
+{ChatMessageSeparator}
+");
 			}
 
 			string authTokenSuffix = await CreateAuthTokenSuffixAsync(chatMessagesInformation.ParticipantId);
 
-			var (_, participantName, participantEmail) = chatMessagesInformation.RelevantUserData.First(u => u.id == chatMessagesInformation.ParticipantId);
+			(_, string participantName, string participantEmail) = chatMessagesInformation.RelevantUserData.First(u => u.id == chatMessagesInformation.ParticipantId);
 
 			string message = $@"Hallo {participantName}
 
