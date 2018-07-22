@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace HeyImIn.WebApplication.Controllers
 {
 	[AllowAnonymous]
+	[ApiVersionNeutral]
 	public class HomeController : ControllerBase
 	{
 		public HomeController(IHostingEnvironment environment)

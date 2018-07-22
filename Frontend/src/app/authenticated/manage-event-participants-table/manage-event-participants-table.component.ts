@@ -2,7 +2,7 @@ import { Component, AfterViewInit, ViewChild, Input, EventEmitter, Output } from
 import { MatDialog, MatTableDataSource, MatSort } from '@angular/material';
 import { AreYouSureDialogComponent } from '../../shared/are-you-sure-dialog/are-you-sure-dialog.component';
 import { ParticipateEventClient } from '../../shared/backend-clients/participate-event.client';
-import { EventParticipantInformation } from '../../shared/server-model/event-edit-details.model';
+import { UserInformation } from '../../shared/server-model/user-information.model';
 
 @Component({
 	selector: 'manage-event-participants-table',
@@ -13,8 +13,8 @@ export class ManageEventParticipantsTableComponent implements AfterViewInit {
 	@ViewChild(MatSort)
 	public sort: MatSort;
 
-	public displayedColumns = ['participantName', 'participantEmail', 'action'];
-	public dataSource: MatTableDataSource<EventParticipantInformation>;
+	public displayedColumns = ['name', 'email', 'action'];
+	public dataSource: MatTableDataSource<UserInformation>;
 
 	// Forwards change event from appointment-participation
 	@Output()
@@ -23,19 +23,23 @@ export class ManageEventParticipantsTableComponent implements AfterViewInit {
 	@Input()
 	public eventId: number;
 
-	private _participants: EventParticipantInformation[];
+	private _participants: UserInformation[];
 	@Input()
-	public set participants(participants: EventParticipantInformation[]) {
+	public set participants(participants: UserInformation[]) {
 		this._participants = participants;
 		this.dataSource = new MatTableDataSource(participants);
 		this.dataSource.sort = this.sort;
 	}
-	public get participants(): EventParticipantInformation[] {
+	public get participants(): UserInformation[] {
 		return this._participants;
 	}
 
 	constructor(private dialog: MatDialog,
 				private participateEventServer: ParticipateEventClient) { }
+
+	public getUserId(_index: number, user: UserInformation) {
+		return user.userId;
+	}
 
 	public async removeFromEvent(participantId: number) {
 		const result = await this.dialog

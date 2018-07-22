@@ -12,7 +12,7 @@
 				<event-info-display [info]="eventDetails.information"></event-info-display>
 			</mat-card-content>
 			<mat-card-actions>
-				<ng-container *ngIf="eventDetails.information.currentUserDoesParticipate; else notParticipatingTemplate">
+				<ng-container *ngIf="currentUserDoesParticipate; else notParticipatingTemplate">
 					<button mat-raised-button (click)="leaveEvent()" color="warn" type="button">
 						Verlassen
 					</button>
@@ -37,27 +37,27 @@
 						<mat-expansion-panel *ngFor="let appointment of eventDetails.upcomingAppointments; index as i; trackBy: getAppointmentId" [expanded]="i === 0">
 							<mat-expansion-panel-header>
 								<mat-panel-title>
-									{{appointment.appointmentInformation.startTime | date:'short'}}
+									{{appointment.startTime | date:'short'}}
 								</mat-panel-title>
 								<mat-panel-description fxHide.lt-md fxLayoutAlign="stretch center">
-									<appointment-participation-summary [appointment]="appointment.appointmentInformation" orientation="row"></appointment-participation-summary>
+									<appointment-participation-summary [eventParticipants]="eventDetails.information.participants" [givenAnswers]="appointment.participations" orientation="row"></appointment-participation-summary>
 								</mat-panel-description>
 								<div fxFlex="nogrow">
-									<appointment-participation [readonly]="false" [currentResponse]="appointment.appointmentInformation.currentResponse"
-										[participantId]="currentUserId" [appointmentId]="appointment.appointmentInformation.appointmentId"
-										(selectedNewResponse)="loadEventDetails()"></appointment-participation>
+									<appointment-participation [readonly]="false" [currentResponse]="getCurrentResponse(appointment)"
+										[participantId]="currentSession.userId" [appointmentId]="appointment.appointmentId"
+										(selectedNewResponse)="setNewAnswer(appointment, currentSession.userId, $event)"></appointment-participation>
 								</div>
 							</mat-expansion-panel-header>
 							<ng-template matExpansionPanelContent>
-								<appointment-participant-table [participants]="appointment.participations" [isOrganizingEvent]="isOrganizingEvent"
-									[appointment]="appointment.appointmentInformation" (updatedResponse)="loadEventDetails()"></appointment-participant-table>
+								<appointment-participant-table [eventParticipants]="eventDetails.information.participants" [givenAnswers]="appointment.participations" [isOrganizingEvent]="isOrganizingEvent"
+									[appointment]="appointment" (updatedResponse)="setNewAnswer(appointment, $event.participantId, $event.newAnswer)"></appointment-participant-table>
 							</ng-template>
 						</mat-expansion-panel>
 					</mat-accordion>
 				</ng-template>
 			</mat-card-content>
 		</mat-card>
-		<ng-container *ngIf="eventDetails.information.currentUserDoesParticipate">
+		<ng-container *ngIf="currentUserDoesParticipate">
 			<mat-card>
 				<mat-card-header>
 					<mat-card-title>Notifikationen</mat-card-title>

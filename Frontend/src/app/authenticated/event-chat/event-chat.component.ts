@@ -3,7 +3,10 @@ import { FormControl, Validators } from '@angular/forms';
 import { EventChatMessage } from '../../shared/server-model/event-chat-message.model';
 import { EventChatClient } from '../../shared/backend-clients/event-chat.client';
 import { Constants } from '../../shared/constants';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { UserInformation } from '../../shared/server-model/user-information.model';
+import { AuthService } from '../../shared/services/auth.service';
 
 @Component({
 	selector: 'event-chat',
@@ -18,8 +21,15 @@ export class EventChatComponent implements OnInit {
 	public chatMessages = new BehaviorSubject<ReadonlyArray<EventChatMessage>>([]);
 	public hasMoreMessages = new BehaviorSubject(false);
 	public chatMessageCtrl = new FormControl('', [Validators.required, Validators.maxLength(Constants.chatMessageMaxLength)]);
+	public userList$ = new BehaviorSubject<UserInformation[]>([]);
 
-	constructor(private server: EventChatClient) { }
+	constructor(private server: EventChatClient, authService: AuthService) {
+		this.userList$.next([{
+			userId: authService.session.userId,
+			name: authService.session.fullName,
+			email: authService.session.email
+		}]);
+	}
 
 	public ngOnInit(): void {
 		this.reload();
@@ -33,7 +43,12 @@ export class EventChatComponent implements OnInit {
 		this.server.getChatMessages(this.eventId).subscribe(response => {
 			this.chatMessages.next(response.messages);
 			this.hasMoreMessages.next(response.possiblyMoreMessages);
+			this.updateAuthorInformation(response.authorInformations);
 		});
+	}
+
+	public getUserData$(userId: number): Observable<UserInformation> {
+		return this.userList$.pipe(map(l => l.find(u => u.userId === userId)));
 	}
 
 	public loadPreviousChatMessages() {
@@ -44,6 +59,7 @@ export class EventChatComponent implements OnInit {
 		this.server.getChatMessages(this.eventId, earliestLoadedMessage).subscribe(response => {
 			this.chatMessages.next(messagesArray.concat(response.messages));
 			this.hasMoreMessages.next(response.possiblyMoreMessages);
+			this.updateAuthorInformation(response.authorInformations);
 		}, err => {
 			this.hasMoreMessages.next(true);
 		});
@@ -57,5 +73,14 @@ export class EventChatComponent implements OnInit {
 		}, err => {
 			this.chatMessageCtrl.setValue(messageContent);
 		});
+	}
+
+	private updateAuthorInformation(authorInformation: ReadonlyArray<UserInformation>) {
+		const currentList = this.userList$.value;
+		const newInformation = authorInformation.filter((author, index) =>
+			authorInformation.indexOf(author) === index && currentList.every(u => u.userId !== author.userId));
+		if (newInformation.length > 0) {
+			this.userList$.next(currentList.concat(newInformation));
+		}
 	}
 }

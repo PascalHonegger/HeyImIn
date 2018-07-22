@@ -1,6 +1,8 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { OrganizeAppointmentClient } from '../../shared/backend-clients/organize-appointment.client';
-import { AppointmentParticipationAnswer } from '../../shared/server-model/appointment-participation-answer.model';
+import {
+	AppointmentParticipationAnswer, Accepted, Declined, NoAnswer
+} from '../../shared/server-model/appointment-participation-answer.model';
 
 @Component({
 	selector: 'appointment-participation',
@@ -19,28 +21,28 @@ export class AppointmentParticipationComponent {
 	public participantId: number;
 
 	@Output()
-	public selectedNewResponse: EventEmitter<void> = new EventEmitter();
+	public selectedNewResponse: EventEmitter<AppointmentParticipationAnswer> = new EventEmitter();
 
 	public get accepted() {
-		return this.currentResponse === AppointmentParticipationAnswer.Accepted;
+		return this.currentResponse === Accepted;
 	}
 	public get declined() {
-		return this.currentResponse === AppointmentParticipationAnswer.Declined;
+		return this.currentResponse === Declined;
 	}
 	public get noAnswer() {
-		return this.currentResponse === undefined;
+		return this.currentResponse === NoAnswer;
 	}
 
 	constructor(private server: OrganizeAppointmentClient) { }
 
 	public accept(event: MouseEvent) {
-		this.clickedResponse(event, AppointmentParticipationAnswer.Accepted);
+		this.clickedResponse(event, Accepted);
 	}
 	public decline(event: MouseEvent) {
-		this.clickedResponse(event, AppointmentParticipationAnswer.Declined);
+		this.clickedResponse(event, Declined);
 	}
 	public removeAnswer(event: MouseEvent) {
-		this.clickedResponse(event, undefined);
+		this.clickedResponse(event, NoAnswer);
 	}
 
 	public clickedResponse(event: MouseEvent, clicked?: AppointmentParticipationAnswer) {
@@ -53,7 +55,7 @@ export class AppointmentParticipationComponent {
 
 		if (clicked !== this.currentResponse) {
 			this.server.setAppointmentResponse(this.appointmentId, this.participantId, clicked).subscribe(
-				() => this.selectedNewResponse.emit()
+				() => this.selectedNewResponse.emit(clicked)
 			);
 		}
 	}

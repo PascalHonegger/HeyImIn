@@ -211,9 +211,9 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 			var eventDetails = okObjectResult.Value as EventDetails;
 			Assert.NotNull(eventDetails);
 			Assert.Equal(MaxAmountOfAppointments, eventDetails.UpcomingAppointments.Count);
-			Assert.Equal(2, eventDetails.UpcomingAppointments.Count(a => a.AppointmentInformation.StartTime == earlyStartTime));
-			Assert.Equal(MaxAmountOfAppointments - 2, eventDetails.UpcomingAppointments.Count(a => a.AppointmentInformation.StartTime == middleStartTime));
-			Assert.Equal(0, eventDetails.UpcomingAppointments.Count(a => a.AppointmentInformation.StartTime == lateStartTime));
+			Assert.Equal(2, eventDetails.UpcomingAppointments.Count(a => a.StartTime == earlyStartTime));
+			Assert.Equal(MaxAmountOfAppointments - 2, eventDetails.UpcomingAppointments.Count(a => a.StartTime == middleStartTime));
+			Assert.Equal(0, eventDetails.UpcomingAppointments.Count(a => a.StartTime == lateStartTime));
 		}
 	}
 }

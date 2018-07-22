@@ -1,9 +1,9 @@
 import { Component, Input, EventEmitter, Output, ChangeDetectionStrategy } from '@angular/core';
 import { ParticipateEventClient } from '../../shared/backend-clients/participate-event.client';
-import { EventOverviewInformation } from '../../shared/server-model/event-overview.model';
 import { AuthService } from '../../shared/services/auth.service';
 import { DetailOverviewBase } from '../detail-overview-base';
 import { MatDialog } from '@angular/material';
+import { EventOverviewInformation } from '../../shared/server-model/event-overview-information.model';
 
 @Component({
 	selector: 'events-overview-list',
@@ -36,5 +36,9 @@ export class EventsOverviewListComponent extends DetailOverviewBase {
 	public async joinEvent(eventId: number) {
 		await this.joinEventAsync(eventId);
 		this.eventChanged.emit();
+	}
+
+	public currentUserDoesParticipate(event: EventOverviewInformation) {
+		return event.viewEventInformation.participants.some(p => p.userId === this.currentSession.userId);
 	}
 }

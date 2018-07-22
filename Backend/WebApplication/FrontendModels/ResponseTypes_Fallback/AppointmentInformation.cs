@@ -2,7 +2,7 @@
 using System.Linq;
 using HeyImIn.Database.Models;
 
-namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
+namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes_Fallback
 {
 	public class AppointmentInformation
 	{

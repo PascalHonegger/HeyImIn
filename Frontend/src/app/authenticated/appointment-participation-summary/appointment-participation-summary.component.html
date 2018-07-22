@@ -1,5 +1,5 @@
 <div [fxLayout]="orientation" fxLayoutGap="10px">
-	<div><span class="accepted">{{appointment.acceptedParticipants}}</span> {{appointment.acceptedParticipants === 1 ? 'Zusage' : 'Zusagen'}}</div>
-	<div><span class="declined">{{appointment.declinedParticipants}}</span> {{appointment.declinedParticipants === 1 ? 'Absage' : 'Absagen'}}</div>
-	<div><span class="not-answered">{{appointment.notAnsweredParticipants}}</span> ohne Antwort</div>
+	<div><span class="accepted">{{acceptedCount}}</span> {{acceptedCount === 1 ? 'Zusage' : 'Zusagen'}}</div>
+	<div><span class="declined">{{declinedCount}}</span> {{declinedCount === 1 ? 'Absage' : 'Absagen'}}</div>
+	<div><span class="not-answered">{{noAnswerCount}}</span> ohne Antwort</div>
 </div>

@@ -1,4 +1,4 @@
-export interface FrontendSession {
+﻿export interface FrontendSession {
 	token: string;
 	userId: number;
 	fullName: string;
