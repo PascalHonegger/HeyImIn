@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
 import { ServerClientBase } from './server-client-base';
-import { GeneralEventInfo } from '../server-model/general-event-info.model';
-import { EditEventDetails } from '../server-model/event-edit-details.model';
+import { GeneralEventInformation } from '../server-model/general-event-information.model';
+import { EditEventDetails } from '../server-model/edit-event-details.model';
 
 @Injectable({ providedIn: 'root' })
 export class OrganizeEventClient extends ServerClientBase {
@@ -17,12 +17,12 @@ export class OrganizeEventClient extends ServerClientBase {
 		});
 	}
 
-	public updateEventInfo(eventId: number, eventInfo: GeneralEventInfo) {
+	public updateEventInfo(eventId: number, eventInfo: GeneralEventInformation) {
 		const combinedDto = Object.assign({ eventId }, eventInfo);
 		return this.httpClient.post<void>(this.baseUrl + '/UpdateEventInfo', combinedDto);
 	}
 
-	public createEvent(eventInfo: GeneralEventInfo) {
+	public createEvent(eventInfo: GeneralEventInformation) {
 		return this.httpClient.post<void>(this.baseUrl + '/CreateEvent', eventInfo);
 	}
 

@@ -3,7 +3,7 @@
 		<mat-form-field fxFlex>
 			<textarea matInput matTextareaAutosize required placeholder="Hinterlasse eine Nachricht" [formControl]="chatMessageCtrl"></textarea>
 			<mat-hint align="end">{{chatMessageCtrl.value.length}} / 250</mat-hint>
-			<mat-error *ngIf="chatMessageCtrl.hasError('required') || chatMessageCtrl.hasError('max')">
+			<mat-error *ngIf="chatMessageCtrl.hasError('required') || chatMessageCtrl.hasError('maxlength')">
 				Bitte geben Sie eine Nachricht mit maximal 250 Zeichen ein
 			</mat-error>
 		</mat-form-field>
@@ -17,8 +17,8 @@
 				<!-- TODO Profile picture
 					<img mat-card-avatar [src]="authorProfilePicture"></img>
 				-->
-				<mat-card-subtitle>
-					{{message.authorName}} @ {{message.sentDate | date:'medium'}}
+				<mat-card-subtitle *ngIf="getUserData$(message.authorId) | async as author">
+					{{author.name}} @ {{message.sentDate | date:'medium'}}
 				</mat-card-subtitle>
 			</mat-card-header>
 			<mat-card-content>

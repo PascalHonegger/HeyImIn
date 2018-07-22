@@ -94,7 +94,6 @@ namespace HeyImIn.Authentication.Impl
 				: session.ValidUntil >= DateTime.UtcNow;
 		}
 
-
 		private readonly GetDatabaseContext _getDatabaseContext;
 
 		/// <summary>

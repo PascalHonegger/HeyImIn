@@ -1,31 +1,20 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using HeyImIn.Database.Models;
+﻿using System;
+using System.Collections.Generic;
 
 namespace HeyImIn.WebApplication.FrontendModels.ResponseTypes
 {
 	public class AppointmentDetails
 	{
-		public AppointmentDetails(AppointmentInformation appointmentInformation, List<AppointmentParticipationInformation> participations)
+		public AppointmentDetails(int appointmentId, DateTime startTime, List<AppointmentParticipationInformation> participations)
 		{
-			AppointmentInformation = appointmentInformation;
+			AppointmentId = appointmentId;
+			StartTime = startTime;
 			Participations = participations;
 		}
 
-		public static AppointmentDetails FromAppointment(Appointment appointment, int currentUserId, List<User> allParticipants)
-		{
-			IEnumerable<AppointmentParticipationInformation> withAnswers = appointment.AppointmentParticipations.Select(p => new AppointmentParticipationInformation(p.Participant.FullName, p.Participant.Id, p.AppointmentParticipationAnswer));
+		public int AppointmentId { get; }
 
-			IEnumerable<User> otherParticipants = allParticipants.Except(appointment.AppointmentParticipations.Select(a => a.Participant));
-			IEnumerable<AppointmentParticipationInformation> noAnswers = otherParticipants.Select(p => new AppointmentParticipationInformation(p.FullName, p.Id, null));
-
-			List<AppointmentParticipationInformation> participations = withAnswers.Concat(noAnswers).ToList();
-			AppointmentInformation appointmentInformation = AppointmentInformation.FromAppointment(appointment, currentUserId, allParticipants.Count);
-
-			return new AppointmentDetails(appointmentInformation, participations);
-		}
-
-		public AppointmentInformation AppointmentInformation { get; }
+		public DateTime StartTime { get; }
 
 		public List<AppointmentParticipationInformation> Participations { get; }
 	}

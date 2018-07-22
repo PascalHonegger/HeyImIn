@@ -4,14 +4,14 @@ namespace HeyImIn.MailNotifier.Models
 {
 	public class ChatMessageNotificationInformation
 	{
-		public ChatMessageNotificationInformation(string authorName, DateTime sentDate, string content)
+		public ChatMessageNotificationInformation(int authorId, DateTime sentDate, string content)
 		{
-			AuthorName = authorName;
+			AuthorId = authorId;
 			SentDate = sentDate;
 			Content = content;
 		}
 
-		public string AuthorName { get; }
+		public int AuthorId { get; }
 
 		public DateTime SentDate { get; }
 

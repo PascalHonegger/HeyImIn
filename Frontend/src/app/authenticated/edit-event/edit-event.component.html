@@ -29,15 +29,15 @@
 					<mat-expansion-panel *ngFor="let appointment of eventDetails.upcomingAppointments; index as i; trackBy: getAppointmentId" [expanded]="i === 0">
 						<mat-expansion-panel-header>
 							<mat-panel-title>
-								{{appointment.appointmentInformation.startTime | date:'short'}}
+								{{appointment.startTime | date:'short'}}
 							</mat-panel-title>
 						</mat-expansion-panel-header>
 						<ng-template matExpansionPanelContent>
-							<appointment-participant-table [participants]="appointment.participations" [isOrganizingEvent]="true" [appointment]="appointment.appointmentInformation"
-							(updatedResponse)="loadEventDetails()"></appointment-participant-table>
+							<appointment-participant-table [eventParticipants]="eventDetails.participants" [givenAnswers]="appointment.participations" [isOrganizingEvent]="true" [appointment]="appointment"
+							(updatedResponse)="setNewAnswer(appointment, $event.participantId, $event.newAnswer)"></appointment-participant-table>
 						</ng-template>
 						<mat-action-row>
-							<button mat-raised-button (click)="cancelAppointment(appointment.appointmentInformation.appointmentId)" color="warn">Absagen</button>
+							<button mat-raised-button (click)="cancelAppointment(appointment.appointmentId)" color="warn">Absagen</button>
 						</mat-action-row>
 					</mat-expansion-panel>
 				</mat-accordion>

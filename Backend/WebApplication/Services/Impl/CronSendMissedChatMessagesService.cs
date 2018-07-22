@@ -28,29 +28,33 @@ namespace HeyImIn.WebApplication.Services.Impl
 		{
 			DateTime maxAge = DateTime.UtcNow - _minimumChatMessageNotificationTimeSpan;
 
-			// TODO This query for some reason causes a log warning => Investigate, maybe fixed with future release
-
 			var chatMessagesToNotifyAbout = await _context.EventParticipations
 				.Select(ep => new
 				{
 					participation = ep,
-					participant = ep.Participant,
 					eventId = ep.EventId,
 					eventTitle = ep.Event.Title,
 					messages = ep.Event.ChatMessages
-						.AsQueryable()
 						.Where(c => c.SentDate < maxAge)
 						.Where(c => c.SentDate > ep.LastReadMessageSentDate)
 						.OrderByDescending(c => c.SentDate)
-						.Select(c => new { authorName = c.Author.FullName, sentDate = c.SentDate, content = c.Content })
+						.Select(c => new ChatMessageNotificationInformation(c.AuthorId, c.SentDate, c.Content))
 				})
-				.Where(x => x.messages.AsQueryable().Any())
+				.Where(x => x.messages.Any())
 				.ToListAsync(token);
+
+			List<int> allAuthorIds = chatMessagesToNotifyAbout
+				.SelectMany(c => c.messages.Select(m => m.AuthorId))
+				.Concat(chatMessagesToNotifyAbout.Select(c => c.participation.ParticipantId))
+				.Distinct()
+				.ToList();
+
+			List<(int id, string fullName, string email)> relevantUsers = await _context.Users.Where(u => allAuthorIds.Contains(u.Id)).Select(u => ValueTuple.Create(u.Id, u.FullName, u.Email)).ToListAsync(token);
 
 			foreach (var chatMessage in chatMessagesToNotifyAbout)
 			{
-				List<ChatMessageNotificationInformation> messages = chatMessage.messages.Select(m => new ChatMessageNotificationInformation(m.authorName, m.sentDate, m.content)).ToList();
-				await _notificationService.NotifyUnreadChatMessagesAsync(new ChatMessagesNotificationInformation(chatMessage.eventId, chatMessage.eventTitle, chatMessage.participant, messages));
+				List<ChatMessageNotificationInformation> messages = chatMessage.messages.ToList();
+				await _notificationService.NotifyUnreadChatMessagesAsync(new ChatMessagesNotificationInformation(chatMessage.eventId, chatMessage.eventTitle, chatMessage.participation.ParticipantId, messages, relevantUsers));
 
 				chatMessage.participation.LastReadMessageSentDate = messages[0].SentDate;
 			}
