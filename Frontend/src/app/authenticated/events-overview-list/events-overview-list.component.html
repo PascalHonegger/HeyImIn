@@ -17,7 +17,7 @@
 		</mat-expansion-panel-header>
 		<ng-template matExpansionPanelContent>
 			<div fxLayoutGap="20px">
-				<appointment-participation-summary *ngIf="event.latestAppointmentInformation" fxHide.gt-sm [eventParticipants]="event.viewEventInformation.participants" [givenAnswers]="event.latestAppointmentDetails.participations" orientation="row"></appointment-participation-summary>
+				<appointment-participation-summary *ngIf="event.latestAppointmentDetails" fxHide.gt-sm [eventParticipants]="event.viewEventInformation.participants" [givenAnswers]="event.latestAppointmentDetails.participations" orientation="row"></appointment-participation-summary>
 				<event-info-display [info]="event.viewEventInformation"></event-info-display>
 			</div>
 		</ng-template>

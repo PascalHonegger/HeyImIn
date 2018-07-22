@@ -105,7 +105,7 @@ namespace HeyImIn.WebApplication.Controllers
 			Event @event = await context.Events
 				.Include(e => e.Organizer)
 				.Include(e => e.EventParticipations)
-				.ThenInclude(p => p.Participant)
+					.ThenInclude(p => p.Participant)
 				.FirstOrDefaultAsync(e => e.Id == eventId);
 
 			if (@event == null)
@@ -127,6 +127,7 @@ namespace HeyImIn.WebApplication.Controllers
 			List<Appointment> appointments = await context.Appointments
 				.Include(a => a.AppointmentParticipations)
 				.ThenInclude(ap => ap.Participant)
+				.Where(a => a.EventId == eventId)
 				.Where(a => a.StartTime >= DateTime.UtcNow)
 				.OrderBy(a => a.StartTime)
 				.Take(_maxShownAppointmentsPerEvent)
