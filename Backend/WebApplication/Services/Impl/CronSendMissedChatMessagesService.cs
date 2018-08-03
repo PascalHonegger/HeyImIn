@@ -43,6 +43,11 @@ namespace HeyImIn.WebApplication.Services.Impl
 				.Where(x => x.messages.Any())
 				.ToListAsync(token);
 
+			if (chatMessagesToNotifyAbout.Count == 0)
+			{
+				return;
+			}
+
 			List<int> allAuthorIds = chatMessagesToNotifyAbout
 				.SelectMany(c => c.messages.Select(m => m.AuthorId))
 				.Concat(chatMessagesToNotifyAbout.Select(c => c.participation.ParticipantId))
