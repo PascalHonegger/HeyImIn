@@ -88,11 +88,14 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 			using (IDatabaseContext context = getContext())
 			{
 				User john = ContextUtilities.CreateJohnDoe();
+				User richard = ContextUtilities.CreateRichardRoe();
 
 				Event event1 = DummyEvent(john);
 				Event event2 = DummyEvent(john, true);
 				context.EventParticipations.Add(new EventParticipation { Event = event1, Participant = john });
+				context.EventParticipations.Add(new EventParticipation { Event = event1, Participant = richard });
 				context.EventParticipations.Add(new EventParticipation { Event = event2, Participant = john });
+				context.EventParticipations.Add(new EventParticipation { Event = event2, Participant = richard });
 
 				context.EventInvitations.Add(new EventInvitation { Event = event1, Requested = DateTime.UtcNow });
 				context.EventInvitations.Add(new EventInvitation { Event = event2, Requested = DateTime.UtcNow });
@@ -119,7 +122,7 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 			Assert.IsType<OkResult>(response);
 			using (IDatabaseContext context = getContext())
 			{
-				Assert.Empty(context.Users);
+				Assert.Single(context.Users);
 				Assert.Empty(context.Events);
 				Assert.Empty(context.EventParticipations);
 			}
