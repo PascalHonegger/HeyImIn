@@ -122,6 +122,7 @@ namespace HeyImIn.WebApplication.Controllers
 				.Include(u => u.EventParticipations)
 				.Include(u => u.OrganizedEvents)
 					.ThenInclude(e => e.EventParticipations)
+						.ThenInclude(ep => ep.Participant)
 				.Include(u => u.OrganizedEvents)
 					.ThenInclude(e => e.Appointments)
 				.Include(u => u.OrganizedEvents)

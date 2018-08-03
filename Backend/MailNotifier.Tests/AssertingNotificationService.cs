@@ -7,6 +7,10 @@ using Xunit;
 
 namespace HeyImIn.MailNotifier.Tests
 {
+	/// <summary>
+	///     A dummy implementation of the NotificationService which asserts all provided data has the correct format.
+	///     This ensures the test and real life notification service behave nearly the same.
+	/// </summary>
 	public class AssertingNotificationService : INotificationService
 	{
 		public virtual Task SendPasswordResetTokenAsync(Guid token, User recipient)
@@ -17,7 +21,7 @@ namespace HeyImIn.MailNotifier.Tests
 			return Task.CompletedTask;
 		}
 
-		public Task SendInvitationLinkAsync(List<(User user, EventInvitation invite)> userInvitations, List<(string email, EventInvitation invite)> newInvitations)
+		public virtual Task SendInvitationLinkAsync(List<(User user, EventInvitation invite)> userInvitations, List<(string email, EventInvitation invite)> newInvitations)
 		{
 			Assert.NotNull(userInvitations);
 
@@ -60,6 +64,7 @@ namespace HeyImIn.MailNotifier.Tests
 				Assert.NotNull(eventEventParticipation);
 				Assert.NotNull(eventEventParticipation.Participant);
 			}
+
 			Assert.NotNull(appointment.AppointmentParticipations);
 			foreach (AppointmentParticipation appointmentParticipation in appointment.AppointmentParticipations)
 			{
