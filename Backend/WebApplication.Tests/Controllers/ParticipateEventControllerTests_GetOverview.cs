@@ -212,7 +212,9 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 				return (eventWithoutAppointments, eventWithSoonerAppointment, eventWithLaterAppointment);
 			}
 
+			// ReSharper disable ParameterOnlyUsedForPreconditionCheck.Local
 			void AssertEventOrder(List<EventOverviewInformation> loadedEvents, (Event eventWithoutAppointments, Event eventWithSoonerAppointment, Event eventWithLaterAppointment) providedEvents)
+			// ReSharper restore ParameterOnlyUsedForPreconditionCheck.Local
 			{
 				Assert.Equal(3, loadedEvents.Count);
 				Assert.Equal(providedEvents.eventWithSoonerAppointment.Id, loadedEvents[0].EventId);

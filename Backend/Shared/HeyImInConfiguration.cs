@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace HeyImIn.Shared
 {
@@ -7,6 +8,7 @@ namespace HeyImIn.Shared
 	///     For descriptions of the values see the appsettings.json file, where settings can be explicitly specified
 	///     CAUTION: The default values should be kept in sync with the default appsettings.json
 	/// </summary>
+	[SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
 	public class HeyImInConfiguration
 	{
 		public string FrontendBaseUrl { get; set; } = "https://hey-im-in.azurewebsites.net/#/";
