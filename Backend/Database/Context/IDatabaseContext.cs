@@ -39,7 +39,7 @@ namespace HeyImIn.Database.Context
 
 		DbSet<Session> Sessions { get; }
 
-		DbSet<ChatMessage> ChatMessages { get; set; }
+		DbSet<ChatMessage> ChatMessages { get; }
 
 		// Many-To-Many relation tables
 		DbSet<AppointmentParticipation> AppointmentParticipations { get; }

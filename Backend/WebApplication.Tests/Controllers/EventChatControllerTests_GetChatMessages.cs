@@ -144,7 +144,7 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 
 				context.EventParticipations.Add(new EventParticipation { Participant = john.Entity, Event = dummyEvent });
 
-				int addedAmount = (amountOfChatMessages * 2) - 1;
+				int addedAmount = amountOfChatMessages * 2 - 1;
 				for (var i = 1; i <= addedAmount; i++)
 				{
 					context.ChatMessages.Add(new ChatMessage
