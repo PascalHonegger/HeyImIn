@@ -63,7 +63,7 @@ export class ViewEventComponent extends DetailOverviewBase {
 				this.eventDetails = detail;
 				this.isOrganizingEvent = this.currentSession.userId === detail.information.organizer.userId;
 			},
-			err => this.eventDetails = null);
+			_err => this.eventDetails = null);
 	}
 
 	public setNewAnswer(appointment: AppointmentDetails,
