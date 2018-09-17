@@ -134,6 +134,6 @@ export class EditEventComponent {
 			detail => {
 				this.eventDetails = detail;
 			},
-			err => this.eventDetails = null);
+			_err => this.eventDetails = null);
 	}
 }

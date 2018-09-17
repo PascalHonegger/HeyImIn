@@ -60,7 +60,7 @@ export class EventChatComponent implements OnInit {
 			this.chatMessages.next(messagesArray.concat(response.messages));
 			this.hasMoreMessages.next(response.possiblyMoreMessages);
 			this.updateAuthorInformation(response.authorInformations);
-		}, err => {
+		}, _err => {
 			this.hasMoreMessages.next(true);
 		});
 	}
@@ -70,7 +70,7 @@ export class EventChatComponent implements OnInit {
 		this.chatMessageCtrl.reset('');
 		this.server.sendChatMessage(this.eventId, messageContent).subscribe(m => {
 			this.chatMessages.next([m].concat(this.chatMessages.value));
-		}, err => {
+		}, _err => {
 			this.chatMessageCtrl.setValue(messageContent);
 		});
 	}
