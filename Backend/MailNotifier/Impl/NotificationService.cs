@@ -91,11 +91,14 @@ namespace HeyImIn.MailNotifier.Impl
 			return TimeZoneInfo.ConvertTimeFromUtc(utcDateTime, _mailTimeZone);
 		}
 
-		private static string ParticipationsList(IEnumerable<AppointmentParticipation> allParticipations)
+		private static (int count, string formattedString) ParticipationsList(IEnumerable<AppointmentParticipation> allParticipations)
 		{
-			return string.Join(Environment.NewLine, allParticipations
+			List<string> acceptedParticipantsList = allParticipations
 				.Where(a => a.AppointmentParticipationAnswer == AppointmentParticipationAnswer.Accepted)
-				.Select(a => $"- {a.Participant.FullName}"));
+				.Select(a => $"- {a.Participant.FullName}")
+				.ToList();
+
+			return (acceptedParticipantsList.Count, string.Join(Environment.NewLine, acceptedParticipantsList));
 		}
 		private readonly IMailSender _mailSender;
 
@@ -233,13 +236,13 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{appointment.
 
 			string summarySubject = $"Zusammenfassung Event '{appointment.Event.Title}' zum Termin am {startTime:g}";
 
-			string participants = ParticipationsList(appointment.AppointmentParticipations);
+			(int count, string formattedString) = ParticipationsList(appointment.AppointmentParticipations);
 
 			string messageBody = $@"Die Teilnehmer treffen sich am {startTime:g} am Treffpunkt '{appointment.Event.MeetingPlace}'
 
-Die finale Teilnehmerliste:
+Die finale Teilnehmerliste der {count} Zusagen:
 
-{participants}";
+{formattedString}";
 
 			List<AppointmentParticipation> participationsAwaitingSummary = FilterAcceptedParticipations(appointment.AppointmentParticipations, p => !p.SentSummary, e => e.SendSummaryEmail);
 
@@ -339,11 +342,11 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{chatMessages
 
 			string lastMinuteChangeSubject = $"Kurzfristige Änderung zum Termin am {startTime:g}";
 
-			string participants = ParticipationsList(appointment.AppointmentParticipations);
+			(int count, string formattedString) = ParticipationsList(appointment.AppointmentParticipations);
 
-			string messageBody = $@"Die Teilnehmer des Events '{appointment.Event.Title}' haben sich geändert. Die aktualisierte Teilnehmerliste:
+			string messageBody = $@"Die Teilnehmer des Events '{appointment.Event.Title}' haben sich geändert. Die aktualisierte Teilnehmerliste der {count} Zusagen:
 
-{participants}";
+{formattedString}";
 
 			List<AppointmentParticipation> participationsAlreadyGotSummary = FilterAcceptedParticipations(appointment.AppointmentParticipations, p => p.SentSummary, e => e.SendLastMinuteChangesEmail);
 
