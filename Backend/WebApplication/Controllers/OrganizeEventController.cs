@@ -54,6 +54,7 @@ namespace HeyImIn.WebApplication.Controllers
 					.ThenInclude(ep => ep.Participant)
 				.Include(e => e.Appointments)
 					.ThenInclude(a => a.AppointmentParticipations)
+				.Include(e => e.ChatMessages)
 				.FirstOrDefaultAsync(e => e.Id == eventId);
 
 			if (@event == null)

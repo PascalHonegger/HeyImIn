@@ -100,6 +100,9 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 				context.EventInvitations.Add(new EventInvitation { Event = event1, Requested = DateTime.UtcNow });
 				context.EventInvitations.Add(new EventInvitation { Event = event2, Requested = DateTime.UtcNow });
 
+				context.ChatMessages.Add(new ChatMessage { Event = event1, Author = john, Content = "Hello World.", SentDate = DateTime.UtcNow });
+				context.ChatMessages.Add(new ChatMessage { Event = event2, Author = john, Content = "Hello World.", SentDate = DateTime.UtcNow });
+
 				await context.SaveChangesAsync();
 
 				johnDoeId = john.Id;
@@ -125,6 +128,7 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 				Assert.Single(context.Users);
 				Assert.Empty(context.Events);
 				Assert.Empty(context.EventParticipations);
+				Assert.Empty(context.ChatMessages);
 			}
 		}
 
