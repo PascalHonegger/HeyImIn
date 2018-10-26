@@ -27,8 +27,10 @@ namespace HeyImIn.WebApplication.Services.Impl
 			context.EventParticipations.RemoveRange(user.EventParticipations);
 
 			// Appointment participations the user is part of
-			List<AppointmentParticipation> userAppointmentParticipations = user.AppointmentParticipations.ToList();
-			context.AppointmentParticipations.RemoveRange(userAppointmentParticipations);
+			context.AppointmentParticipations.RemoveRange(user.AppointmentParticipations);
+
+			// ChatMessages belonging to the event
+			context.ChatMessages.RemoveRange(user.ChatMessages);
 
 			// User himself
 			context.Users.Remove(user);
@@ -54,6 +56,9 @@ namespace HeyImIn.WebApplication.Services.Impl
 
 			// Invitations to the event
 			context.EventInvitations.RemoveRange(@event.EventInvitations);
+
+			// ChatMessages belonging to the event
+			context.ChatMessages.RemoveRange(@event.ChatMessages);
 
 			// Event itself
 			context.Events.Remove(@event);

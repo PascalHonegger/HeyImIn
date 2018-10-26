@@ -127,6 +127,7 @@ namespace HeyImIn.WebApplication.Controllers
 					.ThenInclude(e => e.Appointments)
 				.Include(u => u.OrganizedEvents)
 					.ThenInclude(e => e.EventInvitations)
+				.Include(u => u.ChatMessages)
 				.FirstAsync(u => u.Id == currentUserId);
 
 			// Appointments the user participates, excluding his organized events
