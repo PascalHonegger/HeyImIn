@@ -122,6 +122,49 @@ namespace HeyImIn.WebApplication.Controllers
 		}
 
 		/// <summary>
+		///     Changes the organizer of an event
+		///     Informs the users about the change
+		/// </summary>
+		[HttpPost(nameof(ChangeOrganizer))]
+		[ProducesResponseType(typeof(void), 200)]
+		public async Task<IActionResult> ChangeOrganizer(ChangeOrganizerDto updatedEventInfoDto)
+		{
+			IDatabaseContext context = _getDatabaseContext();
+			Event @event = await context.Events
+				.Include(e => e.EventParticipations)
+				.FirstOrDefaultAsync(e => e.Id == updatedEventInfoDto.EventId);
+
+			if (@event == null)
+			{
+				return BadRequest(RequestStringMessages.EventNotFound);
+			}
+
+			if (@event.OrganizerId != HttpContext.GetUserId())
+			{
+				_logger.LogInformation("{0}(): Tried to set the organizer of event {1}, which he's not organizing", nameof(UpdateEventInfo), @event.Id);
+
+				return BadRequest(RequestStringMessages.OrganizerRequired);
+			}
+
+			if (@event.EventParticipations.All(ep => ep.ParticipantId != updatedEventInfoDto.NewOrganizerId))
+			{
+				_logger.LogInformation("{0}(): Tried to set the organizer of event {1}, but chose an invalid new organizer", nameof(UpdateEventInfo), @event.Id);
+
+				return BadRequest(RequestStringMessages.UserNotPartOfEvent);
+			}
+
+			@event.OrganizerId = updatedEventInfoDto.NewOrganizerId;
+
+			await context.SaveChangesAsync();
+
+			_auditLogger.LogInformation("{0}(): Changed organizer of event {1}", nameof(UpdateEventInfo), @event.Id);
+
+			await _notificationService.NotifyEventUpdatedAsync(@event);
+
+			return Ok();
+		}
+
+		/// <summary>
 		///     Creates a new event
 		/// </summary>
 		/// <returns>
