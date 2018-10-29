@@ -11,6 +11,7 @@ import { AppointmentDetails } from '../../shared/server-model/appointment-detail
 import { GeneralEventInformation } from '../../shared/server-model/general-event-information.model';
 import { EditEventDetails } from '../../shared/server-model/edit-event-details.model';
 import { AppointmentParticipationAnswer } from '../../shared/server-model/appointment-participation-answer.model';
+import { ChangeOrganizerDialogComponent, ChangeOrganizerDialogParameter } from '../change-organizer-dialog/change-organizer-dialog.component';
 
 @Component({
 	styleUrls: ['./edit-event.component.scss'],
@@ -127,6 +128,21 @@ export class EditEventComponent {
 					}
 				);
 			}
+	}
+
+	public async openChangeOrganizerDialog() {
+		const newOrganizerId = await this.dialog
+			.open<ChangeOrganizerDialogComponent, ChangeOrganizerDialogParameter, number | undefined>(ChangeOrganizerDialogComponent, {
+				data: { participants: this.eventDetails.participants },
+				closeOnNavigation: true
+			}).afterClosed().toPromise();
+
+		if (newOrganizerId) {
+			this.organizeEventServer.changeOrganizer(this.eventId, newOrganizerId).subscribe(() => {
+				this.snackBar.open('Der Organisator des Events wurde geändert', 'Ok');
+				this.router.navigate(['/']);
+			});
+		}
 	}
 
 	public loadEventDetails() {

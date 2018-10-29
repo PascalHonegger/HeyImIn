@@ -12,11 +12,14 @@
 				<edit-general-event-info #eventInfoEdit [eventInfo]="eventDetails.information"></edit-general-event-info>
 			</mat-card-content>
 			<mat-card-actions>
+				<button mat-raised-button [disabled]="!eventInfoEdit.formValid" (click)="saveEvent(eventInfoEdit.updatedEventInfo)" color="primary" type="button">
+					Speichern
+				</button>
 				<button mat-raised-button (click)="deleteEvent()" color="warn" type="button">
 					Löschen
 				</button>
-				<button mat-raised-button [disabled]="!eventInfoEdit.formValid" (click)="saveEvent(eventInfoEdit.updatedEventInfo)" color="primary" type="button">
-					Speichern
+				<button mat-raised-button (click)="openChangeOrganizerDialog()" color="warn" type="button">
+					Organisation übergeben
 				</button>
 			</mat-card-actions>
 		</mat-card>

@@ -81,6 +81,13 @@ namespace HeyImIn.MailNotifier
 		Task NotifyEventUpdatedAsync(Event @event);
 
 		/// <summary>
+		///     Sends a notification to all users who are participating in an event
+		///     This happens because the organizer selected a new person to organize the event
+		/// </summary>
+		/// <param name="event">Event which got updated</param>
+		Task NotifyOrganizerChangedAsync(Event @event);
+
+		/// <summary>
 		///     Sends an email with all missed chat messages to a single user
 		/// </summary>
 		/// <param name="chatMessageInformation">User, event and the corresponding chat messages</param>

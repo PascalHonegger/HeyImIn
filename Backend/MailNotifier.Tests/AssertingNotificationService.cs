@@ -152,6 +152,20 @@ namespace HeyImIn.MailNotifier.Tests
 			return Task.CompletedTask;
 		}
 
+		public Task NotifyOrganizerChangedAsync(Event @event)
+		{
+			Assert.NotNull(@event);
+			Assert.NotNull(@event.EventParticipations);
+			Assert.NotNull(@event.Organizer);
+			foreach (EventParticipation participation in @event.EventParticipations)
+			{
+				Assert.NotNull(participation);
+				Assert.NotNull(participation.Participant);
+			}
+
+			return Task.CompletedTask;
+		}
+
 		public virtual Task NotifyUnreadChatMessagesAsync(ChatMessagesNotificationInformation chatMessageInformation)
 		{
 			Assert.NotNull(chatMessageInformation);
