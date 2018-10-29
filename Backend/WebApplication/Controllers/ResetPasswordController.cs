@@ -17,7 +17,6 @@ namespace HeyImIn.WebApplication.Controllers
 	[AllowAnonymous]
 	[ApiController]
 	[ApiVersion(ApiVersions.Version2_0)]
-	[ApiVersion(ApiVersions.Version1_1, Deprecated = true)]
 	[Route("api/ResetPassword")]
 	public class ResetPasswordController : ControllerBase
 	{

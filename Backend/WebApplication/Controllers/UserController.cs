@@ -22,7 +22,6 @@ namespace HeyImIn.WebApplication.Controllers
 {
 	[ApiController]
 	[ApiVersion(ApiVersions.Version2_0)]
-	[ApiVersion(ApiVersions.Version1_1, Deprecated = true)]
 	[Route("api/User")]
 	public class UserController : ControllerBase
 	{
