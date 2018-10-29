@@ -131,7 +131,9 @@ namespace HeyImIn.WebApplication.Controllers
 		{
 			IDatabaseContext context = _getDatabaseContext();
 			Event @event = await context.Events
+				.Include(e => e.Organizer)
 				.Include(e => e.EventParticipations)
+					.ThenInclude(ep => ep.Participant)
 				.FirstOrDefaultAsync(e => e.Id == updatedEventInfoDto.EventId);
 
 			if (@event == null)
@@ -153,13 +155,19 @@ namespace HeyImIn.WebApplication.Controllers
 				return BadRequest(RequestStringMessages.UserNotPartOfEvent);
 			}
 
+			if (@event.OrganizerId == updatedEventInfoDto.NewOrganizerId)
+			{
+				// Shortcut => This shouldn't usually happen
+				return Ok();
+			}
+
 			@event.OrganizerId = updatedEventInfoDto.NewOrganizerId;
 
 			await context.SaveChangesAsync();
 
 			_auditLogger.LogInformation("{0}(): Changed organizer of event {1}", nameof(UpdateEventInfo), @event.Id);
 
-			await _notificationService.NotifyEventUpdatedAsync(@event);
+			await _notificationService.NotifyOrganizerChangedAsync(@event);
 
 			return Ok();
 		}

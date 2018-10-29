@@ -287,6 +287,29 @@ Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{@event.Id}{a
 			_logger.LogInformation("{0}(): Sent {1} notifications about a change of the event {2}", nameof(NotifyEventUpdatedAsync), @event.EventParticipations.Count, @event.Id);
 		}
 
+		public async Task NotifyOrganizerChangedAsync(Event @event)
+		{
+			string updatedSubject = $"Der Event '{@event.Title}' wurde an {@event.Organizer.FullName} übergeben";
+
+			string messageBody = $"Der Event '{@event.Title}' wird neu von {@event.Organizer.FullName} organisiert.";
+
+			foreach (EventParticipation participation in @event.EventParticipations)
+			{
+				string authTokenSuffix = await CreateAuthTokenSuffixAsync(participation.Participant.Id);
+
+				string message = $@"Hallo {participation.Participant.FullName}
+
+{messageBody}
+
+Sie können weitere Details zum Event unter {_baseWebUrl}ViewEvent/{@event.Id}{authTokenSuffix} ansehen.";
+
+
+				await _mailSender.SendMailAsync(participation.Participant.Email, updatedSubject, message);
+			}
+
+			_logger.LogInformation("{0}(): Sent {1} notifications about the new organizer of the event {2}", nameof(NotifyEventUpdatedAsync), @event.EventParticipations.Count, @event.Id);
+		}
+
 		public async Task NotifyUnreadChatMessagesAsync(ChatMessagesNotificationInformation chatMessagesInformation)
 		{
 			string unreadMessagesSubject = $"Ungelesene Nachrichten im Event '{chatMessagesInformation.EventTitle}'";

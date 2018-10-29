@@ -1,8 +1,10 @@
 import { NgModule } from '@angular/core';
+import { MatSelectModule } from '@angular/material';
 
 // Dialogs
 import { AddAppointmentsDialogComponent } from './add-appointments-dialog/add-appointments-dialog.component';
 import { AddParticipantDialogComponent } from './add-participant-dialog/add-participant-dialog.component';
+import { ChangeOrganizerDialogComponent } from './change-organizer-dialog/change-organizer-dialog.component';
 
 // Profile
 import { ProfileComponent } from './profile/profile.component';
@@ -29,7 +31,8 @@ import { SharedModule } from '../shared/shared.module';
 
 const dialogs = [
 	AddAppointmentsDialogComponent,
-	AddParticipantDialogComponent
+	AddParticipantDialogComponent,
+	ChangeOrganizerDialogComponent
 ];
 
 const components = [
@@ -42,8 +45,6 @@ const components = [
 	ViewEventComponent,
 	EditGeneralEventInfoComponent,
 	AppointmentParticipantTableComponent,
-	AddAppointmentsDialogComponent,
-	AddParticipantDialogComponent,
 	EditNotificationsComponent,
 	AppointmentParticipationComponent,
 	EventsOverviewListComponent,
@@ -63,7 +64,8 @@ const components = [
 		...dialogs
 	],
 	imports: [
-		SharedModule
+		SharedModule,
+		MatSelectModule
 	]
 })
 export class AuthenticatedModule {
