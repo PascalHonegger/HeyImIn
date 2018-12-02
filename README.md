@@ -1,7 +1,6 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/us7e70paow22nhxv?svg=true)](https://ci.appveyor.com/project/PascalHonegger/heyimin)
 # Hey, I'm in
-"Hey, I'm in" is a tool to organize and manage recurring events. The 
-war die praktische Abschlussarbeit von Pascal Honegger. Die Dokumentation der Arbeit kann im Verzeichnis [Dokumentation](https://github.com/PascalHonegger/HeyImIn/tree/master/Dokumentation) gefunden werden.
+"Hey, I'm in" is a tool to organize and manage recurring events.
 
 ## Guidelines
 * Issues are tracked within GitHub
