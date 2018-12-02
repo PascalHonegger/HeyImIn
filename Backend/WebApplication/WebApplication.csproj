@@ -15,7 +15,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="FrontendModels\ResponseTypes_Fallback\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
