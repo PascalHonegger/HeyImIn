@@ -19,7 +19,6 @@ namespace HeyImIn.WebApplication
 				.UseContentRoot(Directory.GetCurrentDirectory())
 				.UseKestrel()
 				.UseIISIntegration()
-				.UseAzureAppServices()
 				.UseStartup<Startup>()
 				.Build();
 		}
