@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { MatDialogRef } from '@angular/material';
-import { startOfHour, addDays, format, parse } from 'date-fns';
+import { startOfHour, addDays, parse, lightFormat } from 'date-fns';
 import { FormControl, Validators } from '@angular/forms';
 
 @Component({
@@ -22,7 +22,7 @@ export class AddAppointmentsDialogComponent {
 	constructor(private dialogRef: MatDialogRef<AddAppointmentsDialogComponent, Date[]>) {
 		const tomorrow = addDays(new Date(), 1);
 		const withNiceTime = startOfHour(tomorrow);
-		this.exampleDate = format(withNiceTime, AddAppointmentsDialogComponent.dateFormat);
+		this.exampleDate = lightFormat(withNiceTime, AddAppointmentsDialogComponent.dateFormat);
 	}
 
 	public parseAndReturnDates() {
