@@ -11,7 +11,10 @@ import { AppointmentDetails } from '../../shared/server-model/appointment-detail
 import { GeneralEventInformation } from '../../shared/server-model/general-event-information.model';
 import { EditEventDetails } from '../../shared/server-model/edit-event-details.model';
 import { AppointmentParticipationAnswer } from '../../shared/server-model/appointment-participation-answer.model';
-import { ChangeOrganizerDialogComponent, ChangeOrganizerDialogParameter } from '../change-organizer-dialog/change-organizer-dialog.component';
+import {
+	ChangeOrganizerDialogComponent,
+	ChangeOrganizerDialogParameter
+} from '../change-organizer-dialog/change-organizer-dialog.component';
 
 @Component({
 	styleUrls: ['./edit-event.component.scss'],
