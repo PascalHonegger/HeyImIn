@@ -1,8 +1,9 @@
 <form [formGroup]="form">
 	<main-title>Anmelden</main-title>
-	<div fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="20px">
+	<div fxLayout="column" fxLayoutAlign="start stretch">
 		<mat-form-field>
-			<input matInput placeholder="E-Mail-Adresse" formControlName="mailCtrl" required autocomplete="email" type="email">
+			<mat-label>E-Mail-Adresse</mat-label>
+			<input matInput formControlName="mailCtrl" required autocomplete="email" type="email">
 			<mat-error *ngIf="	form.get('mailCtrl').hasError('required') ||
 								form.get('mailCtrl').hasError('email') ||
 								form.get('mailCtrl').hasError('maxlength')">
@@ -10,17 +11,19 @@
 			</mat-error>
 		</mat-form-field>
 		<mat-form-field>
-			<input matInput placeholder="Passwort" formControlName="passwordCtrl" required type="password" autocomplete="current-password">
+			<mat-label>Passwort</mat-label>
+			<input matInput formControlName="passwordCtrl" required type="password" autocomplete="current-password">
 			<mat-error *ngIf="form.get('passwordCtrl').hasError('required')">
 				Bitte geben Sie Ihr Passwort ein
 			</mat-error>
 		</mat-form-field>
-
-		<button mat-raised-button [disabled]="!form.valid" (click)="login()" color="primary" type="submit">
-			Anmelden
-		</button>
-		<button mat-raised-button routerLink="/ResetPassword" type="button">
-			Passwort vergessen?
-		</button>
+		<div fxLayout="column" fxLayoutGap="20px">
+			<button mat-raised-button [disabled]="!form.valid" (click)="login()" color="primary" type="submit">
+				Anmelden
+			</button>
+			<button mat-button routerLink="/ResetPassword" type="button" fxFlexAlign="center">
+				Passwort vergessen?
+			</button>
+		</div>
 	</div>
 </form>
