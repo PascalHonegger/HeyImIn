@@ -20,7 +20,7 @@ export class EventChatComponent implements OnInit {
 
 	public chatMessages = new BehaviorSubject<ReadonlyArray<EventChatMessage>>([]);
 	public hasMoreMessages = new BehaviorSubject(false);
-	public chatMessageCtrl = new FormControl('', [Validators.required, Validators.maxLength(Constants.chatMessageMaxLength)]);
+	public chatMessageCtrl = new FormControl('', [Validators.maxLength(Constants.chatMessageMaxLength)]);
 	public userList$ = new BehaviorSubject<UserInformation[]>([]);
 
 	constructor(private server: EventChatClient, authService: AuthService) {

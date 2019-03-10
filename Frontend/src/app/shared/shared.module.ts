@@ -19,7 +19,9 @@ import {
 	MatStepperModule,
 	MatSlideToggleModule,
 	MatExpansionModule,
-	MatSortModule
+	MatSortModule,
+	MAT_FORM_FIELD_DEFAULT_OPTIONS,
+	MatFormFieldDefaultOptions
 } from '@angular/material';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
@@ -120,6 +122,10 @@ export class SharedModule {
 					provide: HTTP_INTERCEPTORS,
 					useClass: AppendApiVersionInterceptor,
 					multi: true
+				},
+				{
+					provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
+					useValue: { appearance: 'outline' } as MatFormFieldDefaultOptions
 				}
 			]
 		};

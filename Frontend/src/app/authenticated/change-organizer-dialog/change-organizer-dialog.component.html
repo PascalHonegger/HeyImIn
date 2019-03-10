@@ -1,7 +1,8 @@
 <h2 mat-dialog-title>Neuen Organisator setzen</h2>
 <mat-dialog-content>
 	<mat-form-field>
-		<mat-select placeholder="Neuer Organisator" #organizerSelect>
+		<mat-label>Neuer Organisator</mat-label>
+		<mat-select #organizerSelect>
 			<mat-option *ngFor="let participant of parameter.participants" [value]="participant.userId">
 				{{participant.name}}
 			</mat-option>

@@ -21,3 +21,11 @@ body {
 .mat-expansion-panel-header-title {
 	align-items: center;
 }
+
+// TODO Remove once https://github.com/angular/material2/issues/12803 is fixed
+.mat-form-field-appearance-outline {
+	.mat-form-field-prefix,
+	.mat-form-field-suffix {
+		align-self: center;
+	}
+}

@@ -1,8 +1,9 @@
 <form [formGroup]="form">
 	<main-title>Registrieren</main-title>
-	<div fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="20px">
+	<div fxLayout="column" fxLayoutAlign="start stretch">
 		<mat-form-field>
-			<input matInput placeholder="Vollständiger Name" formControlName="nameCtrl" required autocomplete="name">
+			<mat-label>Vollständiger Name</mat-label>
+			<input matInput formControlName="nameCtrl" required autocomplete="name">
 			<mat-error *ngIf="	form.get('nameCtrl').hasError('required') ||
 								form.get('nameCtrl').hasError('minlength') ||
 								form.get('nameCtrl').hasError('maxlength')">
@@ -10,7 +11,8 @@
 			</mat-error>
 		</mat-form-field>
 		<mat-form-field>
-			<input matInput placeholder="E-Mail-Adresse" formControlName="mailCtrl" required autocomplete="email" type="email">
+			<mat-label>E-Mail-Adresse</mat-label>
+			<input matInput formControlName="mailCtrl" required autocomplete="email" type="email">
 			<mat-error *ngIf="	form.get('mailCtrl').hasError('required') ||
 								form.get('mailCtrl').hasError('email') ||
 								form.get('mailCtrl').hasError('maxlength')">
@@ -18,7 +20,8 @@
 			</mat-error>
 		</mat-form-field>
 		<mat-form-field>
-			<input matInput placeholder="Passwort" formControlName="passwordCtrl" required type="password" autocomplete="new-password">
+			<mat-label>Passwort</mat-label>
+			<input matInput formControlName="passwordCtrl" required type="password" autocomplete="new-password">
 			<mat-error *ngIf="form.get('passwordCtrl').hasError('required')">
 				Bitte geben Sie ein Passwort ein
 			</mat-error>

@@ -1,16 +1,15 @@
 <div fxLayout="column" fxLayoutGap="20px">
-	<div fxLayout="row" fxLayoutGap="20px">
-		<mat-form-field fxFlex>
-			<textarea matInput matTextareaAutosize required placeholder="Hinterlasse eine Nachricht" [formControl]="chatMessageCtrl"></textarea>
-			<mat-hint align="end">{{chatMessageCtrl.value.length}} / 250</mat-hint>
-			<mat-error *ngIf="chatMessageCtrl.hasError('required') || chatMessageCtrl.hasError('maxlength')">
-				Bitte geben Sie eine Nachricht mit maximal 250 Zeichen ein
-			</mat-error>
-		</mat-form-field>
-		<button mat-icon-button color="accent" [disabled]="!chatMessageCtrl.valid" (click)="sendChatMessage()">
+	<mat-form-field fxFlex>
+		<mat-label>Hinterlasse eine Nachricht</mat-label>
+		<textarea matInput matTextareaAutosize [formControl]="chatMessageCtrl"></textarea>
+		<mat-hint align="end">{{chatMessageCtrl.value.length}} / 250</mat-hint>
+		<button mat-icon-button matSuffix type="button" color="accent" [disabled]="!chatMessageCtrl.valid || !chatMessageCtrl.value" (click)="sendChatMessage()">
 			<mat-icon aria-label="Senden">send</mat-icon>
 		</button>
-	</div>
+		<mat-error *ngIf="chatMessageCtrl.hasError('maxlength')">
+			Bitte geben Sie eine Nachricht mit maximal 250 Zeichen ein
+		</mat-error>
+	</mat-form-field>
 	<div class="chat-messages-container" fxLayout="column">
 		<mat-card *ngFor="let message of chatMessages | async; trackBy: getChatMessageId" class="chat-message">
 			<mat-card-header>

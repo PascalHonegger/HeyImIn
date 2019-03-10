@@ -1,33 +1,38 @@
 <form [formGroup]="form">
-	<div fxLayout="column" fxLayoutAlign="start stretch" fxLayoutGap="20px">
+	<div fxLayout="column" fxLayoutAlign="start stretch">
 		<mat-form-field>
-			<input matInput placeholder="Titel" formControlName="titleCtrl" required>
+			<mat-label>Titel</mat-label>
+			<input matInput formControlName="titleCtrl" required>
 			<mat-error *ngIf="form.get('titleCtrl').hasError('required') || form.get('titleCtrl').hasError('maxlength')">
 				Bitte geben Sie einen Titel mit maximal 40 Zeichen ein
 			</mat-error>
 		</mat-form-field>
 		<mat-form-field>
-			<input matInput placeholder="Treffpunkt" formControlName="meetingPlaceCtrl" required>
+			<mat-label>Treffpunkt</mat-label>
+			<input matInput formControlName="meetingPlaceCtrl" required>
 			<mat-error *ngIf="form.get('meetingPlaceCtrl').hasError('required') || form.get('meetingPlaceCtrl').hasError('maxlength')">
 				Bitte geben Sie einen Treffpunkt mit maximal 40 Zeichen ein
 			</mat-error>
 		</mat-form-field>
 		<mat-form-field>
-			<textarea matInput matTextareaAutosize placeholder="Beschreibung" formControlName="descriptionCtrl" required></textarea>
+			<mat-label>Beschreibung</mat-label>
+			<textarea matInput matTextareaAutosize formControlName="descriptionCtrl" required></textarea>
 			<mat-error *ngIf="form.get('descriptionCtrl').hasError('required') || form.get('descriptionCtrl').hasError('maxlength')">
 				Bitte geben Sie eine Beschreibung mit maximal 120 Zeichen ein
 			</mat-error>
 			<mat-hint align="end">{{form.get('descriptionCtrl').value.length}} / 120</mat-hint>
 		</mat-form-field>
 		<mat-form-field>
-			<input matInput placeholder="Reminder {{form.get('reminderCtrl').value}} Stunden vor Event versenden" formControlName="reminderCtrl" required type="number">
+			<mat-label>Reminder {{form.get('reminderCtrl').value}} Stunden vor Event versenden</mat-label>
+			<input matInput formControlName="reminderCtrl" required type="number">
 			<mat-error *ngIf="form.get('reminderCtrl').hasError('required') || form.get('reminderCtrl').hasError('min') || form.get('reminderCtrl').hasError('max')">
 				Bitte geben Sie eine Zahl zwischen 1 und 720 ein
 			</mat-error>
 			<span matSuffix>&nbsp;Stunden</span>
 		</mat-form-field>
 		<mat-form-field>
-			<input matInput placeholder="Zusammenfassung {{form.get('summaryCtrl').value}} Stunden vor Event versenden" formControlName="summaryCtrl" required type="number">
+			<mat-label>Zusammenfassung {{form.get('summaryCtrl').value}} Stunden vor Event versenden</mat-label>
+			<input matInput formControlName="summaryCtrl" required type="number">
 			<mat-error *ngIf="form.get('summaryCtrl').hasError('required') || form.get('summaryCtrl').hasError('min') || form.get('summaryCtrl').hasError('max')">
 				Bitte geben Sie eine Zahl zwischen 1 und 720 ein
 			</mat-error>
