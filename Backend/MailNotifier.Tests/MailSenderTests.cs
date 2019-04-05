@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using HeyImIn.MailNotifier.Impl;
+using HeyImIn.Shared;
 using HeyImIn.Shared.Tests;
 using Moq;
 using SendGrid;
@@ -31,7 +32,7 @@ namespace HeyImIn.MailNotifier.Tests
 				.ReturnsAsync(new Response(HttpStatusCode.OK, null, null));
 
 			// Act
-			var mailSender = new MailSender(mock.Object, DummyLogger<MailSender>());
+			var mailSender = new MailSender(mock.Object, new HeyImInConfiguration(), DummyLogger<MailSender>());
 			const string Subject = "Subject text";
 			const string Body = "Body text";
 			await mailSender.SendMailAsync(recipients, Subject, Body);

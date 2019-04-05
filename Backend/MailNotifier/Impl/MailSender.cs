@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using HeyImIn.Shared;
 using Microsoft.Extensions.Logging;
 using SendGrid;
 using SendGrid.Helpers.Mail;
@@ -9,9 +10,11 @@ namespace HeyImIn.MailNotifier.Impl
 {
 	public class MailSender : IMailSender
 	{
-		public MailSender(ISendGridClient sendGridClient, ILogger<MailSender> logger)
+		public MailSender(ISendGridClient sendGridClient, HeyImInConfiguration configuration, ILogger<MailSender> logger)
 		{
 			_sendGridClient = sendGridClient;
+			_senderMail = configuration.SenderEmailAddress;
+			_senderName = configuration.SenderEmailName;
 			_logger = logger;
 		}
 
@@ -23,7 +26,7 @@ namespace HeyImIn.MailNotifier.Impl
 		public async Task SendMailAsync(IReadOnlyCollection<string> recipientEmails, string subject, string bodyText)
 		{
 			var message = new SendGridMessage();
-			message.SetFrom("no-reply@hey-im-in.ch", "Hey, I'm in");
+			message.SetFrom(_senderMail, _senderName);
 
 			foreach (string recipient in recipientEmails)
 			{
@@ -46,6 +49,8 @@ namespace HeyImIn.MailNotifier.Impl
 		}
 
 		private readonly ISendGridClient _sendGridClient;
+		private readonly string _senderMail;
+		private readonly string _senderName;
 		private readonly ILogger<MailSender> _logger;
 	}
 }
