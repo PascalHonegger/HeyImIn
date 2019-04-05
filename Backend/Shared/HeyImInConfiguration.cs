@@ -15,6 +15,10 @@ namespace HeyImIn.Shared
 
 		public string MailTimeZoneName { get; set; } = "W. Europe Standard Time";
 
+		public string SenderEmailName { get; set; } = "Hey, I'm in";
+
+		public string SenderEmailAddress { get; set; } = "no-reply@hey-im-in.ch";
+
 		public int PasswordHashWorkFactor { get; set; } = 10;
 
 		public int MaxAmountOfAppointmentsPerDetailPage { get; set; } = 5;
