@@ -2,7 +2,7 @@ import { Component, Input, EventEmitter, Output, ChangeDetectionStrategy } from 
 import { ParticipateEventClient } from '../../shared/backend-clients/participate-event.client';
 import { AuthService } from '../../shared/services/auth.service';
 import { DetailOverviewBase } from '../detail-overview-base';
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 import { EventOverviewInformation } from '../../shared/server-model/event-overview-information.model';
 
 @Component({

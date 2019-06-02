@@ -6,23 +6,20 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
 // Material 2
-import {
-	MatButtonModule,
-	MatToolbarModule,
-	MatDialogModule,
-	MatInputModule,
-	MatSnackBarModule,
-	MatCardModule,
-	MatIconModule,
-	MatTableModule,
-	MatProgressSpinnerModule,
-	MatStepperModule,
-	MatSlideToggleModule,
-	MatExpansionModule,
-	MatSortModule,
-	MAT_FORM_FIELD_DEFAULT_OPTIONS,
-	MatFormFieldDefaultOptions
-} from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MAT_FORM_FIELD_DEFAULT_OPTIONS, MatFormFieldDefaultOptions } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSortModule } from '@angular/material/sort';
+import { MatStepperModule } from '@angular/material/stepper';
+import { MatTableModule } from '@angular/material/table';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { FlexLayoutModule } from '@angular/flex-layout';
 
 // Interceptors

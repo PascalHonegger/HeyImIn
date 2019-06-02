@@ -8,7 +8,7 @@ import {
 
 import { Observable, Subject } from 'rxjs';
 import { finalize, map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { LoadingDialogComponent } from '../loading-dialog/loading-dialog.component';
 
 /**

@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { MatSnackBar, MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../shared/services/auth.service';
 import { ParticipateEventClient } from '../../shared/backend-clients/participate-event.client';

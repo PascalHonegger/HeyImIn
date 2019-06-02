@@ -1,5 +1,6 @@
 import { Component, AfterViewInit, ViewChild, Input, EventEmitter, Output, ChangeDetectionStrategy } from '@angular/core';
-import { MatTableDataSource, MatSort } from '@angular/material';
+import { MatSort } from '@angular/material/sort';
+import { MatTableDataSource } from '@angular/material/table';
 import { AuthService } from '../../shared/services/auth.service';
 import { AppointmentParticipationInformation } from '../../shared/server-model/appointment-participation-information.model';
 import { UserInformation } from '../../shared/server-model/user-information.model';

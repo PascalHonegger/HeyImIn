@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { MatSelectModule } from '@angular/material';
+import { MatSelectModule } from '@angular/material/select';
 
 // Dialogs
 import { AddAppointmentsDialogComponent } from './add-appointments-dialog/add-appointments-dialog.component';
