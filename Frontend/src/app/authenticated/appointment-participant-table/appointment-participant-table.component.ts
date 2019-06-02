@@ -13,7 +13,7 @@ import { AppointmentDetails } from '../../shared/server-model/appointment-detail
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppointmentParticipantTableComponent implements AfterViewInit {
-	@ViewChild(MatSort)
+	@ViewChild(MatSort, { static: false })
 	public sort: MatSort;
 
 	public displayedColumns = ['name', 'response'];
@@ -34,7 +34,6 @@ export class AppointmentParticipantTableComponent implements AfterViewInit {
 	public set eventParticipants(v: ReadonlyArray<UserInformation>) {
 		this._eventParticipants = v;
 		this.dataSource = new MatTableDataSource(v.slice());
-		this.dataSource.sort = this.sort;
 	}
 	public get eventParticipants(): ReadonlyArray<UserInformation> {
 		return this._eventParticipants;
