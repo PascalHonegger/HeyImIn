@@ -10,7 +10,7 @@ import { UserInformation } from '../../shared/server-model/user-information.mode
 	templateUrl: './manage-event-participants-table.component.html'
 })
 export class ManageEventParticipantsTableComponent implements AfterViewInit {
-	@ViewChild(MatSort)
+	@ViewChild(MatSort, { static: false })
 	public sort: MatSort;
 
 	public displayedColumns = ['name', 'email', 'action'];
@@ -28,7 +28,6 @@ export class ManageEventParticipantsTableComponent implements AfterViewInit {
 	public set participants(participants: UserInformation[]) {
 		this._participants = participants;
 		this.dataSource = new MatTableDataSource(participants);
-		this.dataSource.sort = this.sort;
 	}
 	public get participants(): UserInformation[] {
 		return this._participants;
