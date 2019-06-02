@@ -4,7 +4,7 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { Link } from './link.model';
 import { UpdateService } from '../services/update.service';
 import { Observable } from 'rxjs';
-import { MatSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { tap } from 'rxjs/operators';
 
 @Component({

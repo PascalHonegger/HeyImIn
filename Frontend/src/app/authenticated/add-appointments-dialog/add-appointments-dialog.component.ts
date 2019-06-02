@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { MatDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material/dialog';
 import { startOfHour, addDays, parse, lightFormat } from 'date-fns';
 import { FormControl, Validators } from '@angular/forms';
 

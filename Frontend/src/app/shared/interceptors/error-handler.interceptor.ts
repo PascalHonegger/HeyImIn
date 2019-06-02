@@ -7,7 +7,8 @@ import {
 	HttpErrorResponse
 } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { MatDialog, MatDialogRef, MatSnackBar } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';

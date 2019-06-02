@@ -1,7 +1,7 @@
 import { Component, ViewChild, ChangeDetectionStrategy, } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Constants } from '../../shared/constants';
-import { MatStepper } from '@angular/material';
+import { MatStepper } from '@angular/material/stepper';
 import { ResetPasswordClient } from '../../shared/backend-clients/reset-password.client';
 
 @Component({
