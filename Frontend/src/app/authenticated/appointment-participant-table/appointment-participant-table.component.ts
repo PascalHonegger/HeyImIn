@@ -30,18 +30,18 @@ export class AppointmentParticipantTableComponent implements AfterViewInit {
 	@Input()
 	public isOrganizingEvent: boolean;
 
-	private _eventParticipants: ReadonlyArray<UserInformation>;
+	private _eventParticipants: readonly UserInformation[];
 	@Input()
-	public set eventParticipants(v: ReadonlyArray<UserInformation>) {
+	public set eventParticipants(v: readonly UserInformation[]) {
 		this._eventParticipants = v;
 		this.dataSource = new MatTableDataSource(v.slice());
 	}
-	public get eventParticipants(): ReadonlyArray<UserInformation> {
+	public get eventParticipants(): readonly UserInformation[] {
 		return this._eventParticipants;
 	}
 
 	@Input()
-	public givenAnswers: ReadonlyArray<AppointmentParticipationInformation>;
+	public givenAnswers: readonly AppointmentParticipationInformation[];
 
 	public currentUserId: number;
 

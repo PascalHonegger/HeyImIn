@@ -13,7 +13,7 @@ import { EventOverviewInformation } from '../../shared/server-model/event-overvi
 })
 export class EventsOverviewListComponent extends DetailOverviewBase {
 	@Input()
-	public events: EventOverviewInformation[] = [];
+	public events: readonly EventOverviewInformation[] = [];
 
 	@Output()
 	public eventChanged: EventEmitter<any> = new EventEmitter();

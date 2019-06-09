@@ -3,5 +3,5 @@
 export interface AppointmentDetails {
 	appointmentId: number;
 	startTime: Date;
-	participations: ReadonlyArray<AppointmentParticipationInformation>;
+	participations: readonly AppointmentParticipationInformation[];
 }

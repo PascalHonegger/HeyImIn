@@ -1,6 +1,6 @@
 ﻿import { EventOverviewInformation } from './event-overview-information.model';
 
 export interface EventOverview {
-	yourEvents: ReadonlyArray<EventOverviewInformation>;
-	publicEvents: ReadonlyArray<EventOverviewInformation>;
+	yourEvents: readonly EventOverviewInformation[];
+	publicEvents: readonly EventOverviewInformation[];
 }

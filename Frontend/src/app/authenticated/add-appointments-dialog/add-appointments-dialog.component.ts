@@ -19,7 +19,7 @@ export class AddAppointmentsDialogComponent {
 	public readonly datesCtrl = new FormControl('',
 		[Validators.required, Validators.pattern(AddAppointmentsDialogComponent.multiLineRegexPattern)]);
 
-	constructor(private dialogRef: MatDialogRef<AddAppointmentsDialogComponent, Date[]>) {
+	constructor(private dialogRef: MatDialogRef<AddAppointmentsDialogComponent, readonly Date[]>) {
 		const tomorrow = addDays(new Date(), 1);
 		const withNiceTime = startOfHour(tomorrow);
 		this.exampleDate = lightFormat(withNiceTime, AddAppointmentsDialogComponent.dateFormat);

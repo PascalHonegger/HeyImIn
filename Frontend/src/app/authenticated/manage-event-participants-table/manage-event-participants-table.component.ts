@@ -25,13 +25,13 @@ export class ManageEventParticipantsTableComponent implements AfterViewInit {
 	@Input()
 	public eventId: number;
 
-	private _participants: UserInformation[];
+	private _participants: readonly UserInformation[];
 	@Input()
-	public set participants(participants: UserInformation[]) {
+	public set participants(participants: readonly UserInformation[]) {
 		this._participants = participants;
-		this.dataSource = new MatTableDataSource(participants);
+		this.dataSource = new MatTableDataSource([...participants]);
 	}
-	public get participants(): UserInformation[] {
+	public get participants(): readonly UserInformation[] {
 		return this._participants;
 	}
 

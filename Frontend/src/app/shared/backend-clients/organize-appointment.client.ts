@@ -16,7 +16,7 @@ export class OrganizeAppointmentClient extends ServerClientBase {
 		});
 	}
 
-	public addAppointments(eventId: number, startTimes: ReadonlyArray<Date | string>) {
+	public addAppointments(eventId: number, startTimes: readonly (Date | string)[]) {
 		return this.httpClient.post<void>(this.baseUrl + '/AddAppointments', { eventId, startTimes });
 	}
 
