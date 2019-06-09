@@ -5,6 +5,10 @@
 		"module": "es2015",
 		"types": []
 	},
+	"angularCompilerOptions": {
+		"strictInjectionParameters": true,
+		"fullTemplateTypeCheck": true
+	},
 	"exclude": [
 		"src/test.ts",
 		"**/*.spec.ts"

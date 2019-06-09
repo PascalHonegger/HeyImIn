@@ -18,7 +18,7 @@ export class EventChatComponent implements OnInit {
 	@Input()
 	public eventId: number;
 
-	public chatMessages = new BehaviorSubject<ReadonlyArray<EventChatMessage>>([]);
+	public chatMessages = new BehaviorSubject<readonly EventChatMessage[]>([]);
 	public hasMoreMessages = new BehaviorSubject(false);
 	public chatMessageCtrl = new FormControl('', [Validators.maxLength(Constants.chatMessageMaxLength)]);
 	public userList$ = new BehaviorSubject<UserInformation[]>([]);
@@ -75,7 +75,7 @@ export class EventChatComponent implements OnInit {
 		});
 	}
 
-	private updateAuthorInformation(authorInformation: ReadonlyArray<UserInformation>) {
+	private updateAuthorInformation(authorInformation: readonly UserInformation[]) {
 		const currentList = this.userList$.value;
 		const newInformation = authorInformation.filter((author, index) =>
 			authorInformation.indexOf(author) === index && currentList.every(u => u.userId !== author.userId));

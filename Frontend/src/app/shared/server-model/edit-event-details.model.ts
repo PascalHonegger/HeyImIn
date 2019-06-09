@@ -4,6 +4,6 @@ import { UserInformation } from './user-information.model';
 
 export interface EditEventDetails {
 	information: GeneralEventInformation;
-	upcomingAppointments: ReadonlyArray<AppointmentDetails>;
-	participants: ReadonlyArray<UserInformation>;
+	upcomingAppointments: readonly AppointmentDetails[];
+	participants: readonly UserInformation[];
 }

@@ -21,9 +21,5 @@
 			"es2017",
 			"dom"
 		]
-	},
-	"angularCompilerOptions": {
-		"strictInjectionParameters": true,
-		"fullTemplateTypeCheck": true
-	},
+	}
 }

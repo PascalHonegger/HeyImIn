@@ -13,5 +13,5 @@ export class ChangeOrganizerDialogComponent {
 }
 
 export interface ChangeOrganizerDialogParameter {
-	participants: ReadonlyArray<UserInformation>;
+	participants: readonly UserInformation[];
 }

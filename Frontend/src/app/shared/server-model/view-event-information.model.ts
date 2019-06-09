@@ -3,5 +3,5 @@ import { UserInformation } from './user-information.model';
 
 export interface ViewEventInformation extends GeneralEventInformation {
 	organizer: UserInformation;
-	participants: ReadonlyArray<UserInformation>;
+	participants: readonly UserInformation[];
 }

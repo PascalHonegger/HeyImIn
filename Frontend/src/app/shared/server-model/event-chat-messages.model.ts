@@ -2,7 +2,7 @@
 import { UserInformation } from './user-information.model';
 
 export interface EventChatMessages {
-	messages: ReadonlyArray<EventChatMessage>;
+	messages: readonly EventChatMessage[];
 	possiblyMoreMessages: boolean;
-	authorInformations: ReadonlyArray<UserInformation>;
+	authorInformations: readonly UserInformation[];
 }

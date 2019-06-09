@@ -4,6 +4,6 @@ import { NotificationConfiguration } from './notification-configuration.model';
 
 export interface EventDetails {
 	information: ViewEventInformation;
-	upcomingAppointments: ReadonlyArray<AppointmentDetails>;
+	upcomingAppointments: readonly AppointmentDetails[];
 	notificationConfigurationResponse: NotificationConfiguration;
 }

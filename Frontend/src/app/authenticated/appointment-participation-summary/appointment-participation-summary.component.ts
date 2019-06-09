@@ -11,10 +11,10 @@ import { AppointmentParticipationInformation } from '../../shared/server-model/a
 })
 export class AppointmentParticipationSummaryComponent implements OnChanges {
 	@Input()
-	public eventParticipants: ReadonlyArray<UserInformation>;
+	public eventParticipants: readonly UserInformation[];
 
 	@Input()
-	public givenAnswers: AppointmentParticipationInformation[];
+	public givenAnswers: readonly AppointmentParticipationInformation[];
 
 	@Input()
 	public orientation = 'column';
