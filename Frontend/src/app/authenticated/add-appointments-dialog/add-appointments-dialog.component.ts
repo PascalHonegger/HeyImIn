@@ -13,7 +13,7 @@ export class AddAppointmentsDialogComponent {
 	private static readonly regexPattern = new RegExp(AddAppointmentsDialogComponent.datePattern, 'g');
 	private static readonly multiLineRegexPattern = new RegExp(`^(${AddAppointmentsDialogComponent.datePattern}\\s?)+$`);
 
-	private static readonly dateFormat = 'dd.MM.yyyy HH:mm';
+	private static readonly dateFormat = "dd.MM.yyyy' 'HH:mm";
 
 	public readonly exampleDate: string;
 	public readonly datesCtrl = new FormControl('',
