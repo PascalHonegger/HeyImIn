@@ -49,7 +49,7 @@ export class ManageEventParticipantsTableComponent implements AfterViewInit {
 				closeOnNavigation: true
 			}).afterClosed().toPromise();
 
-			if (result) {
+		if (result) {
 				this.participateEventServer.removeFromEvent(this.eventId, participantId).subscribe(
 					() => this.removedParticipant.emit()
 				);

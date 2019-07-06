@@ -11,7 +11,7 @@ export class AcceptInviteComponent {
 
 	constructor(server: InviteToEventClient, route: ActivatedRoute, router: Router) {
 		route.params.subscribe(params => {
-			const token = params['token'];
+			const token = params.token;
 			this.messageToDisplay = 'Einladung wird angenommen...';
 			server.acceptInvitation(token).subscribe(
 				id => {

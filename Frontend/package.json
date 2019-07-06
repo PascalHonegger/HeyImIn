@@ -14,8 +14,9 @@
     "e2e": "ng e2e",
     "deploy": "ng build --prod --output-path=../Backend/WebApplication/wwwroot",
     "stats:dev": "ng build --stats-json && npm run analyzer",
-    "stats:prod": "ng build --prod --stats-json && npm run analyzer",
-    "analyzer": ".\\node_modules\\.bin\\webpack-bundle-analyzer dist/hey-im-in/stats.json"
+    "stats:prod": "ng build --prod --stats-json && npm run analyzer:es2015",
+    "analyzer:es5": ".\\node_modules\\.bin\\webpack-bundle-analyzer dist/hey-im-in/stats-es5.json",
+    "analyzer:es2015": ".\\node_modules\\.bin\\webpack-bundle-analyzer dist/hey-im-in/stats-es2015.json"
   },
   "dependencies": {
     "@angular/animations": "^8.1.0",

@@ -35,7 +35,7 @@ export class ViewEventComponent extends DetailOverviewBase {
 				authService: AuthService,
 				route: ActivatedRoute) {
 					super(eventServer, dialog, authService);
-					route.params.subscribe(params => this.eventId = +params['id']);
+					route.params.subscribe(params => this.eventId = +params.id);
 				}
 
 	public getAppointmentId(_index: number, appointment: AppointmentDetails) {
