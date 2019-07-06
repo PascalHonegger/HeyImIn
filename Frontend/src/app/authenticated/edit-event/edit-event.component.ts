@@ -42,7 +42,7 @@ export class EditEventComponent {
 				private router: Router,
 				private dialog: MatDialog,
 				route: ActivatedRoute) {
-					route.params.subscribe(params => this.eventId = +params['id']);
+					route.params.subscribe(params => this.eventId = +params.id);
 				}
 
 	public getAppointmentId(_index: number, appointment: AppointmentDetails) {
@@ -123,7 +123,7 @@ export class EditEventComponent {
 				closeOnNavigation: true
 			}).afterClosed().toPromise();
 
-			if (result) {
+		if (result) {
 				this.organizeAppointmentServer.deleteAppointment(appointmentId).subscribe(
 					() => {
 						// Remove appointment from local list
