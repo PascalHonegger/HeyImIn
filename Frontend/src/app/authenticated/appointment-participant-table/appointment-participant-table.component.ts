@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ViewChild, Input, EventEmitter, Output, ChangeDetectionStrategy } from '@angular/core';
+import { Component, ViewChild, Input, EventEmitter, Output, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { AuthService } from '../../shared/services/auth.service';
@@ -13,12 +13,12 @@ import { AppointmentDetails } from '../../shared/server-model/appointment-detail
 	templateUrl: './appointment-participant-table.component.html',
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AppointmentParticipantTableComponent implements AfterViewInit {
-	@ViewChild(MatSort, { static: false })
+export class AppointmentParticipantTableComponent implements OnInit {
+	@ViewChild(MatSort, { static: true })
 	public sort: MatSort;
 
 	public displayedColumns = ['name', 'response'];
-	public dataSource: MatTableDataSource<UserInformation>;
+	public dataSource = new MatTableDataSource<UserInformation>();
 
 	// Forwards change event from appointment-participation
 	@Output()
@@ -34,7 +34,7 @@ export class AppointmentParticipantTableComponent implements AfterViewInit {
 	@Input()
 	public set eventParticipants(v: readonly UserInformation[]) {
 		this._eventParticipants = v;
-		this.dataSource = new MatTableDataSource(v.slice());
+		this.dataSource.data = [...v];
 	}
 	public get eventParticipants(): readonly UserInformation[] {
 		return this._eventParticipants;
@@ -66,9 +66,7 @@ export class AppointmentParticipantTableComponent implements AfterViewInit {
 	 * Set the sort after the view init since this component will
 	 * be able to query its view for the initialized sort.
 	 */
-	public ngAfterViewInit() {
-		if (this.dataSource) {
-			this.dataSource.sort = this.sort;
-		}
+	public ngOnInit() {
+		this.dataSource.sort = this.sort;
 	}
 }

@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ViewChild, Input, EventEmitter, Output } from '@angular/core';
+import { Component, ViewChild, Input, EventEmitter, Output, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -11,12 +11,12 @@ import { UserInformation } from '../../shared/server-model/user-information.mode
 	styleUrls: ['./manage-event-participants-table.component.scss'],
 	templateUrl: './manage-event-participants-table.component.html'
 })
-export class ManageEventParticipantsTableComponent implements AfterViewInit {
-	@ViewChild(MatSort, { static: false })
+export class ManageEventParticipantsTableComponent implements OnInit {
+	@ViewChild(MatSort, { static: true })
 	public sort: MatSort;
 
 	public displayedColumns = ['name', 'email', 'action'];
-	public dataSource: MatTableDataSource<UserInformation>;
+	public dataSource = new MatTableDataSource<UserInformation>();
 
 	// Forwards change event from appointment-participation
 	@Output()
@@ -29,7 +29,7 @@ export class ManageEventParticipantsTableComponent implements AfterViewInit {
 	@Input()
 	public set participants(participants: readonly UserInformation[]) {
 		this._participants = participants;
-		this.dataSource = new MatTableDataSource([...participants]);
+		this.dataSource.data = [...participants];
 	}
 	public get participants(): readonly UserInformation[] {
 		return this._participants;
@@ -60,9 +60,7 @@ export class ManageEventParticipantsTableComponent implements AfterViewInit {
 	 * Set the sort after the view init since this component will
 	 * be able to query its view for the initialized sort.
 	 */
-	public ngAfterViewInit() {
-		if (this.dataSource) {
-			this.dataSource.sort = this.sort;
-		}
+	public ngOnInit() {
+		this.dataSource.sort = this.sort;
 	}
 }
