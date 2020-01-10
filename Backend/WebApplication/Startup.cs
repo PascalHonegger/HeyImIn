@@ -1,10 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.IO;
-using System.Threading.Tasks;
-using HeyImIn.Authentication;
+﻿using HeyImIn.Authentication;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Context.Impl;
 using HeyImIn.MailNotifier;
@@ -22,10 +16,16 @@ using Microsoft.AspNetCore.Mvc.Versioning;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using SendGrid;
+using System;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.IO;
+using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace HeyImIn.WebApplication
 {
@@ -48,20 +48,16 @@ namespace HeyImIn.WebApplication
 			// Add global filters / attributes
 			services
 				.AddMvc(options => { options.Filters.Add(new LogActionAttribute()); })
-				.SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+				.SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
 				.AddJsonOptions(options =>
 				{
 					// Frontend expects property names to be camelCase and vice versa
-					options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
 #if DEBUG
 					// In debug pretty print the JSON
-					options.SerializerSettings.Formatting = Formatting.Indented;
+					options.JsonSerializerOptions.WriteIndented = true;
 #endif
-					options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-					// Convert all times to UTC
-					options.SerializerSettings.DateTimeZoneHandling = DateTimeZoneHandling.Utc;
-					options.SerializerSettings.DateParseHandling = DateParseHandling.DateTime;
-					options.SerializerSettings.DateFormatHandling = DateFormatHandling.IsoDateFormat;
+					options.JsonSerializerOptions.IgnoreNullValues = true;
+					options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 				});
 
 			services.AddApiVersioning(
@@ -96,7 +92,7 @@ namespace HeyImIn.WebApplication
 			// Register custom types
 			services
 				.AddSingleton(c => configuration)
-				.AddSingleton<Microsoft.Extensions.Hosting.IHostedService, CronBackgroundService>()
+				.AddSingleton<IHostedService, CronBackgroundService>()
 				.AddScoped<IDatabaseContext, HeyImInDatabaseContext>() // Redirect interface to class
 				.AddTransient<ISendGridClient>(c => new SendGridClient(sendGridApiKey))
 				.AddTransient<ICronService, CronSendReminderAndSummaryService>()
@@ -105,7 +101,7 @@ namespace HeyImIn.WebApplication
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-		public void Configure(IApplicationBuilder app, IApplicationLifetime lifetime, IHostingEnvironment env, ILoggerFactory loggerFactory, GetDatabaseContext contextFunc)
+		public void Configure(IApplicationBuilder app, IHostApplicationLifetime lifetime, IWebHostEnvironment env, ILoggerFactory loggerFactory, GetDatabaseContext contextFunc)
 		{
 			// Ensure swiss german date format is used
 			var cultureInfo = new CultureInfo("de-CH");
@@ -133,18 +129,17 @@ namespace HeyImIn.WebApplication
 			lifetime.ApplicationStopping.Register(LogStopping);
 			lifetime.ApplicationStopped.Register(LogStopped);
 
-			app.UseResponseCompression();
-			app.UseMvc();
-
-			// Map Website-calls to the frontend routing
-			app.MapWhen(route => !route.Request.Path.Value.StartsWith("/api"), context =>
-			{
-				context.UseStaticFiles();
-				context.UseMvc(routes => routes.MapSpaFallbackRoute("angular", new { controller = "Home", action = "Index" }));
-			});
+			app
+				.UseResponseCompression()
+				.UseRouting()
+				.UseFileServer()
+				.UseEndpoints(endpoints =>
+				{
+					endpoints.MapControllers();
+				});
 		}
 
-		private static void ConfigureLog4Net(IHostingEnvironment env, ILoggerFactory loggerFactory)
+		private static void ConfigureLog4Net(IHostEnvironment env, ILoggerFactory loggerFactory)
 		{
 			// The mapping to the log4net.conf file is done through the AssemblyInfo.cs
 
@@ -170,7 +165,7 @@ namespace HeyImIn.WebApplication
 
 		private static void LogStarted()
 		{
-			Version currentVersion = typeof(Startup).Assembly.GetName().Version;
+			Version currentVersion = typeof(Startup).Assembly.GetName().Version ?? new Version();
 			_logger.LogInformation("{0}(): {1}", nameof(LogStarted), StartEndPrefix);
 			_logger.LogInformation("{0}(): {1} Started at version {2}", nameof(LogStarted), StartEndPrefix, currentVersion);
 			_logger.LogInformation("{0}(): {1}", nameof(LogStarted), StartEndPrefix);
@@ -204,6 +199,6 @@ namespace HeyImIn.WebApplication
 		private readonly IConfiguration _configuration;
 
 		private const string StartEndPrefix = ">>>>>>>>";
-		private static ILogger<Startup> _logger;
+		private static ILogger<Startup>? _logger;
 	}
 }
