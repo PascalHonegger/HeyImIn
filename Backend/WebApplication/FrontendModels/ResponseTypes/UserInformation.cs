@@ -2,7 +2,7 @@
 {
 	public class UserInformation
 	{
-		public UserInformation(int userId, string name, string email)
+		public UserInformation(int userId, string name, string? email)
 		{
 			UserId = userId;
 			Name = name;
@@ -13,6 +13,6 @@
 
 		public string Name { get; }
 
-		public string Email { get; }
+		public string? Email { get; }
 	}
 }

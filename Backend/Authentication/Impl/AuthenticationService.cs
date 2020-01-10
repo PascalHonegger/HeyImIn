@@ -15,7 +15,7 @@ namespace HeyImIn.Authentication.Impl
 			_logger = logger;
 		}
 
-		public async Task<(bool authenticated, User foundUser)> AuthenticateAsync(string email, string password)
+		public async Task<(bool authenticated, User? foundUser)> AuthenticateAsync(string email, string password)
 		{
 			IDatabaseContext context = _getDatabaseContext();
 			User foundUser = await context.Users.FirstOrDefaultAsync(u => u.Email == email);

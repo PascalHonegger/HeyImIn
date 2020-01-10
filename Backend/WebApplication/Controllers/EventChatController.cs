@@ -57,8 +57,7 @@ namespace HeyImIn.WebApplication.Controllers
 			IQueryable<ChatMessage> chatMessagesQuery = context.ChatMessages
 				.Where(c => c.EventId == getChatMessagesDto.EventId);
 
-			bool providedAlreadyLoadedMessageSentDate = getChatMessagesDto.EarliestLoadedMessageSentDate.HasValue;
-			if (providedAlreadyLoadedMessageSentDate)
+			if (getChatMessagesDto.EarliestLoadedMessageSentDate != null)
 			{
 				DateTime dateValue = getChatMessagesDto.EarliestLoadedMessageSentDate.Value;
 
@@ -71,7 +70,7 @@ namespace HeyImIn.WebApplication.Controllers
 				.Select(m => new EventChatMessage(m.Id, m.AuthorId, m.Content, m.SentDate))
 				.ToListAsync();
 
-			if (!providedAlreadyLoadedMessageSentDate)
+			if (getChatMessagesDto.EarliestLoadedMessageSentDate == null)
 			{
 				DateTime? lastReadMessageSentDate = eventChatMessages.FirstOrDefault()?.SentDate;
 

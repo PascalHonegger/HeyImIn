@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using System.Threading.Tasks;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
@@ -13,7 +12,7 @@ namespace HeyImIn.WebApplication.Helpers
 		// Wrapper for SessionToken property
 		public static Guid? TryGetSessionToken(this HttpContext requestMessage)
 		{
-			if (requestMessage.Items.TryGetValue(SessionTokenPropertiesKey, out object sessionToken))
+			if (requestMessage.Items.TryGetValue(SessionTokenPropertiesKey, out object? sessionToken))
 			{
 				return sessionToken as Guid?;
 			}
@@ -34,7 +33,7 @@ namespace HeyImIn.WebApplication.Helpers
 		// Wrapper for UserId property
 		public static int? TryGetUserId(this HttpContext requestMessage)
 		{
-			if (requestMessage.Items.TryGetValue(UserIdPropertiesKey, out object userId))
+			if (requestMessage.Items.TryGetValue(UserIdPropertiesKey, out object? userId))
 			{
 				return userId as int?;
 			}
@@ -76,6 +75,6 @@ namespace HeyImIn.WebApplication.Helpers
 		private const string UserIdPropertiesKey = "UserId";
 		private const string SessionTokenPropertiesKey = "SessionToken";
 
-		private static readonly ILog _log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
+		private static readonly ILog _log = LogManager.GetLogger(typeof(HttpActionExtensions));
 	}
 }

@@ -18,10 +18,10 @@ namespace HeyImIn.Authentication.Impl
 			_logger = logger;
 		}
 
-		public async Task<Session> GetAndExtendSessionAsync(Guid token)
+		public async Task<Session?> GetAndExtendSessionAsync(Guid token)
 		{
 			IDatabaseContext context = _getDatabaseContext();
-			Session session = await context.Sessions.FindAsync(token);
+			Session? session = await context.Sessions.FindAsync(token);
 
 			if ((session == null) || !IsValidSession(session))
 			{
