@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27130.2036
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 15.0.27130.2036
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApplication", "WebApplication\WebApplication.csproj", "{3D87D935-2CB1-484C-BC04-FDD8CFB31DF1}"
 EndProject
@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Shared.Tests", "Shared.Test
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApplication.Tests", "WebApplication.Tests\WebApplication.Tests.csproj", "{CB845B87-0471-4CB8-8864-72EFB67D7AFB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MailNotifier.Tests", "MailNotifier.Tests\MailNotifier.Tests.csproj", "{26B7973A-79FE-4103-88E3-27E70299B908}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MailNotifier.Tests", "MailNotifier.Tests\MailNotifier.Tests.csproj", "{26B7973A-79FE-4103-88E3-27E70299B908}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
