@@ -5,6 +5,7 @@
     <AssemblyName>HeyImIn.MailNotifier</AssemblyName>
     <RootNamespace>HeyImIn.MailNotifier</RootNamespace>
     <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

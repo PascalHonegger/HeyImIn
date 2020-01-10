@@ -5,6 +5,7 @@
     <AssemblyName>HeyImIn.Shared</AssemblyName>
     <RootNamespace>HeyImIn.Shared</RootNamespace>
     <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>

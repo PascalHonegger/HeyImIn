@@ -5,6 +5,7 @@
     <AssemblyName>HeyImIn.Authentication</AssemblyName>
     <RootNamespace>HeyImIn.Authentication</RootNamespace>
     <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
