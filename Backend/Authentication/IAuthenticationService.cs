@@ -16,6 +16,6 @@ namespace HeyImIn.Authentication
 		/// <param name="email"></param>
 		/// <param name="password"></param>
 		/// <returns></returns>
-		Task<(bool authenticated, User foundUser)> AuthenticateAsync(string email, string password);
+		Task<(bool authenticated, User? foundUser)> AuthenticateAsync(string email, string password);
 	}
 }

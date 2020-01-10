@@ -17,7 +17,7 @@ namespace HeyImIn.Authentication
 		///     <see cref="Session.Token" />
 		/// </param>
 		/// <returns>Found session or null</returns>
-		Task<Session> GetAndExtendSessionAsync(Guid token);
+		Task<Session?> GetAndExtendSessionAsync(Guid token);
 
 		/// <summary>
 		///     Creates a new session for a user

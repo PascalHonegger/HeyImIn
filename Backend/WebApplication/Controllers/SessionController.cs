@@ -38,14 +38,14 @@ namespace HeyImIn.WebApplication.Controllers
 		[AllowAnonymous]
 		public async Task<IActionResult> StartSession(StartSessionDto startSessionDto)
 		{
-			(bool authenticated, User foundUser) = await _authenticationService.AuthenticateAsync(startSessionDto.Email, startSessionDto.Password);
+			(bool authenticated, User? foundUser) = await _authenticationService.AuthenticateAsync(startSessionDto.Email, startSessionDto.Password);
 
 			if (!authenticated)
 			{
 				return Unauthorized();
 			}
 
-			Guid sessionToken = await _sessionService.CreateSessionAsync(foundUser.Id, true);
+			Guid sessionToken = await _sessionService.CreateSessionAsync(foundUser!.Id, true);
 
 			_auditLogger.LogInformation("{0}(userId={1}): User logged in", nameof(StartSession), foundUser.Id);
 
@@ -62,7 +62,7 @@ namespace HeyImIn.WebApplication.Controllers
 		[AllowAnonymous]
 		public async Task<IActionResult> GetSession(Guid sessionToken)
 		{
-			Session session = await _sessionService.GetAndExtendSessionAsync(sessionToken);
+			Session? session = await _sessionService.GetAndExtendSessionAsync(sessionToken);
 
 			if (session == null)
 			{

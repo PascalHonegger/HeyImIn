@@ -34,7 +34,7 @@ namespace HeyImIn.WebApplication.WebApiComponents
 				string token = rawSessionToken.First();
 				if (!string.IsNullOrEmpty(token) && Guid.TryParse(token, out Guid parsedToken))
 				{
-					Session session = await SessionService.GetAndExtendSessionAsync(parsedToken);
+					Session? session = await SessionService.GetAndExtendSessionAsync(parsedToken);
 
 					if (session != null)
 					{

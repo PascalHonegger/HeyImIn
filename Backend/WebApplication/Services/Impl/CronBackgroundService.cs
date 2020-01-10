@@ -135,7 +135,7 @@ namespace HeyImIn.WebApplication.Services.Impl
 
 		private readonly ILogger<CronBackgroundService> _logger;
 
-		private Task _executingTask;
+		private Task? _executingTask;
 		private readonly CancellationTokenSource _stoppingCts = new CancellationTokenSource();
 		private readonly TimeSpan _cronHandlerTimeSpan;
 	}
