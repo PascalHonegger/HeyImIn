@@ -11,7 +11,7 @@ namespace HeyImIn.Shared
 	[SuppressMessage("ReSharper", "AutoPropertyCanBeMadeGetOnly.Global")]
 	public class HeyImInConfiguration
 	{
-		public string FrontendBaseUrl { get; set; } = "https://hey-im-in.azurewebsites.net/#/";
+		public Uri FrontendBaseUrl { get; set; } = new Uri("https://hey-im-in.azurewebsites.net/#/", UriKind.Absolute);
 
 		public string MailTimeZoneName { get; set; } = "W. Europe Standard Time";
 

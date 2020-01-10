@@ -105,7 +105,7 @@ namespace HeyImIn.MailNotifier.Impl
 		/// <summary>
 		///     The url being referred to within emails
 		/// </summary>
-		private readonly string _baseWebUrl;
+		private readonly Uri _baseWebUrl;
 
 		private readonly ISessionService _sessionService;
 		private readonly TimeZoneInfo _mailTimeZone;
