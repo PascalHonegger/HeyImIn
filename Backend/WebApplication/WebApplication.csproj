@@ -1,13 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <AssemblyName>HeyImIn.WebApplication</AssemblyName>
     <RootNamespace>HeyImIn.WebApplication</RootNamespace>
     <Version>2.2.0</Version>
     <PackageId>HeyImIn</PackageId>
     <Authors>Pascal Honegger</Authors>
-    <Company>Atos AG</Company>
     <Product>Hey, I'm in</Product>
     <PackageProjectUrl></PackageProjectUrl>
     <RepositoryUrl>https://github.com/PascalHonegger/HeyImIn</RepositoryUrl>
@@ -20,10 +19,9 @@
 
   <ItemGroup>
     <PackageReference Include="log4net" Version="2.0.8" />
-    <PackageReference Include="Microsoft.AspNetCore.App" Version="" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="3.1.2" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="2.2.11" />
-    <PackageReference Include="Scrutor" Version="3.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="4.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Log4Net.AspNetCore" Version="3.0.3" />
+    <PackageReference Include="Scrutor" Version="3.1.0" />
   </ItemGroup>
 
   <ItemGroup>
