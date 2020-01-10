@@ -61,7 +61,17 @@ namespace HeyImIn.WebApplication.Services.Impl
 
 		public void Dispose()
 		{
-			_stoppingCts.Cancel();
+			Dispose(true);
+			GC.SuppressFinalize(this);
+		}
+
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				_stoppingCts.Cancel();
+				_stoppingCts.Dispose();
+			}
 		}
 
 		/// <summary>
