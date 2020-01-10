@@ -15,6 +15,7 @@ namespace HeyImIn.WebApplication.WebApiComponents
 	///     Authenticates the user and calls <see cref="HttpActionExtensions.SetUserId" /> &
 	///     <see cref="HttpActionExtensions.SetSessionToken" />
 	/// </summary>
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 	public class AuthenticateUserAttribute : Attribute, IAsyncAuthorizationFilter, IFilterFactory
 	{
 		public AuthenticateUserAttribute()
