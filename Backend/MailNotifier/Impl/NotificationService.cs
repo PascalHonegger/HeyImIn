@@ -206,7 +206,7 @@ Sie können den betroffenen Event unter {_baseWebUrl}ViewEvent/{@event.Id}{authT
 						state = "noch keine Antwort gegeben";
 						break;
 					default:
-						throw new ArgumentOutOfRangeException();
+						throw new ArgumentOutOfRangeException(nameof(appointment));
 				}
 
 				string message = await ComposeMessageAsync(appointmentParticipation.Participant, state);
