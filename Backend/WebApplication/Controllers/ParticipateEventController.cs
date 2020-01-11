@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using HeyImIn.Database.Context;
 using HeyImIn.Database.Models;
@@ -48,9 +47,59 @@ namespace HeyImIn.WebApplication.Controllers
 
 			int currentUserId = HttpContext.GetUserId();
 
-			List<EventOverviewInformation> yourEvents = await GetAndFilterEvents(
-				e => (e.OrganizerId == currentUserId) || e.EventParticipations.Select(ep => ep.ParticipantId).Contains(currentUserId));
-			List<EventOverviewInformation> publicEvents = await GetAndFilterEvents(e => !e.IsPrivate && (e.OrganizerId != currentUserId) && !e.EventParticipations.Select(ep => ep.ParticipantId).Contains(currentUserId));
+			var futureAppointments = await context.Appointments
+				.Include(a => a.AppointmentParticipations)
+				.Where(a => a.StartTime >= DateTime.UtcNow)
+				.ToListAsync();
+			var latestAppointments = futureAppointments.GroupBy(a => a.EventId)
+				.ToDictionary(g => g.Key, g => g.OrderBy(a => a.StartTime).FirstOrDefault());
+
+			var events = await context.Events
+				.Where(e => !e.IsPrivate
+							|| (e.OrganizerId == currentUserId)
+							|| e.EventParticipations.Select(ep => ep.ParticipantId).Contains(currentUserId))
+				.Include(e => e.Organizer)
+				.Include(e => e.EventParticipations)
+					.ThenInclude(ep => ep.Participant)
+				.ToListAsync();
+
+			var yourEvents = new List<EventOverviewInformation>();
+			var publicEvents = new List<EventOverviewInformation>();
+
+			foreach (Event e in events)
+			{
+				var latestAppointment = latestAppointments.TryGetValue(e.Id, out Appointment? a) && a != null
+					? new AppointmentDetails(
+						a.Id,
+						a.StartTime,
+						a.AppointmentParticipations
+							.Select(ap => new AppointmentParticipationInformation(ap.ParticipantId, ap.AppointmentParticipationAnswer))
+							.ToList())
+					: null;
+
+				var overviewInformation = new EventOverviewInformation(
+					e.Id,
+					new ViewEventInformation(
+						e.MeetingPlace,
+						e.Description,
+						e.IsPrivate,
+						e.Title,
+						e.SummaryTimeWindowInHours,
+						e.ReminderTimeWindowInHours,
+						new UserInformation(e.OrganizerId, e.Organizer.FullName, null),
+						e.EventParticipations.Select(ep => new UserInformation(ep.ParticipantId, ep.Participant.FullName, null)).ToList()),
+					latestAppointment
+				);
+
+				if ((e.OrganizerId == currentUserId) || e.EventParticipations.Select(ep => ep.ParticipantId).Contains(currentUserId))
+				{
+					yourEvents.Add(overviewInformation);
+				}
+				else
+				{
+					publicEvents.Add(overviewInformation);
+				}
+			}
 
 			List<EventOverviewInformation> yourEventInformations = yourEvents
 				.OrderBy(e => e.LatestAppointmentDetails?.StartTime ?? DateTime.MaxValue)
@@ -60,35 +109,6 @@ namespace HeyImIn.WebApplication.Controllers
 				.ToList();
 
 			return Ok(new EventOverview(yourEventInformations, publicEventInformations));
-
-			async Task<List<EventOverviewInformation>> GetAndFilterEvents(Expression<Func<Event, bool>> eventFilter)
-			{
-				return await context.Events
-					.Where(eventFilter)
-					.Select(e => new EventOverviewInformation(
-						e.Id,
-						new ViewEventInformation(
-							e.MeetingPlace,
-							e.Description,
-							e.IsPrivate,
-							e.Title,
-							e.SummaryTimeWindowInHours,
-							e.ReminderTimeWindowInHours,
-							new UserInformation(e.OrganizerId, e.Organizer.FullName, null),
-							e.EventParticipations.Select(ep => new UserInformation(ep.ParticipantId, ep.Participant.FullName, null)).ToList()), 
-						e.Appointments
-							.Where(a => a.StartTime >= DateTime.UtcNow)
-							.OrderBy(a => a.StartTime)
-							.Select(a => new AppointmentDetails(
-								a.Id,
-								a.StartTime,
-								a.AppointmentParticipations
-									.Select(ap => new AppointmentParticipationInformation(ap.ParticipantId, ap.AppointmentParticipationAnswer))
-									.ToList()))
-							.FirstOrDefault()
-					))
-					.ToListAsync();
-			}
 		}
 
 		/// <summary>
@@ -165,7 +185,7 @@ namespace HeyImIn.WebApplication.Controllers
 		{
 			IDatabaseContext context = _getDatabaseContext();
 			{
-				Event @event = await context.Events
+				Event? @event = await context.Events
 					.Include(e => e.EventParticipations)
 					.FirstOrDefaultAsync(e => e.Id == joinEventDto.EventId);
 
@@ -222,7 +242,7 @@ namespace HeyImIn.WebApplication.Controllers
 				return BadRequest(RequestStringMessages.UserNotFound);
 			}
 
-			Event @event = await context.Events
+			Event? @event = await context.Events
 				.Include(e => e.Organizer)
 				.Include(e => e.EventParticipations)
 				.FirstOrDefaultAsync(e => e.Id == removeFromEventDto.EventId);
@@ -297,7 +317,7 @@ namespace HeyImIn.WebApplication.Controllers
 			IDatabaseContext context = _getDatabaseContext();
 			int currentUserId = HttpContext.GetUserId();
 
-			EventParticipation participation = await context.EventParticipations.FirstOrDefaultAsync(e => (e.EventId == notificationConfigurationDto.EventId) && (e.ParticipantId == currentUserId));
+			EventParticipation? participation = await context.EventParticipations.FirstOrDefaultAsync(e => (e.EventId == notificationConfigurationDto.EventId) && (e.ParticipantId == currentUserId));
 
 			if (participation == null)
 			{
