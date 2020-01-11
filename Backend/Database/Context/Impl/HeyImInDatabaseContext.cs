@@ -57,6 +57,7 @@ namespace HeyImIn.Database.Context.Impl
 			modelBuilder.Entity<Event>().HasMany(e => e.Appointments).WithOne(p => p.Event).OnDelete(DeleteBehavior.Restrict);
 
 			modelBuilder.Entity<Appointment>().HasMany(a => a.AppointmentParticipations).WithOne(p => p.Appointment).OnDelete(DeleteBehavior.Restrict);
+			modelBuilder.Entity<Appointment>().HasIndex(a => a.StartTime);
 
 			modelBuilder.Entity<AppointmentParticipation>().HasIndex(a => new { a.ParticipantId, a.AppointmentId }).IsUnique();
 
