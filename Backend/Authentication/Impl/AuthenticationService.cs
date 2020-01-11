@@ -18,7 +18,7 @@ namespace HeyImIn.Authentication.Impl
 		public async Task<(bool authenticated, User? foundUser)> AuthenticateAsync(string email, string password)
 		{
 			IDatabaseContext context = _getDatabaseContext();
-			User foundUser = await context.Users.FirstOrDefaultAsync(u => u.Email == email);
+			User? foundUser = await context.Users.FirstOrDefaultAsync(u => u.Email == email);
 			if (foundUser == null)
 			{
 				_logger.LogInformation("{0}(): Failed authentication for not existing email {1}", nameof(AuthenticateAsync), email);

@@ -45,7 +45,7 @@ namespace HeyImIn.WebApplication.Controllers
 		public async Task<IActionResult> DeleteEvent(int eventId)
 		{
 			IDatabaseContext context = _getDatabaseContext();
-			Event @event = await context.Events
+			Event? @event = await context.Events
 				.Include(e => e.Organizer)
 				.Include(e => e.EventInvitations)
 				.Include(e => e.EventParticipations)
@@ -87,7 +87,7 @@ namespace HeyImIn.WebApplication.Controllers
 		public async Task<IActionResult> UpdateEventInfo(UpdatedEventInfoDto updatedEventInfoDto)
 		{
 			IDatabaseContext context = _getDatabaseContext();
-			Event @event = await context.Events
+			Event? @event = await context.Events
 				.Include(e => e.Organizer)
 				.Include(e => e.EventParticipations)
 					.ThenInclude(ep => ep.Participant)
@@ -130,7 +130,7 @@ namespace HeyImIn.WebApplication.Controllers
 		public async Task<IActionResult> ChangeOrganizer(ChangeOrganizerDto updatedEventInfoDto)
 		{
 			IDatabaseContext context = _getDatabaseContext();
-			Event @event = await context.Events
+			Event? @event = await context.Events
 				.Include(e => e.Organizer)
 				.Include(e => e.EventParticipations)
 					.ThenInclude(ep => ep.Participant)

@@ -37,7 +37,7 @@ namespace HeyImIn.WebApplication.Controllers
 		public async Task<IActionResult> InviteParticipants(InviteParticipantsDto inviteParticipantsDto)
 		{
 			IDatabaseContext context = _getDatabaseContext();
-			Event @event = await context.Events
+			Event? @event = await context.Events
 				.Include(e => e.Organizer)
 				.Include(e => e.EventInvitations)
 				.Include(e => e.EventParticipations)
@@ -73,7 +73,7 @@ namespace HeyImIn.WebApplication.Controllers
 				context.EventInvitations.Add(invite);
 
 				// Check if a profile with this email exists
-				User existingUser = await context.Users.FirstOrDefaultAsync(u => u.Email == emailAddress);
+				User? existingUser = await context.Users.FirstOrDefaultAsync(u => u.Email == emailAddress);
 
 				if (existingUser == null)
 				{
@@ -108,7 +108,7 @@ namespace HeyImIn.WebApplication.Controllers
 		public async Task<IActionResult> AcceptInvitation(AcceptInvitationDto acceptInvitationDto)
 		{
 			IDatabaseContext context = _getDatabaseContext();
-			EventInvitation invitation = await context.EventInvitations
+			EventInvitation? invitation = await context.EventInvitations
 				.Include(i => i.Event)
 					.ThenInclude(e => e.EventParticipations)
 				.FirstOrDefaultAsync(i => i.Token == acceptInvitationDto.InviteToken);
