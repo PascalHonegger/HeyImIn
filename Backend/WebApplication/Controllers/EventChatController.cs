@@ -47,7 +47,7 @@ namespace HeyImIn.WebApplication.Controllers
 			IDatabaseContext context = _getDatabaseContext();
 			int currentUserId = HttpContext.GetUserId();
 
-			EventParticipation eventParticipation = await context.EventParticipations.FirstOrDefaultAsync(ep => (ep.EventId == getChatMessagesDto.EventId) && (ep.ParticipantId == currentUserId));
+			EventParticipation? eventParticipation = await context.EventParticipations.FirstOrDefaultAsync(ep => (ep.EventId == getChatMessagesDto.EventId) && (ep.ParticipantId == currentUserId));
 
 			if (eventParticipation == null)
 			{
@@ -82,10 +82,7 @@ namespace HeyImIn.WebApplication.Controllers
 					await context.SaveChangesAsync();
 				}
 			}
-			List<int> allAuthorIds = eventChatMessages
-				.Select(c => c.AuthorId)
-				.Distinct()
-				.ToList();
+			var allAuthorIds = new HashSet<int>(eventChatMessages.Select(c => c.AuthorId));
 
 			List<UserInformation> authorInformations = await context.Users
 				.Where(u => allAuthorIds.Contains(u.Id))

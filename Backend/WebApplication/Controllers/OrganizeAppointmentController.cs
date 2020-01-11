@@ -43,7 +43,7 @@ namespace HeyImIn.WebApplication.Controllers
 		public async Task<IActionResult> DeleteAppointment(int appointmentId)
 		{
 			IDatabaseContext context = _getDatabaseContext();
-			Appointment appointment = await context.Appointments
+			Appointment? appointment = await context.Appointments
 				.Include(a => a.Event)
 					.ThenInclude(e => e.Organizer)
 				.Include(a => a.AppointmentParticipations)
@@ -89,7 +89,7 @@ namespace HeyImIn.WebApplication.Controllers
 			}
 
 			IDatabaseContext context = _getDatabaseContext();
-			Event @event = await context.Events.Include(e => e.Organizer).FirstOrDefaultAsync(e => e.Id == addAppointmentsDto.EventId);
+			Event? @event = await context.Events.Include(e => e.Organizer).FirstOrDefaultAsync(e => e.Id == addAppointmentsDto.EventId);
 
 			if (@event == null)
 			{
@@ -137,7 +137,7 @@ namespace HeyImIn.WebApplication.Controllers
 		public async Task<IActionResult> SetAppointmentResponse(SetAppointmentResponseDto setAppointmentResponseDto)
 		{
 			IDatabaseContext context = _getDatabaseContext();
-			Appointment appointment = await context.Appointments
+			Appointment? appointment = await context.Appointments
 				.Include(a => a.Event)
 					.ThenInclude(e => e.Organizer)
 				.Include(a => a.Event)

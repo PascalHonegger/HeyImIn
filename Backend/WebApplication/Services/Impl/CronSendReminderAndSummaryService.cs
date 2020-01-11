@@ -27,6 +27,11 @@ namespace HeyImIn.WebApplication.Services.Impl
 			List<Appointment> appointmentsWithPossibleReminders = await GetFutureAppointmentsAsync(a => a.StartTime.AddHours(-a.Event.ReminderTimeWindowInHours) <= DateTime.UtcNow);
 			List<Appointment> appointmentsWithPossibleSummaries = await GetFutureAppointmentsAsync(a => a.StartTime.AddHours(-a.Event.SummaryTimeWindowInHours) <= DateTime.UtcNow);
 
+			if (appointmentsWithPossibleReminders.Count == 0 && appointmentsWithPossibleSummaries.Count == 0)
+			{
+				return;
+			}
+
 			foreach (Appointment appointmentsWithPossibleReminder in appointmentsWithPossibleReminders)
 			{
 				await _notificationService.SendAndUpdateRemindersAsync(appointmentsWithPossibleReminder);

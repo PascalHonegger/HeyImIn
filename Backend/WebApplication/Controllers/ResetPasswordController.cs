@@ -37,7 +37,7 @@ namespace HeyImIn.WebApplication.Controllers
 		public async Task<IActionResult> RequestPasswordReset(RequestPasswordResetDto requestPasswordResetDto)
 		{
 			IDatabaseContext context = _getDatabaseContext();
-			User user = await context.Users.FirstOrDefaultAsync(u => u.Email == requestPasswordResetDto.Email);
+			User? user = await context.Users.FirstOrDefaultAsync(u => u.Email == requestPasswordResetDto.Email);
 
 			if (user == null)
 			{

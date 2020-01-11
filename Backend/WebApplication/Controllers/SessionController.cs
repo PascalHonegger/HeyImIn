@@ -59,6 +59,7 @@ namespace HeyImIn.WebApplication.Controllers
 		/// <returns>The found <see cref="FrontendSession" /></returns>
 		[HttpGet(nameof(GetSession))]
 		[ProducesResponseType(typeof(FrontendSession), 200)]
+		[ProducesResponseType(typeof(void), 401)]
 		[AllowAnonymous]
 		public async Task<IActionResult> GetSession(Guid sessionToken)
 		{
@@ -70,7 +71,12 @@ namespace HeyImIn.WebApplication.Controllers
 			}
 
 			IDatabaseContext context = _getDatabaseContext();
-			var user = await context.Users.Select(u => new { u.Id, u.FullName, u.Email }).FirstOrDefaultAsync(u => u.Id == session.UserId);
+			User? user = await context.Users.FindAsync(session.UserId);
+
+			if (user == null)
+			{
+				return Unauthorized();
+			}
 
 			return Ok(new FrontendSession(session.Token, session.UserId, user.FullName, user.Email));
 		}
