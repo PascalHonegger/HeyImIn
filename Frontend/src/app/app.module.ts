@@ -8,7 +8,7 @@ import { AppComponent } from './app.component';
 
 // Ensure swiss german language for angular pipes
 import { registerLocaleData } from '@angular/common';
-import localeDeCh from '@angular/common/locales/de-ch';
+import localeDeCh from '@angular/common/locales/de-CH';
 registerLocaleData(localeDeCh);
 
 import { ServiceWorkerModule } from '@angular/service-worker';
