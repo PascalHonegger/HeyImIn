@@ -1,0 +1,22 @@
+name: Backend
+
+on: [push]
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    env:
+      working-directory: ./Backend
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET Core SDK
+      uses: actions/setup-dotnet@v1.4.0
+      with:
+        dotnet-version: 3.1.101
+    - name: Build with dotnet
+      run: dotnet build --configuration Release
+      working-directory: ${{env.working-directory}}
+    - name: Test with dotnet
+      run: dotnet test --configuration Release
+      working-directory: ${{env.working-directory}}

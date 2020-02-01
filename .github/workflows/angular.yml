@@ -1,0 +1,31 @@
+name: Frontend
+
+on: [push]
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    env:
+      working-directory: ./Frontend
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use latest Node.js 12
+      uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+    - name: Install dependencies
+      run: npm ci
+      working-directory: ${{env.working-directory}}
+    - name: Lint
+      run: npm run lint
+      working-directory: ${{env.working-directory}}
+    - name: Build
+      run: npm run build -- --prod
+      working-directory: ${{env.working-directory}}
+    - name: Test
+      run: npm test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
+      working-directory: ${{env.working-directory}}
+    - name: E2E
+      run: npm run e2e -- --protractor-config=e2e/protractor-ci.conf.js
+      working-directory: ${{env.working-directory}}
