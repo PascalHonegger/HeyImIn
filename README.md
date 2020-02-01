@@ -1,4 +1,4 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/us7e70paow22nhxv?svg=true)](https://ci.appveyor.com/project/PascalHonegger/heyimin)
+[![GitHub Actions Frontend status](https://github.com/PascalHonegger/HeyImIn/workflows/Frontend/badge.svg)](https://github.com/PascalHonegger/HeyImIn/actions?workflow=Frontend) [![GitHub Actions Backend status](https://github.com/PascalHonegger/HeyImIn/workflows/Backend/badge.svg)](https://github.com/PascalHonegger/HeyImIn/actions?workflow=Backend)
 # Hey, I'm in
 "Hey, I'm in" is a tool to organize and manage recurring events.
 
