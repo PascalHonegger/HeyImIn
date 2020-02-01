@@ -2,7 +2,7 @@
 {
 	public class EventOverviewInformation
 	{
-		public EventOverviewInformation(int eventId, ViewEventInformation viewEventInformation, AppointmentDetails latestAppointmentDetails)
+		public EventOverviewInformation(int eventId, ViewEventInformation viewEventInformation, AppointmentDetails? latestAppointmentDetails)
 		{
 			EventId = eventId;
 			ViewEventInformation = viewEventInformation;
@@ -13,6 +13,6 @@
 
 		public ViewEventInformation ViewEventInformation { get; }
 
-		public AppointmentDetails LatestAppointmentDetails { get; }
+		public AppointmentDetails? LatestAppointmentDetails { get; }
 	}
 }
