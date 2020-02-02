@@ -1,4 +1,4 @@
-name: Backend
+name: Deployment
 
 on:
   push:
@@ -21,7 +21,9 @@ jobs:
       with:
         node-version: '12.x'
     - name: Build frontend
-      run: npm run deploy
+      run: |
+        npm ci
+        npm run deploy
       working-directory: ./Frontend
     - name: Build backend
       run: dotnet build --configuration Release
