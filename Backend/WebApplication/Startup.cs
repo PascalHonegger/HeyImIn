@@ -145,7 +145,7 @@ namespace HeyImIn.WebApplication
 
 			string logFileDirectory = env.IsDevelopment()
 				? Path.Combine(env.ContentRootPath, "App_Data")
-				: "D:\\home\\LogFiles\\HeyImIn";
+				: "/home/LogFiles/HeyImIn";
 
 			if (!Directory.Exists(logFileDirectory))
 			{
