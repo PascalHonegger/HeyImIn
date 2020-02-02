@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <IsPackable>false</IsPackable>
+    <IsPublishable>false</IsPublishable>
     <AssemblyName>HeyImIn.Shared.Tests</AssemblyName>
     <RootNamespace>HeyImIn.Shared.Tests</RootNamespace>
     <LangVersion>latest</LangVersion>
