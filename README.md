@@ -8,7 +8,9 @@
 * Everything, except localized strings, is written in english
 * Documentation in code or in the [wiki](https://github.com/PascalHonegger/HeyImIn/wiki)
 * Development is done on a feature branch or directly on the master branch
-* The Azure and AzureDev branches are used for deployment and should only contain stable versions
+* Every commit is tested using GitHub Actions
+* The `master` branch is used for development deployments and should be mostly stable
+* The `stable` branch is used for production deployment and should only contain stable versions
 
 ## Changelog
 A detailed changelog can be found under the [GitHub releases](https://github.com/PascalHonegger/HeyImIn/releases) page.
