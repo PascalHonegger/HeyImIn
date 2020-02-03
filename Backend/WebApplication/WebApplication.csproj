@@ -4,7 +4,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <AssemblyName>HeyImIn.WebApplication</AssemblyName>
     <RootNamespace>HeyImIn.WebApplication</RootNamespace>
-    <Version>2.2.0</Version>
+    <Version>3.0.0</Version>
     <PackageId>HeyImIn</PackageId>
     <Authors>Pascal Honegger</Authors>
     <Product>Hey, I'm in</Product>
