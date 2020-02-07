@@ -1,11 +1,6 @@
 import { NgModule } from '@angular/core';
 import { MatSelectModule } from '@angular/material/select';
 
-// Dialogs
-import { AddAppointmentsDialogComponent } from './add-appointments-dialog/add-appointments-dialog.component';
-import { AddParticipantDialogComponent } from './add-participant-dialog/add-participant-dialog.component';
-import { ChangeOrganizerDialogComponent } from './change-organizer-dialog/change-organizer-dialog.component';
-
 // Profile
 import { ProfileComponent } from './profile/profile.component';
 
@@ -24,16 +19,13 @@ import { EventInfoDisplayComponent } from './event-info-display/event-info-displ
 import { ManageEventParticipantsTableComponent } from './manage-event-participants-table/manage-event-participants-table.component';
 import { AppointmentParticipationSummaryComponent } from './appointment-participation-summary/appointment-participation-summary.component';
 import { EventChatComponent } from './event-chat/event-chat.component';
+import { AddAppointmentsDialogComponent } from './add-appointments-dialog/add-appointments-dialog.component';
+import { AddParticipantDialogComponent } from './add-participant-dialog/add-participant-dialog.component';
+import { ChangeOrganizerDialogComponent } from './change-organizer-dialog/change-organizer-dialog.component';
 
 // Other
 import { AuthenticatedLayoutComponent } from './authenticated-layout/authenticated-layout.component';
 import { SharedModule } from '../shared/shared.module';
-
-const dialogs = [
-	AddAppointmentsDialogComponent,
-	AddParticipantDialogComponent,
-	ChangeOrganizerDialogComponent
-];
 
 const components = [
 	AuthenticatedLayoutComponent,
@@ -51,17 +43,15 @@ const components = [
 	EventInfoDisplayComponent,
 	ManageEventParticipantsTableComponent,
 	AppointmentParticipationSummaryComponent,
-	EventChatComponent
+	EventChatComponent,
+	AddAppointmentsDialogComponent,
+	AddParticipantDialogComponent,
+	ChangeOrganizerDialogComponent
 ];
 
 @NgModule({
 	declarations: [
-		...components,
-		...dialogs
-	],
-	// Dialog contents have to be specified here
-	entryComponents: [
-		...dialogs
+		...components
 	],
 	imports: [
 		SharedModule,
