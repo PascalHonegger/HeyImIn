@@ -28,21 +28,13 @@ import { ShowLoadingDialogInterceptor } from './interceptors/show-loading-dialog
 import { ErrorHandlerInterceptor } from './interceptors/error-handler.interceptor';
 import { AppendApiVersionInterceptor } from './interceptors/append-api-version.interceptor';
 
-// Dialogs
+// Components
 import { ErrorDialogComponent } from './error-dialog/error-dialog.component';
 import { LoadingDialogComponent } from './loading-dialog/loading-dialog.component';
 import { AreYouSureDialogComponent } from './are-you-sure-dialog/are-you-sure-dialog.component';
-
-// Other
 import { MainLayoutComponent } from './main-layout/main-layout.component';
 import { MainTitleComponent } from './main-title/main-title.component';
 import { NoContentComponent } from './no-content/no-content.component';
-
-const dialogs = [
-	ErrorDialogComponent,
-	LoadingDialogComponent,
-	AreYouSureDialogComponent
-];
 
 const modules = [
 		// Angular
@@ -73,17 +65,15 @@ const modules = [
 const components = [
 	MainLayoutComponent,
 	MainTitleComponent,
-	NoContentComponent
+	NoContentComponent,
+	ErrorDialogComponent,
+	LoadingDialogComponent,
+	AreYouSureDialogComponent
 ];
 
 @NgModule({
 	declarations: [
-		...components,
-		...dialogs
-	],
-	// Dialog contents have to be specified here
-	entryComponents: [
-		...dialogs
+		...components
 	],
 	imports: [
 		...modules
@@ -95,7 +85,7 @@ const components = [
 })
 export class SharedModule {
 	// Ensures a single instance for all services is returned
-	public static forRoot(): ModuleWithProviders {
+	public static forRoot(): ModuleWithProviders<SharedModule> {
 		return {
 			ngModule: SharedModule,
 			providers: [
