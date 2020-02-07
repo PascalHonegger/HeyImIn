@@ -1,17 +1,16 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace HeyImIn.WebApplication.FrontendModels.ParameterTypes
 {
 	public class GetChatMessagesDto
 	{
-		/// <summary>
-		///     The id of the event
-		/// </summary>
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+		[Required]
 		public int EventId { get; set; }
 
-		/// <summary>
-		///     Null or the earliest SentDate from previously loaded data
-		/// </summary>
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
+
 		public DateTime? EarliestLoadedMessageSentDate { get; set; }
 	}
 }

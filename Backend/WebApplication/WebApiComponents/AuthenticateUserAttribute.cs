@@ -18,9 +18,11 @@ namespace HeyImIn.WebApplication.WebApiComponents
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 	public class AuthenticateUserAttribute : Attribute, IAsyncAuthorizationFilter, IFilterFactory
 	{
+#pragma warning disable CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 		public AuthenticateUserAttribute()
 		{
 		}
+#pragma warning restore CS8618 // Non-nullable field is uninitialized. Consider declaring as nullable.
 
 		public AuthenticateUserAttribute(ISessionService sessionService)
 		{
