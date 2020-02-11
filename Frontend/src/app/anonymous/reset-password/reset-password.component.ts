@@ -10,7 +10,7 @@ import { ResetPasswordClient } from '../../shared/backend-clients/reset-password
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ResetPasswordComponent {
-	@ViewChild('stepper', { static: true })
+	@ViewChild('stepper')
 	public stepper: MatStepper;
 
 	public requestTokenForm: FormGroup;
