@@ -1,7 +1,7 @@
 <div fxLayout="column" fxLayoutGap="20px">
 	<mat-form-field fxFlex>
 		<mat-label>Hinterlasse eine Nachricht</mat-label>
-		<textarea matInput matTextareaAutosize [formControl]="chatMessageCtrl"></textarea>
+		<textarea matInput cdkTextareaAutosize [formControl]="chatMessageCtrl"></textarea>
 		<mat-hint align="end">{{chatMessageCtrl.value.length}} / 250</mat-hint>
 		<button mat-icon-button matSuffix type="button" color="accent" [disabled]="!chatMessageCtrl.valid || !chatMessageCtrl.value" (click)="sendChatMessage()">
 			<mat-icon aria-label="Senden">send</mat-icon>
