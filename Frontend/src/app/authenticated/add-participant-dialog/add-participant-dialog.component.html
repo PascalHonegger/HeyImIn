@@ -2,7 +2,7 @@
 <mat-dialog-content>
 	<mat-form-field fxFlex>
 		<mat-label>Bsp. max.muster@email.ch</mat-label>
-		<textarea matInput matTextareaAutosize required [formControl]="emailsCtrl"></textarea>
+		<textarea matInput cdkTextareaAutosize required [formControl]="emailsCtrl"></textarea>
 		<mat-hint align="end">Mehrere E-Mail-Adressen durch Zeilenumbruch trennen</mat-hint>
 		<mat-error *ngIf="!emailsCtrl.valid">
 			Ungültige Eingabe

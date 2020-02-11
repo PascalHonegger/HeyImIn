@@ -2,7 +2,7 @@
 <mat-dialog-content>
 	<mat-form-field fxFlex>
 		<mat-label>Bsp. {{exampleDate}}</mat-label>
-		<textarea matInput matTextareaAutosize required [formControl]="datesCtrl"></textarea>
+		<textarea matInput cdkTextareaAutosize required [formControl]="datesCtrl"></textarea>
 		<mat-hint align="end">Mehrere Termine durch Zeilenumbruch trennen</mat-hint>
 		<mat-error *ngIf="!datesCtrl.valid">
 			Ungültige Eingabe
