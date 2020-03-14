@@ -32,14 +32,14 @@ jobs:
       run: dotnet publish -c Release -o bundle
       working-directory: ./Backend
     - name: Azure deploy dev
-      uses: azure/webapps-deploy@v1
+      uses: azure/webapps-deploy@v2
       if: github.ref == 'refs/heads/master'
       with:
         app-name: hey-im-in-dev
         publish-profile: ${{ secrets.AZURE_WEBAPP_DEV_PUBLISH_PROFILE }}
         package: ./Backend/bundle
     - name: Azure deploy prod
-      uses: azure/webapps-deploy@v1
+      uses: azure/webapps-deploy@v2
       if: github.ref == 'refs/heads/stable'
       with:
         app-name: hey-im-in
