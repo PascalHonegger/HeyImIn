@@ -24,7 +24,7 @@ namespace HeyImIn.WebApplication.Tests.Controllers
 
 			// Arrange
 			var data = new RegisterDto { Email = "new@user.com", FullName = "New User", Password = "Password" };
-			Guid newSessionGuid = Guid.NewGuid();
+			var newSessionGuid = Guid.NewGuid();
 			const string PasswordHash = "P@ssw0rd";
 
 			// Act

@@ -47,14 +47,14 @@ namespace HeyImIn.WebApplication.Controllers
 
 			int currentUserId = HttpContext.GetUserId();
 
-			var futureAppointments = await context.Appointments
+			List<Appointment> futureAppointments = await context.Appointments
 				.Include(a => a.AppointmentParticipations)
 				.Where(a => a.StartTime >= DateTime.UtcNow)
 				.ToListAsync();
-			var latestAppointments = futureAppointments.GroupBy(a => a.EventId)
+			Dictionary<int, Appointment> latestAppointments = futureAppointments.GroupBy(a => a.EventId)
 				.ToDictionary(g => g.Key, g => g.OrderBy(a => a.StartTime).FirstOrDefault());
 
-			var events = await context.Events
+			List<Event> events = await context.Events
 				.Where(e => !e.IsPrivate
 							|| (e.OrganizerId == currentUserId)
 							|| e.EventParticipations.Select(ep => ep.ParticipantId).Contains(currentUserId))
@@ -68,7 +68,7 @@ namespace HeyImIn.WebApplication.Controllers
 
 			foreach (Event e in events)
 			{
-				var latestAppointment = latestAppointments.TryGetValue(e.Id, out Appointment? a) && a != null
+				AppointmentDetails? latestAppointment = latestAppointments.TryGetValue(e.Id, out Appointment? a) && a != null
 					? new AppointmentDetails(
 						a.Id,
 						a.StartTime,
