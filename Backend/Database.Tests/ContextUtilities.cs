@@ -15,7 +15,7 @@ namespace HeyImIn.Database.Tests
 		/// </summary>
 		public static GetDatabaseContext CreateInMemoryContext(ITestOutputHelper output)
 		{
-			string databaseName = Guid.NewGuid().ToString();
+			var databaseName = Guid.NewGuid().ToString();
 
 			var builder = new DbContextOptionsBuilder<HeyImInDatabaseContext>();
 			builder

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Threading.Tasks;
 using HeyImIn.Authentication;
 using HeyImIn.Database.Context;
@@ -11,7 +10,6 @@ using HeyImIn.WebApplication.Helpers;
 using HeyImIn.WebApplication.WebApiComponents;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
 namespace HeyImIn.WebApplication.Controllers
