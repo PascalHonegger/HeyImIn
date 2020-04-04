@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
+import type { HttpClient } from '@angular/common/http';
 
 import { ServerClientBase } from './server-client-base';
-import { GeneralEventInformation } from '../server-model/general-event-information.model';
-import { EditEventDetails } from '../server-model/edit-event-details.model';
+import type { GeneralEventInformation } from '../server-model/general-event-information.model';
+import type { EditEventDetails } from '../server-model/edit-event-details.model';
 
 @Injectable({ providedIn: 'root' })
 export class OrganizeEventClient extends ServerClientBase {

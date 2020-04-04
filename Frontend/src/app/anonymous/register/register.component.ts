@@ -1,9 +1,10 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { AuthService } from '../../shared/services/auth.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { UserClient } from '../../shared/backend-clients/user.client';
+import { Validators } from '@angular/forms';
+import type { FormGroup, FormBuilder } from '@angular/forms';
+import type { Router } from '@angular/router';
+import type { AuthService } from '../../shared/services/auth.service';
+import type { UserClient } from '../../shared/backend-clients/user.client';
 import { Constants } from '../../shared/constants';
 
 @Component({

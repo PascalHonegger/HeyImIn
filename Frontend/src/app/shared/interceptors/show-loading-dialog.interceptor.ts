@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
-import {
+import type {
 	HttpRequest,
 	HttpHandler,
 	HttpEvent,
 	HttpInterceptor
 } from '@angular/common/http';
+import type { MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 import { Observable, Subject } from 'rxjs';
 import { finalize, map, debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { LoadingDialogComponent } from '../loading-dialog/loading-dialog.component';
 
 /**

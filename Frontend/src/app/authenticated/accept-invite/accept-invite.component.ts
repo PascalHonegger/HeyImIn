@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { InviteToEventClient } from '../../shared/backend-clients/invite-to-event.client';
+import type { ActivatedRoute, Router } from '@angular/router';
+import type { InviteToEventClient } from '../../shared/backend-clients/invite-to-event.client';
 
 @Component({
 	styleUrls: ['./accept-invite.component.scss'],

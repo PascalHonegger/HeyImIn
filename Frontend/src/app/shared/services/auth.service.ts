@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { FrontendSession } from '../server-model/frontend-session.model';
-import { SessionClient } from '../backend-clients/session.client';
+import type { FrontendSession } from '../server-model/frontend-session.model';
+import type { SessionClient } from '../backend-clients/session.client';
 
 const sessionTokenStorageKey = 'sessionToken';
 

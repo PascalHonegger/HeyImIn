@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
+import type { HttpClient } from '@angular/common/http';
 
 import { ServerClientBase } from './server-client-base';
-import { EventOverview } from '../server-model/event-overview.model';
-import { EventDetails } from '../server-model/event-details.model';
-import { NotificationConfiguration } from '../server-model/notification-configuration.model';
+import type { EventOverview } from '../server-model/event-overview.model';
+import type { EventDetails } from '../server-model/event-details.model';
+import type { NotificationConfiguration } from '../server-model/notification-configuration.model';
 
 @Injectable({ providedIn: 'root' })
 export class ParticipateEventClient extends ServerClientBase {

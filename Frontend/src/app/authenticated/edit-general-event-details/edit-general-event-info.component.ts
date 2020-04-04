@@ -1,7 +1,8 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Validators } from '@angular/forms';
+import type { FormGroup, FormBuilder } from '@angular/forms';
+import type { GeneralEventInformation } from '../../shared/server-model/general-event-information.model';
 import { Constants } from '../../shared/constants';
-import { GeneralEventInformation } from '../../shared/server-model/general-event-information.model';
 
 @Component({
 	selector: 'edit-general-event-info',

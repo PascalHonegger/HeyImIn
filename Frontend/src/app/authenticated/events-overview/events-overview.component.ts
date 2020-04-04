@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { ParticipateEventClient } from '../../shared/backend-clients/participate-event.client';
-import { EventOverview } from '../../shared/server-model/event-overview.model';
+import type { ParticipateEventClient } from '../../shared/backend-clients/participate-event.client';
+import type { EventOverview } from '../../shared/server-model/event-overview.model';
 
 @Component({
 	styleUrls: ['./events-overview.component.scss'],

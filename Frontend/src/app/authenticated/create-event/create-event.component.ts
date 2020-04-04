@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { OrganizeEventClient } from '../../shared/backend-clients/organize-event.client';
-import { GeneralEventInformation } from '../../shared/server-model/general-event-information.model';
+import type { Router } from '@angular/router';
+import type { OrganizeEventClient } from '../../shared/backend-clients/organize-event.client';
+import type { GeneralEventInformation } from '../../shared/server-model/general-event-information.model';
 
 @Component({
 	styleUrls: ['./create-event.component.scss'],

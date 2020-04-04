@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { UserInformation } from '../../shared/server-model/user-information.model';
+import type { UserInformation } from '../../shared/server-model/user-information.model';
 
 @Component({
 	styleUrls: ['./change-organizer-dialog.component.scss'],

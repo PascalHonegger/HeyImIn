@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
+import type { HttpClient } from '@angular/common/http';
 
 import { ServerClientBase } from './server-client-base';
-import { AppointmentParticipationAnswer } from '../server-model/appointment-participation-answer.model';
+import type { AppointmentParticipationAnswer } from '../server-model/appointment-participation-answer.model';
 
 @Injectable({ providedIn: 'root' })
 export class OrganizeAppointmentClient extends ServerClientBase {

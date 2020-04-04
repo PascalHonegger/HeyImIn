@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import type { HttpClient } from '@angular/common/http';
 
 import { ServerClientBase } from './server-client-base';
-import { EventChatMessages } from '../server-model/event-chat-messages.model';
-import { EventChatMessage } from '../server-model/event-chat-message.model';
+import type { EventChatMessages } from '../server-model/event-chat-messages.model';
+import type { EventChatMessage } from '../server-model/event-chat-message.model';
 
 @Injectable({ providedIn: 'root' })
 export class EventChatClient extends ServerClientBase {

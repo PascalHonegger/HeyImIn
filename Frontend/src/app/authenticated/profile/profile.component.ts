@@ -1,11 +1,12 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
+import { Validators } from '@angular/forms';
+import type { FormGroup, FormBuilder } from '@angular/forms';
+import type { MatDialog } from '@angular/material/dialog';
+import type { MatSnackBar } from '@angular/material/snack-bar';
+import type { Router } from '@angular/router';
+import type { UserClient } from '../../shared/backend-clients/user.client';
+import type { AuthService } from '../../shared/services/auth.service';
 import { Constants } from '../../shared/constants';
-import { UserClient } from '../../shared/backend-clients/user.client';
-import { AuthService } from '../../shared/services/auth.service';
 import { AreYouSureDialogComponent } from '../../shared/are-you-sure-dialog/are-you-sure-dialog.component';
 
 @Component({

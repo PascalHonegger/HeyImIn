@@ -1,11 +1,13 @@
-import { Component, ViewChild, Input, EventEmitter, Output, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { Component, ViewChild, Input, EventEmitter, Output, ChangeDetectionStrategy } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { AuthService } from '../../shared/services/auth.service';
-import { AppointmentParticipationInformation } from '../../shared/server-model/appointment-participation-information.model';
-import { UserInformation } from '../../shared/server-model/user-information.model';
-import { AppointmentParticipationAnswer, NoAnswer } from '../../shared/server-model/appointment-participation-answer.model';
-import { AppointmentDetails } from '../../shared/server-model/appointment-details.model';
+import type { OnInit } from '@angular/core';
+import type { AuthService } from '../../shared/services/auth.service';
+import type { AppointmentParticipationInformation } from '../../shared/server-model/appointment-participation-information.model';
+import type { UserInformation } from '../../shared/server-model/user-information.model';
+import type { AppointmentDetails } from '../../shared/server-model/appointment-details.model';
+import type { AppointmentParticipationAnswer } from '../../shared/server-model/appointment-participation-answer.model';
+import { NoAnswer } from '../../shared/server-model/appointment-participation-answer.model';
 
 @Component({
 	selector: 'appointment-participant-table',

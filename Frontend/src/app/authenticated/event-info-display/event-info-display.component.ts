@@ -1,5 +1,5 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
-import { ViewEventInformation } from '../../shared/server-model/view-event-information.model';
+import type { ViewEventInformation } from '../../shared/server-model/view-event-information.model';
 
 @Component({
 	selector: 'event-info-display',
