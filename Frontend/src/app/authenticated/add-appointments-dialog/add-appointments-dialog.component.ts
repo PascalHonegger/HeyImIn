@@ -27,7 +27,7 @@ export class AddAppointmentsDialogComponent {
 
 	public parseAndReturnDates() {
 		const inputDates: string = this.datesCtrl.value;
-		const matches = inputDates.match(AddAppointmentsDialogComponent.regexPattern) || [];
+		const matches = inputDates.match(AddAppointmentsDialogComponent.regexPattern) ?? [];
 		const parsedDates = matches.map(match => parse(match, AddAppointmentsDialogComponent.dateFormat, new Date()));
 		this.dialogRef.close(parsedDates);
 	}
