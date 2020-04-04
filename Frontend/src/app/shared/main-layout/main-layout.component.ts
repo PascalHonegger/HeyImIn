@@ -1,11 +1,11 @@
 // Taken from HappyMeter
 
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
-import { Link } from './link.model';
-import { UpdateService } from '../services/update.service';
 import { Observable } from 'rxjs';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { tap } from 'rxjs/operators';
+import type { MatSnackBar } from '@angular/material/snack-bar';
+import type { Link } from './link.model';
+import type { UpdateService } from '../services/update.service';
 
 @Component({
 	selector: 'main-layout',

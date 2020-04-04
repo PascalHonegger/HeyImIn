@@ -1,12 +1,13 @@
-import { Component, Input, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { EventChatMessage } from '../../shared/server-model/event-chat-message.model';
-import { EventChatClient } from '../../shared/backend-clients/event-chat.client';
-import { Constants } from '../../shared/constants';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { UserInformation } from '../../shared/server-model/user-information.model';
-import { AuthService } from '../../shared/services/auth.service';
+import type { OnInit } from '@angular/core';
+import type { EventChatMessage } from '../../shared/server-model/event-chat-message.model';
+import type { EventChatClient } from '../../shared/backend-clients/event-chat.client';
+import type { UserInformation } from '../../shared/server-model/user-information.model';
+import type { AuthService } from '../../shared/services/auth.service';
+import { Constants } from '../../shared/constants';
 
 @Component({
 	selector: 'event-chat',

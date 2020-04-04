@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { Link } from '../main-layout/link.model';
+import type { Link } from '../main-layout/link.model';
 
 @Component({
 	styleUrls: ['./no-content.component.scss'],

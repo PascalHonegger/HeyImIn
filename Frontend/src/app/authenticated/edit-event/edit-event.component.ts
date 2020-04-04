@@ -1,21 +1,19 @@
 import { Component } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router, ActivatedRoute } from '@angular/router';
+import type { MatDialog } from '@angular/material/dialog';
+import type { MatSnackBar } from '@angular/material/snack-bar';
+import type { Router, ActivatedRoute } from '@angular/router';
+import type { OrganizeAppointmentClient } from '../../shared/backend-clients/organize-appointment.client';
+import type { OrganizeEventClient } from '../../shared/backend-clients/organize-event.client';
+import type { InviteToEventClient } from '../../shared/backend-clients/invite-to-event.client';
+import type { AppointmentDetails } from '../../shared/server-model/appointment-details.model';
+import type { GeneralEventInformation } from '../../shared/server-model/general-event-information.model';
+import type { EditEventDetails } from '../../shared/server-model/edit-event-details.model';
+import type { AppointmentParticipationAnswer } from '../../shared/server-model/appointment-participation-answer.model';
+import type { ChangeOrganizerDialogParameter } from '../change-organizer-dialog/change-organizer-dialog.component';
 import { AreYouSureDialogComponent } from '../../shared/are-you-sure-dialog/are-you-sure-dialog.component';
-import { OrganizeAppointmentClient } from '../../shared/backend-clients/organize-appointment.client';
-import { OrganizeEventClient } from '../../shared/backend-clients/organize-event.client';
 import { AddAppointmentsDialogComponent } from '../add-appointments-dialog/add-appointments-dialog.component';
+import { ChangeOrganizerDialogComponent } from '../change-organizer-dialog/change-organizer-dialog.component';
 import { AddParticipantDialogComponent } from '../add-participant-dialog/add-participant-dialog.component';
-import { InviteToEventClient } from '../../shared/backend-clients/invite-to-event.client';
-import { AppointmentDetails } from '../../shared/server-model/appointment-details.model';
-import { GeneralEventInformation } from '../../shared/server-model/general-event-information.model';
-import { EditEventDetails } from '../../shared/server-model/edit-event-details.model';
-import { AppointmentParticipationAnswer } from '../../shared/server-model/appointment-participation-answer.model';
-import {
-	ChangeOrganizerDialogComponent,
-	ChangeOrganizerDialogParameter
-} from '../change-organizer-dialog/change-organizer-dialog.component';
 
 @Component({
 	styleUrls: ['./edit-event.component.scss'],

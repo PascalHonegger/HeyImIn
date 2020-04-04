@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
-import {
+import type {
 	HttpRequest,
 	HttpHandler,
 	HttpEvent,
 	HttpInterceptor
 } from '@angular/common/http';
 
-import { AuthService } from '../services/auth.service';
-import { Observable } from 'rxjs';
+import type { AuthService } from '../services/auth.service';
+import type { Observable } from 'rxjs';
 
 /**
  * Appends the current session token to each request to authorize it

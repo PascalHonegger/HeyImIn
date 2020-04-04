@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { ActivatedRoute } from '@angular/router';
-import { AuthService } from '../../shared/services/auth.service';
-import { ParticipateEventClient } from '../../shared/backend-clients/participate-event.client';
-import { EventDetails } from '../../shared/server-model/event-details.model';
-import { NotificationConfiguration } from '../../shared/server-model/notification-configuration.model';
+import type { MatDialog } from '@angular/material/dialog';
+import type { MatSnackBar } from '@angular/material/snack-bar';
+import type { ActivatedRoute } from '@angular/router';
+import type { AuthService } from '../../shared/services/auth.service';
+import type { ParticipateEventClient } from '../../shared/backend-clients/participate-event.client';
+import type { EventDetails } from '../../shared/server-model/event-details.model';
+import type { NotificationConfiguration } from '../../shared/server-model/notification-configuration.model';
+import type { AppointmentDetails } from '../../shared/server-model/appointment-details.model';
+import type { AppointmentParticipationAnswer } from '../../shared/server-model/appointment-participation-answer.model';
 import { DetailOverviewBase } from '../detail-overview-base';
-import { AppointmentDetails } from '../../shared/server-model/appointment-details.model';
-import { AppointmentParticipationAnswer } from '../../shared/server-model/appointment-participation-answer.model';
 
 @Component({
 	styleUrls: ['./view-event.component.scss'],

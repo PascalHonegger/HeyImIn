@@ -1,10 +1,11 @@
-import { Component, ViewChild, Input, EventEmitter, Output, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { Component, ViewChild, Input, EventEmitter, Output } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import type { OnInit } from '@angular/core';
+import type { MatDialog } from '@angular/material/dialog';
+import type { ParticipateEventClient } from '../../shared/backend-clients/participate-event.client';
+import type { UserInformation } from '../../shared/server-model/user-information.model';
 import { AreYouSureDialogComponent } from '../../shared/are-you-sure-dialog/are-you-sure-dialog.component';
-import { ParticipateEventClient } from '../../shared/backend-clients/participate-event.client';
-import { UserInformation } from '../../shared/server-model/user-information.model';
 
 @Component({
 	selector: 'manage-event-participants-table',

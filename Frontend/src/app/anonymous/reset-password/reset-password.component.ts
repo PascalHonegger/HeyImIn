@@ -1,8 +1,9 @@
 import { Component, ViewChild, ChangeDetectionStrategy, } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { Validators } from '@angular/forms';
+import type { FormGroup, FormBuilder } from '@angular/forms';
+import type { MatStepper } from '@angular/material/stepper';
+import type { ResetPasswordClient } from '../../shared/backend-clients/reset-password.client';
 import { Constants } from '../../shared/constants';
-import { MatStepper } from '@angular/material/stepper';
-import { ResetPasswordClient } from '../../shared/backend-clients/reset-password.client';
 
 @Component({
 	styleUrls: ['./reset-password.component.scss'],

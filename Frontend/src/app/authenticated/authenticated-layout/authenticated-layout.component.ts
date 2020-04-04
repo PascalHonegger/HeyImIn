@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { Link } from '../../shared/main-layout/link.model';
+import type { Link } from '../../shared/main-layout/link.model';
 
 @Component({
 	styleUrls: [ './authenticated-layout.component.scss' ],

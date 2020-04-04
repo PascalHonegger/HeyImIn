@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import type { Routes } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { AcceptInviteComponent } from './authenticated/accept-invite/accept-invite.component';
 import { NoContentComponent } from './shared/no-content/no-content.component';
 import { CanActivateViaAuthGuard } from './shared/guards/can-activate-via-auth.guard';

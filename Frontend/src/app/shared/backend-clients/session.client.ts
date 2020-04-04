@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpParams } from '@angular/common/http';
+import type { HttpClient } from '@angular/common/http';
 
-import { FrontendSession } from '../server-model/frontend-session.model';
 import { ServerClientBase } from './server-client-base';
+import type { FrontendSession } from '../server-model/frontend-session.model';
 
 @Injectable({ providedIn: 'root' })
 export class SessionClient extends ServerClientBase {

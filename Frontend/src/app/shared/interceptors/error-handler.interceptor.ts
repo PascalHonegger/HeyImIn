@@ -1,19 +1,19 @@
 import { Injectable } from '@angular/core';
-import {
+import { HttpErrorResponse } from '@angular/common/http';
+import type {
 	HttpRequest,
 	HttpHandler,
 	HttpEvent,
-	HttpInterceptor,
-	HttpErrorResponse
+	HttpInterceptor
 } from '@angular/common/http';
-import { Router } from '@angular/router';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import type { Router } from '@angular/router';
+import type { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import type { MatSnackBar } from '@angular/material/snack-bar';
 
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
-import { AuthService } from '../services/auth.service';
+import type { AuthService } from '../services/auth.service';
 import { ErrorDialogComponent } from '../error-dialog/error-dialog.component';
 
 /**

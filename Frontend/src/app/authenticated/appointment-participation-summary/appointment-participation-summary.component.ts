@@ -1,7 +1,8 @@
-import { Component, Input, ChangeDetectionStrategy, OnChanges, SimpleChanges } from '@angular/core';
-import { UserInformation } from '../../shared/server-model/user-information.model';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import type { OnChanges, SimpleChanges } from '@angular/core';
+import type { UserInformation } from '../../shared/server-model/user-information.model';
+import type { AppointmentParticipationInformation } from '../../shared/server-model/appointment-participation-information.model';
 import { Accepted, Declined } from '../../shared/server-model/appointment-participation-answer.model';
-import { AppointmentParticipationInformation } from '../../shared/server-model/appointment-participation-information.model';
 
 @Component({
 	selector: 'appointment-participation-summary',

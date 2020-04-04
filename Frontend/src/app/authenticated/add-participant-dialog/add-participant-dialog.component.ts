@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { MatDialogRef } from '@angular/material/dialog';
 import { FormControl, Validators } from '@angular/forms';
+import type { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
 	styleUrls: ['./add-participant-dialog.component.scss'],

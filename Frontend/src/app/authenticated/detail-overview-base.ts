@@ -1,11 +1,12 @@
-import { MatDialog } from '@angular/material/dialog';
-import { AuthService } from '../shared/services/auth.service';
-import { ParticipateEventClient } from '../shared/backend-clients/participate-event.client';
+import type { MatDialog } from '@angular/material/dialog';
+import type { AuthService } from '../shared/services/auth.service';
+import type { ParticipateEventClient } from '../shared/backend-clients/participate-event.client';
+import type { FrontendSession } from '../shared/server-model/frontend-session.model';
+import type { UserInformation } from '../shared/server-model/user-information.model';
+import type { AppointmentDetails } from '../shared/server-model/appointment-details.model';
+import type { AppointmentParticipationAnswer } from '../shared/server-model/appointment-participation-answer.model';
+import { NoAnswer } from '../shared/server-model/appointment-participation-answer.model';
 import { AreYouSureDialogComponent } from '../shared/are-you-sure-dialog/are-you-sure-dialog.component';
-import { FrontendSession } from '../shared/server-model/frontend-session.model';
-import { UserInformation } from '../shared/server-model/user-information.model';
-import { AppointmentDetails } from '../shared/server-model/appointment-details.model';
-import { AppointmentParticipationAnswer, NoAnswer } from '../shared/server-model/appointment-participation-answer.model';
 
 export abstract class DetailOverviewBase {
 	public readonly currentSession: FrontendSession;

@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import {
+import type {
 	HttpRequest,
 	HttpHandler,
 	HttpEvent,
 	HttpInterceptor
 } from '@angular/common/http';
 
-import { Observable } from 'rxjs';
+import type { Observable } from 'rxjs';
 
 /**
  * Appends the current api version as a query parameter to each request

@@ -1,8 +1,7 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
-import { OrganizeAppointmentClient } from '../../shared/backend-clients/organize-appointment.client';
-import {
-	AppointmentParticipationAnswer, Accepted, Declined, NoAnswer
-} from '../../shared/server-model/appointment-participation-answer.model';
+import type { OrganizeAppointmentClient } from '../../shared/backend-clients/organize-appointment.client';
+import type { AppointmentParticipationAnswer } from '../../shared/server-model/appointment-participation-answer.model';
+import { Accepted, Declined, NoAnswer } from '../../shared/server-model/appointment-participation-answer.model';
 
 @Component({
 	selector: 'appointment-participation',

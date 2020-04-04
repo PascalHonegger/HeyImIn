@@ -1,4 +1,4 @@
-﻿import { EventOverviewInformation } from './event-overview-information.model';
+﻿import type { EventOverviewInformation } from './event-overview-information.model';
 
 export interface EventOverview {
 	yourEvents: readonly EventOverviewInformation[];

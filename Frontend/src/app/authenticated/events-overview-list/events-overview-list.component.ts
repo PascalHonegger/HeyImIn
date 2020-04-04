@@ -1,9 +1,9 @@
 import { Component, Input, EventEmitter, Output, ChangeDetectionStrategy } from '@angular/core';
-import { ParticipateEventClient } from '../../shared/backend-clients/participate-event.client';
-import { AuthService } from '../../shared/services/auth.service';
 import { DetailOverviewBase } from '../detail-overview-base';
-import { MatDialog } from '@angular/material/dialog';
-import { EventOverviewInformation } from '../../shared/server-model/event-overview-information.model';
+import type { ParticipateEventClient } from '../../shared/backend-clients/participate-event.client';
+import type { AuthService } from '../../shared/services/auth.service';
+import type { MatDialog } from '@angular/material/dialog';
+import type { EventOverviewInformation } from '../../shared/server-model/event-overview-information.model';
 
 @Component({
 	selector: 'events-overview-list',

@@ -1,4 +1,4 @@
-﻿import { AppointmentParticipationAnswer } from './appointment-participation-answer.model';
+﻿import type { AppointmentParticipationAnswer } from './appointment-participation-answer.model';
 
 export interface AppointmentParticipationInformation {
 	participantId: number;
