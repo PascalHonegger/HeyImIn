@@ -16,7 +16,7 @@ export class AuthService {
 	private _session: FrontendSession = null;
 
 	constructor(private server: SessionClient) {
-		this._sessionToken = localStorage.getItem(sessionTokenStorageKey) || '';
+		this._sessionToken = localStorage.getItem(sessionTokenStorageKey) ?? '';
 	}
 
 	public get sessionToken(): string | null {

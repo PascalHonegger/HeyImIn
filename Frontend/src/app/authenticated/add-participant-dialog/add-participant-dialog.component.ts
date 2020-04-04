@@ -20,7 +20,7 @@ export class AddParticipantDialogComponent {
 
 	public parseAndReturnEmails() {
 		const inputEmails: string = this.emailsCtrl.value;
-		const matches = inputEmails.match(AddParticipantDialogComponent.regexPattern) || [];
+		const matches = inputEmails.match(AddParticipantDialogComponent.regexPattern) ?? [];
 		this.dialogRef.close(matches);
 	}
 }

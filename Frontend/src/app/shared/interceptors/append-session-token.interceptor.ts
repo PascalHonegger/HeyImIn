@@ -20,7 +20,7 @@ export class AppendSessionTokenInterceptor implements HttpInterceptor {
 	public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 		request = request.clone({
 			setHeaders: {
-				SessionToken: this.auth.sessionToken || ''
+				SessionToken: this.auth.sessionToken ?? ''
 			}
 		});
 
