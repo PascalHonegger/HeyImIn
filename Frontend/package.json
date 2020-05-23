@@ -12,11 +12,11 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "deploy": "ng build --prod --output-path=../Backend/WebApplication/wwwroot",
-    "stats:dev": "ng build --stats-json && npm run analyzer",
-    "stats:prod": "ng build --prod --stats-json && npm run analyzer:es2015",
-    "analyzer:es5": ".\\node_modules\\.bin\\webpack-bundle-analyzer dist/hey-im-in/stats-es5.json",
-    "analyzer:es2015": ".\\node_modules\\.bin\\webpack-bundle-analyzer dist/hey-im-in/stats-es2015.json"
+    "stats": "ng build --prod --stats-json && .\\node_modules\\.bin\\webpack-bundle-analyzer dist/hey-im-in/stats-es2015.json",
+    "ci:build": "ng build --prod",
+    "ci:test": "ng test --no-watch --no-progress --browsers=ChromeHeadlessCI",
+    "ci:e2e": "ng e2e --protractor-config=e2e/protractor-ci.conf.js",
+    "ci:deploy": "ng build --prod --output-path=../Backend/WebApplication/wwwroot"
   },
   "dependencies": {
     "@angular/animations": "^9.1.0",

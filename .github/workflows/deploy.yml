@@ -23,7 +23,7 @@ jobs:
     - name: Build frontend
       run: |
         npm ci
-        npm run deploy
+        npm run ci:deploy
       working-directory: ./Frontend
     - name: Build backend
       run: dotnet build --configuration Release
