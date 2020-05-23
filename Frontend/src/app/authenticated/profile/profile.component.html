@@ -33,6 +33,25 @@
 			</mat-card-actions>
 		</mat-card>
 	</form>
+	<mat-card>
+		<mat-card-header>
+			<mat-card-title>Push-Notifikationen</mat-card-title>
+		</mat-card-header>
+		<mat-card-content>
+			<ng-container *ngIf="pushService.pushEnabledInThisBrowser; then enablePushTemplate; else pushNotSupportedTemplate"></ng-container>
+			<ng-template #enablePushTemplate>
+				TODO Überprüfen ob bereits subscribed
+				<button mat-raised-button (click)="pushService.addDevice()" color="primary" type="button">
+					Push-Notifikationen in diesem Browser aktivieren
+				</button>
+			</ng-template>
+			<ng-template #pushNotSupportedTemplate>
+				Dieser Browser unterstütz keine Push-Notifikationen :(
+			</ng-template>
+		</mat-card-content>
+		<mat-card-actions>
+		</mat-card-actions>
+	</mat-card>
 	<form [formGroup]="passwordForm">
 		<mat-card>
 			<mat-card-header>

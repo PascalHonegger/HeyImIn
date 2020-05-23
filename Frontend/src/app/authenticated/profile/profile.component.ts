@@ -8,6 +8,7 @@ import type { UserClient } from '../../shared/backend-clients/user.client';
 import type { AuthService } from '../../shared/services/auth.service';
 import { Constants } from '../../shared/constants';
 import { AreYouSureDialogComponent } from '../../shared/are-you-sure-dialog/are-you-sure-dialog.component';
+import { PushService } from '../../shared/services/push.service';
 
 @Component({
 	styleUrls: ['./profile.component.scss'],
@@ -23,6 +24,7 @@ export class ProfileComponent {
 				private router: Router,
 				private dialog: MatDialog,
 				private authService: AuthService,
+				public pushService: PushService,
 				formBuilder: FormBuilder) {
 					this.userDataForm = formBuilder.group({
 						nameCtrl: [authService.session.fullName, [Validators.required, Validators.maxLength(Constants.userFullNameMaxLength)]],
