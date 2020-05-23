@@ -16,10 +16,10 @@ jobs:
       uses: actions/setup-dotnet@v1.4.0
       with:
         dotnet-version: 3.1.201
-    - name: Use latest Node.js 13
+    - name: Use latest Node.js 14
       uses: actions/setup-node@v1
       with:
-        node-version: '13.x'
+        node-version: '14.x'
     - name: Build frontend
       run: |
         npm ci
