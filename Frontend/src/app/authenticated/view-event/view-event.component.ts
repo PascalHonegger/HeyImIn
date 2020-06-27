@@ -38,27 +38,27 @@ export class ViewEventComponent extends DetailOverviewBase {
 					route.params.subscribe(params => this.eventId = +params.id);
 				}
 
-	public getAppointmentId(_index: number, appointment: AppointmentDetails) {
+	public getAppointmentId(_index: number, appointment: AppointmentDetails): number {
 		return appointment.appointmentId;
 	}
 
-	public async leaveEvent() {
+	public async leaveEvent(): Promise<void> {
 		await this.leaveEventAsync(this.eventId);
 		this.loadEventDetails();
 	}
 
-	public async joinEvent() {
+	public async joinEvent(): Promise<void> {
 		await this.joinEventAsync(this.eventId);
 		this.eventDetails.information.participants = this.eventDetails.information.participants.concat([this.currentUserInformation]);
 	}
 
-	public setNotifications(notifications: NotificationConfiguration) {
+	public setNotifications(notifications: NotificationConfiguration): void {
 		this.eventServer.configureNotifications(this.eventId, notifications).subscribe(
 			() => this.snackBar.open('Notifikationen konfiguriert', 'Ok')
 		);
 	}
 
-	public loadEventDetails() {
+	public loadEventDetails(): void {
 		this.eventServer.getDetails(this.eventId).subscribe(
 			detail => {
 				this.eventDetails = detail;
@@ -69,7 +69,7 @@ export class ViewEventComponent extends DetailOverviewBase {
 
 	public setNewAnswer(appointment: AppointmentDetails,
 						participantId: number,
-						response: AppointmentParticipationAnswer) {
+						response: AppointmentParticipationAnswer): void {
 		if (!this.currentUserDoesParticipate) {
 			// We could theoretically optimize this, but too much effort regarding change detection
 			this.loadEventDetails();
@@ -85,7 +85,7 @@ export class ViewEventComponent extends DetailOverviewBase {
 			.concat([{ participantId, response }]);
 	}
 
-	public get currentUserDoesParticipate() {
+	public get currentUserDoesParticipate(): boolean {
 		return this.eventDetails && this.eventDetails.information.participants.some(p => p.userId === this.currentSession.userId);
 	}
 }

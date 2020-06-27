@@ -26,7 +26,7 @@ export class RegisterComponent {
 					});
 				}
 
-	public async register() {
+	public async register(): Promise<void> {
 		if (!this.form.valid) {
 			return;
 		}

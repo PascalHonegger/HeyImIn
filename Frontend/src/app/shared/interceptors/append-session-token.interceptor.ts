@@ -17,7 +17,7 @@ export class AppendSessionTokenInterceptor implements HttpInterceptor {
 
 	constructor(private auth: AuthService) {}
 
-	public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+	public intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
 		request = request.clone({
 			setHeaders: {
 				SessionToken: this.auth.sessionToken ?? ''

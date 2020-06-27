@@ -28,13 +28,13 @@ export class ResetPasswordComponent {
 		});
 	}
 
-	public requestResetCode() {
+	public requestResetCode(): void {
 		this.server.requestPasswordReset(this.requestTokenForm.get('mailCtrl').value).subscribe(
 			() => this.stepper.next()
 		);
 	}
 
-	public resetPassword() {
+	public resetPassword(): void {
 		this.server.resetPassword(this.setNewPasswordForm.get('codeCtrl').value, this.setNewPasswordForm.get('passwordCtrl').value).subscribe(
 			() => this.stepper.next()
 		);

@@ -35,7 +35,7 @@ export class ProfileComponent {
 					});
 				}
 
-	public setUserData() {
+	public setUserData(): void {
 		if (!this.userDataForm.valid) {
 			return;
 		}
@@ -57,7 +57,7 @@ export class ProfileComponent {
 		);
 	}
 
-	public changePassword() {
+	public changePassword(): void {
 		if (!this.passwordForm.valid) {
 			return;
 		}
@@ -73,7 +73,7 @@ export class ProfileComponent {
 		);
 	}
 
-	public async deleteProfile() {
+	public async deleteProfile(): Promise<void> {
 		const result = await this.dialog
 			.open(AreYouSureDialogComponent, {
 				data: 'Möchten Sie wirklich Ihr Profil und alle damit verbundenen Daten löschen?',
@@ -89,7 +89,7 @@ export class ProfileComponent {
 		}
 	}
 
-	public async logOut() {
+	public async logOut(): Promise<void> {
 		await this.authService.logOut();
 		this.snackBar.open('Erfolgreich abgemeldet', 'Ok');
 		this.router.navigate(['/Login']);

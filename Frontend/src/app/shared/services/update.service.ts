@@ -28,7 +28,7 @@ export class UpdateService {
 		*/
 	}
 
-	public async applyUpdate() {
+	public async applyUpdate(): Promise<void> {
 		try {
 			this.updateAvailable$.next(false);
 			await this.updates.activateUpdate();

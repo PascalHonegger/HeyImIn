@@ -29,7 +29,7 @@ export class MainLayoutComponent {
 		);
 	}
 
-	public applyUpdate() {
+	public applyUpdate(): void {
 		this.updateService.applyUpdate();
 	}
 }

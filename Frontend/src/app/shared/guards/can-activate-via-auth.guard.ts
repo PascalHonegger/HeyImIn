@@ -8,7 +8,7 @@ export class CanActivateViaAuthGuard implements CanActivate, CanActivateChild {
 	constructor(private authService: AuthService, private router: Router) {
 	}
 
-	public async canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+	public async canActivate(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> {
 		// Ensure the user gets to the website he desired
 		this.authService.urlAfterLogin = state.url;
 
@@ -37,7 +37,7 @@ export class CanActivateViaAuthGuard implements CanActivate, CanActivateChild {
 		return false;
 	}
 
-	public canActivateChild(next: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
+	public canActivateChild(next: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> {
 		return this.canActivate(next, state);
 	}
 }

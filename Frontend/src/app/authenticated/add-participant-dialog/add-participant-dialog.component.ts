@@ -18,7 +18,7 @@ export class AddParticipantDialogComponent {
 	constructor(private dialogRef: MatDialogRef<AddParticipantDialogComponent, string[]>) {
 	}
 
-	public parseAndReturnEmails() {
+	public parseAndReturnEmails(): void {
 		const inputEmails: string = this.emailsCtrl.value;
 		const matches = inputEmails.match(AddParticipantDialogComponent.regexPattern) ?? [];
 		this.dialogRef.close(matches);

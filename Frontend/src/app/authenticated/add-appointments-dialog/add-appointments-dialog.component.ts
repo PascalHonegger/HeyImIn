@@ -25,7 +25,7 @@ export class AddAppointmentsDialogComponent {
 		this.exampleDate = lightFormat(withNiceTime, AddAppointmentsDialogComponent.dateFormat);
 	}
 
-	public parseAndReturnDates() {
+	public parseAndReturnDates(): void {
 		const inputDates: string = this.datesCtrl.value;
 		const matches = inputDates.match(AddAppointmentsDialogComponent.regexPattern) ?? [];
 		const parsedDates = matches.map(match => parse(match, AddAppointmentsDialogComponent.dateFormat, new Date()));

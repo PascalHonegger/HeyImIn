@@ -4,6 +4,7 @@ import type { HttpClient } from '@angular/common/http';
 import { ServerClientBase } from './server-client-base';
 import type { EventChatMessages } from '../server-model/event-chat-messages.model';
 import type { EventChatMessage } from '../server-model/event-chat-message.model';
+import type { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class EventChatClient extends ServerClientBase {
@@ -11,7 +12,7 @@ export class EventChatClient extends ServerClientBase {
 		super('EventChat');
 	}
 
-	public getChatMessages(eventId: number, earliestLoadedMessage: EventChatMessage | null = null) {
+	public getChatMessages(eventId: number, earliestLoadedMessage: EventChatMessage | null = null): Observable<EventChatMessages> {
 /*		const queryParams: { [param: string]: string } = {
 			eventId: eventId.toString()
 		};
@@ -29,7 +30,7 @@ export class EventChatClient extends ServerClientBase {
 			{ eventId, earliestLoadedMessageSentDate: earliestLoadedMessage && earliestLoadedMessage.sentDate });
 	}
 
-	public sendChatMessage(eventId: number, content: string) {
+	public sendChatMessage(eventId: number, content: string): Observable<EventChatMessage> {
 		return this.httpClient.post<EventChatMessage>(this.baseUrl + '/SendChatMessage', { eventId, content });
 	}
 }

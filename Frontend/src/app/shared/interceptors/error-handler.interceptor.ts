@@ -25,7 +25,7 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
 
 	constructor(private auth: AuthService, private router: Router, private dialog: MatDialog, private snackBar: MatSnackBar) {}
 
-	public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+	public intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
 		return next.handle(request).pipe((
 			tap(() => {}, (event) => {
 				if (event instanceof HttpErrorResponse) {

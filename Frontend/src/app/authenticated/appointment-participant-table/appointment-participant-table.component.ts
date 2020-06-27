@@ -51,7 +51,7 @@ export class AppointmentParticipantTableComponent implements OnInit {
 		this.currentUserId = authService.session.userId;
 	}
 
-	public getUserId(_index: number, participation: UserInformation) {
+	public getUserId(_index: number, participation: UserInformation): number {
 		return participation.userId;
 	}
 
@@ -60,7 +60,7 @@ export class AppointmentParticipantTableComponent implements OnInit {
 		return foundAnswer !== undefined ? foundAnswer.response : NoAnswer;
 	}
 
-	public setResponse(participantId: number, newAnswer: AppointmentParticipationAnswer) {
+	public setResponse(participantId: number, newAnswer: AppointmentParticipationAnswer): void {
 		this.updatedResponse.emit({ participantId, newAnswer });
 	}
 
@@ -68,7 +68,7 @@ export class AppointmentParticipantTableComponent implements OnInit {
 	 * Set the sort after the view init since this component will
 	 * be able to query its view for the initialized sort.
 	 */
-	public ngOnInit() {
+	public ngOnInit(): void {
 		this.dataSource.sort = this.sort;
 	}
 }
