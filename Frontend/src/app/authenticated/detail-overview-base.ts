@@ -23,7 +23,7 @@ export abstract class DetailOverviewBase {
 					};
 				}
 
-	public async leaveEventAsync(eventId: number) {
+	public async leaveEventAsync(eventId: number): Promise<void> {
 		const result = await this.dialog
 			.open(AreYouSureDialogComponent, {
 				data: 'Möchten Sie diesen Event und alle damit verbundenen Termine verlassen?',
@@ -35,7 +35,7 @@ export abstract class DetailOverviewBase {
 		}
 	}
 
-	public async joinEventAsync(eventId: number) {
+	public async joinEventAsync(eventId: number): Promise<void> {
 		await this.eventServer.joinEvent(eventId).toPromise();
 	}
 

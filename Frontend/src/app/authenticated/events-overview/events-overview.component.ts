@@ -13,7 +13,7 @@ export class EventsOverviewComponent {
 		this.loadEventOverview();
 	}
 
-	public loadEventOverview() {
+	public loadEventOverview(): void {
 		this.server.getOverview().subscribe(
 			overview => this.eventOverview = overview,
 			_err => this.eventOverview = null

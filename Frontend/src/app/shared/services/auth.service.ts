@@ -112,7 +112,7 @@ export class AuthService {
 	/**
 	 * Deletes the lcaolly saved information about the session, effectively logging the user out
 	 */
-	public clearLocalSession() {
+	public clearLocalSession(): void {
 		this._sessionToken = null;
 		sessionStorage.removeItem(sessionTokenStorageKey);
 	}

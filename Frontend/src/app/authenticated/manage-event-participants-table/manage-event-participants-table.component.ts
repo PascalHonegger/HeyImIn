@@ -39,11 +39,11 @@ export class ManageEventParticipantsTableComponent implements OnInit {
 	constructor(private dialog: MatDialog,
 				private participateEventServer: ParticipateEventClient) { }
 
-	public getUserId(_index: number, user: UserInformation) {
+	public getUserId(_index: number, user: UserInformation): number {
 		return user.userId;
 	}
 
-	public async removeFromEvent(participantId: number) {
+	public async removeFromEvent(participantId: number): Promise<void> {
 		const result = await this.dialog
 			.open(AreYouSureDialogComponent, {
 				data: 'Möchten Sie diesen Benutzer wirklich vom Event und allen Terminen entfernen?',
@@ -61,7 +61,7 @@ export class ManageEventParticipantsTableComponent implements OnInit {
 	 * Set the sort after the view init since this component will
 	 * be able to query its view for the initialized sort.
 	 */
-	public ngOnInit() {
+	public ngOnInit(): void {
 		this.dataSource.sort = this.sort;
 	}
 }

@@ -43,19 +43,19 @@ export class EditEventComponent {
 					route.params.subscribe(params => this.eventId = +params.id);
 				}
 
-	public getAppointmentId(_index: number, appointment: AppointmentDetails) {
+	public getAppointmentId(_index: number, appointment: AppointmentDetails): number {
 		return appointment.appointmentId;
 	}
 
 	public setNewAnswer(appointment: AppointmentDetails,
 		participantId: number,
-		response: AppointmentParticipationAnswer) {
+		response: AppointmentParticipationAnswer): void {
 		appointment.participations = appointment.participations
 			.filter(p => p.participantId !== participantId)
 			.concat([{ participantId, response }]);
 	}
 
-	public saveEvent(newEventInfo: GeneralEventInformation) {
+	public saveEvent(newEventInfo: GeneralEventInformation): void {
 		this.organizeEventServer
 			.updateEventInfo(this.eventId, newEventInfo)
 			.subscribe(() => {
@@ -64,7 +64,7 @@ export class EditEventComponent {
 			});
 	}
 
-	public async deleteEvent() {
+	public async deleteEvent(): Promise<void> {
 		const result = await this.dialog
 			.open(AreYouSureDialogComponent, {
 				data: 'Möchten Sie wirklich diesen Event und alle damit verbundenen Termine löschen?',
@@ -79,7 +79,7 @@ export class EditEventComponent {
 		}
 	}
 
-	public async addAppointments() {
+	public async addAppointments(): Promise<void> {
 		const newAppointments = await this.dialog
 			.open(AddAppointmentsDialogComponent, {
 				closeOnNavigation: true,
@@ -97,7 +97,7 @@ export class EditEventComponent {
 		}
 	}
 
-	public async inviteParticipants() {
+	public async inviteParticipants(): Promise<void> {
 		const emailsToInvite = await this.dialog
 			.open(AddParticipantDialogComponent, {
 				closeOnNavigation: true,
@@ -114,7 +114,7 @@ export class EditEventComponent {
 		}
 	}
 
-	public async cancelAppointment(appointmentId: number) {
+	public async cancelAppointment(appointmentId: number): Promise<void> {
 		const result = await this.dialog
 			.open(AreYouSureDialogComponent, {
 				data: 'Möchten Sie diesen Termin wirklich absagen?',
@@ -132,7 +132,7 @@ export class EditEventComponent {
 			}
 	}
 
-	public async openChangeOrganizerDialog() {
+	public async openChangeOrganizerDialog(): Promise<void> {
 		const newOrganizerId = await this.dialog
 			.open<ChangeOrganizerDialogComponent, ChangeOrganizerDialogParameter, number | undefined>(ChangeOrganizerDialogComponent, {
 				data: { participants: this.eventDetails.participants },
@@ -147,7 +147,7 @@ export class EditEventComponent {
 		}
 	}
 
-	public loadEventDetails() {
+	public loadEventDetails(): void {
 		this.organizeEventServer.getEditDetails(this.eventId).subscribe(
 			detail => {
 				this.eventDetails = detail;

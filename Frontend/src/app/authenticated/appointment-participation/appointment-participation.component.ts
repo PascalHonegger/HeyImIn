@@ -22,29 +22,29 @@ export class AppointmentParticipationComponent {
 	@Output()
 	public selectedNewResponse: EventEmitter<AppointmentParticipationAnswer> = new EventEmitter();
 
-	public get accepted() {
+	public get accepted(): boolean {
 		return this.currentResponse === Accepted;
 	}
-	public get declined() {
+	public get declined(): boolean {
 		return this.currentResponse === Declined;
 	}
-	public get noAnswer() {
+	public get noAnswer(): boolean {
 		return this.currentResponse === NoAnswer;
 	}
 
 	constructor(private server: OrganizeAppointmentClient) { }
 
-	public accept(event: MouseEvent) {
+	public accept(event: MouseEvent): void {
 		this.clickedResponse(event, Accepted);
 	}
-	public decline(event: MouseEvent) {
+	public decline(event: MouseEvent): void {
 		this.clickedResponse(event, Declined);
 	}
-	public removeAnswer(event: MouseEvent) {
+	public removeAnswer(event: MouseEvent): void {
 		this.clickedResponse(event, NoAnswer);
 	}
 
-	public clickedResponse(event: MouseEvent, clicked?: AppointmentParticipationAnswer) {
+	public clickedResponse(event: MouseEvent, clicked?: AppointmentParticipationAnswer): void {
 		// Prevent any elements like expansion panels to trigger
 		event.stopPropagation();
 

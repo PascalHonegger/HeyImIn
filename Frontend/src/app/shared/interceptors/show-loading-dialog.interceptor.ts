@@ -47,7 +47,7 @@ export class ShowLoadingDialogInterceptor implements HttpInterceptor {
 		);
 	}
 
-	public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+	public intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
 		this.runningRequests++;
 
 		return next.handle(request).pipe(

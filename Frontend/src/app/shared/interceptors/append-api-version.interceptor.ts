@@ -13,7 +13,7 @@ import type { Observable } from 'rxjs';
  */
 @Injectable({ providedIn: 'root' })
 export class AppendApiVersionInterceptor implements HttpInterceptor {
-	public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+	public intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
 		request = request.clone({
 			setParams: {
 				'api-version': '2.0'

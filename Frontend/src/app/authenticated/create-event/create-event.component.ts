@@ -20,7 +20,7 @@ export class CreateEventComponent {
 	constructor(private organizeEventServer: OrganizeEventClient,
 				private router: Router) { }
 
-	public createEvent(newEventInfo: GeneralEventInformation) {
+	public createEvent(newEventInfo: GeneralEventInformation): void {
 		this.organizeEventServer
 			.createEvent(newEventInfo)
 			.subscribe((id) => this.router.navigate(['/EditEvent', id]));

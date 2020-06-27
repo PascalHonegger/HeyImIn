@@ -25,7 +25,7 @@ export class LoginComponent {
 					});
 				}
 
-	public async login() {
+	public async login(): Promise<void> {
 		if (!this.form.valid) {
 			return;
 		}

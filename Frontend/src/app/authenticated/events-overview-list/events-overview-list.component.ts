@@ -16,7 +16,7 @@ export class EventsOverviewListComponent extends DetailOverviewBase {
 	public events: readonly EventOverviewInformation[] = [];
 
 	@Output()
-	public eventChanged: EventEmitter<any> = new EventEmitter();
+	public eventChanged: EventEmitter<unknown> = new EventEmitter();
 
 	constructor(eventServer: ParticipateEventClient,
 				dialog: MatDialog,
@@ -24,21 +24,21 @@ export class EventsOverviewListComponent extends DetailOverviewBase {
 		super(eventServer, dialog, authService);
 	}
 
-	public getEventId(_index: number, event: EventOverviewInformation) {
+	public getEventId(_index: number, event: EventOverviewInformation): number {
 		return event.eventId;
 	}
 
-	public async leaveEvent(eventId: number) {
+	public async leaveEvent(eventId: number): Promise<void> {
 		await this.leaveEventAsync(eventId);
 		this.eventChanged.emit();
 	}
 
-	public async joinEvent(eventId: number) {
+	public async joinEvent(eventId: number): Promise<void> {
 		await this.joinEventAsync(eventId);
 		this.eventChanged.emit();
 	}
 
-	public currentUserDoesParticipate(event: EventOverviewInformation) {
+	public currentUserDoesParticipate(event: EventOverviewInformation): boolean {
 		return event.viewEventInformation.participants.some(p => p.userId === this.currentSession.userId);
 	}
 }

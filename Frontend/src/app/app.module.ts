@@ -7,9 +7,7 @@ import { AnonymousModule } from './anonymous/anonymous.module';
 import { AppComponent } from './app.component';
 
 // Ensure swiss german language for angular pipes
-import { registerLocaleData } from '@angular/common';
-import localeDeCh from '@angular/common/locales/de-CH';
-registerLocaleData(localeDeCh);
+import '@angular/common/locales/global/de-CH';
 
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';

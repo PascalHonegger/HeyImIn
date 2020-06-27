@@ -36,11 +36,11 @@ export class EventChatComponent implements OnInit {
 		this.reload();
 	}
 
-	public getChatMessageId(_index: number, chatMessage: EventChatMessage) {
+	public getChatMessageId(_index: number, chatMessage: EventChatMessage): number {
 		return chatMessage.id;
 	}
 
-	public reload() {
+	public reload(): void {
 		this.server.getChatMessages(this.eventId).subscribe(response => {
 			this.chatMessages.next(response.messages);
 			this.hasMoreMessages.next(response.possiblyMoreMessages);
@@ -52,7 +52,7 @@ export class EventChatComponent implements OnInit {
 		return this.userList$.pipe(map(l => l.find(u => u.userId === userId)));
 	}
 
-	public loadPreviousChatMessages() {
+	public loadPreviousChatMessages(): void {
 		this.hasMoreMessages.next(false);
 		const messagesArray = this.chatMessages.value;
 		const earliestLoadedMessage = messagesArray[messagesArray.length - 1];
@@ -66,7 +66,7 @@ export class EventChatComponent implements OnInit {
 		});
 	}
 
-	public sendChatMessage() {
+	public sendChatMessage(): void {
 		const messageContent = this.chatMessageCtrl.value;
 		this.chatMessageCtrl.reset('');
 		this.server.sendChatMessage(this.eventId, messageContent).subscribe(m => {
@@ -76,7 +76,7 @@ export class EventChatComponent implements OnInit {
 		});
 	}
 
-	private updateAuthorInformation(authorInformation: readonly UserInformation[]) {
+	private updateAuthorInformation(authorInformation: readonly UserInformation[]): void {
 		const currentList = this.userList$.value;
 		const newInformation = authorInformation.filter((author, index) =>
 			authorInformation.indexOf(author) === index && currentList.every(u => u.userId !== author.userId));
