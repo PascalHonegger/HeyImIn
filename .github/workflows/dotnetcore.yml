@@ -1,6 +1,17 @@
 name: Backend
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+      - stable
+    paths:
+      - Backend/**
+      - .github/workflows/dotnetcore.yml
+  pull_request:
+    paths:
+      - Backend/**
+      - .github/workflows/dotnetcore.yml
 
 jobs:
   build_and_test:
