@@ -1,6 +1,17 @@
 name: Frontend
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+      - stable
+    paths:
+      - Backend/**
+      - .github/workflows/dotnetcore.yml
+  pull_request:
+    paths:
+      - Frontend/**
+      - .github/workflows/angular.yml
 
 jobs:
   build_and_test:
