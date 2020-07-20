@@ -15,7 +15,7 @@ jobs:
     - name: Setup .NET Core SDK
       uses: actions/setup-dotnet@v1.5.0
       with:
-        dotnet-version: 3.1.300
+        dotnet-version: 3.1.x
     - name: Use latest Node.js 14
       uses: actions/setup-node@v2.1.0
       with:
