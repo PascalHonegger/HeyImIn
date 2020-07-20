@@ -17,7 +17,7 @@ jobs:
       with:
         dotnet-version: 3.1.300
     - name: Use latest Node.js 14
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v2.1.0
       with:
         node-version: '14.x'
     - name: Build frontend
