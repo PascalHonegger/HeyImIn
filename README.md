@@ -7,13 +7,14 @@
 * A commit message should include a reference to an issue (e.g. `My test (#ISSUE)` or `My text, closes #ISSUE`)
 * Everything, except localized strings, is written in english
 * Documentation in code or in the [wiki](https://github.com/PascalHonegger/HeyImIn/wiki)
-* Development is done on a feature branch or directly on the master branch
+* Development is done on a feature branch
+* Changes get integrated using pull requests
 * Every commit is tested using GitHub Actions
 * The `master` branch is used for development deployments and should be mostly stable
-* The `stable` branch is used for production deployment and should only contain stable versions
+* The `stable` branch is used for production deployment and must only contain stable versions
 
 ## Changelog
 A detailed changelog can be found under the [GitHub releases](https://github.com/PascalHonegger/HeyImIn/releases) page.
 
 ## Want to help?
-You like this tool and want to contribute? Create an issue, contribute some code, or improve documentation - help is always appreciated! If you're interestend in gettings code done, there's a helpful [quickstart](https://github.com/PascalHonegger/HeyImIn/wiki/Quickstart) guide in the wiki.
+You like this tool and want to contribute? Create an issue, contribute some code, or improve documentation - help is always appreciated! If you're interested in writing code, there's a helpful [quickstart](https://github.com/PascalHonegger/HeyImIn/wiki/Quickstart) guide in the wiki.
