@@ -3,19 +3,25 @@ updates:
 - package-ecosystem: github-actions
   directory: "/"
   schedule:
-    interval: daily
-    time: "04:00"
+    interval: weekly
+    time: "12:00"
+    timezone: "Europe/Zurich"
+    day: "sunday"
   open-pull-requests-limit: 10
 - package-ecosystem: nuget
   directory: "/Backend"
   schedule:
-    interval: daily
-    time: "04:00"
+    interval: weekly
+    time: "12:00"
+    timezone: "Europe/Zurich"
+    day: "sunday"
   open-pull-requests-limit: 10
 - package-ecosystem: npm
   directory: "/Frontend"
   schedule:
-    interval: daily
-    time: "04:00"
+    interval: weekly
+    time: "12:00"
+    timezone: "Europe/Zurich"
+    day: "sunday"
   open-pull-requests-limit: 10
   versioning-strategy: increase
