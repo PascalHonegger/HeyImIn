@@ -6,8 +6,8 @@ on:
       - master
       - stable
     paths:
-      - Backend/**
-      - .github/workflows/dotnetcore.yml
+      - Frontend/**
+      - .github/workflows/angular.yml
   pull_request:
     paths:
       - Frontend/**
