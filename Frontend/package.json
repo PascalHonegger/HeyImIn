@@ -33,7 +33,7 @@
     "@angular/service-worker": "^10.0.4",
     "core-js": "^3.6.5",
     "date-fns": "^2.15.0",
-    "rxjs": "^6.6.0",
+    "rxjs": "^6.6.2",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.3"
   },
