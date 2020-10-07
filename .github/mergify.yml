@@ -1,0 +1,33 @@
+pull_request_rules:
+  - name: automatic merge Frontend/ 🤖
+    conditions:
+      - author=dependabot[bot]
+      - status-success=Frontend
+      - files~=^Frontend/
+    actions:
+      merge:
+        method: rebase
+  - name: automatic merge angular.yml 🤖
+    conditions:
+      - author=dependabot[bot]
+      - status-success=Frontend
+      - files=.github/workflows/angular.yml
+    actions:
+      merge:
+        method: rebase
+  - name: automatic merge Backend/ 🤖
+    conditions:
+      - author=dependabot[bot]
+      - status-success=Backend
+      - files~=^Backend/
+    actions:
+      merge:
+        method: rebase
+  - name: automatic merge dotnetcore.yml 🤖
+    conditions:
+      - author=dependabot[bot]
+      - status-success=Backend
+      - files=.github/workflows/dotnetcore.yml
+    actions:
+      merge:
+        method: rebase
