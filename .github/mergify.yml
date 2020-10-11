@@ -2,7 +2,7 @@ pull_request_rules:
   - name: automatic merge Frontend/ 🤖
     conditions:
       - author=dependabot[bot]
-      - status-success=Frontend
+      - status-success=build_and_test
       - files~=^Frontend/
     actions:
       merge:
@@ -10,7 +10,7 @@ pull_request_rules:
   - name: automatic merge angular.yml 🤖
     conditions:
       - author=dependabot[bot]
-      - status-success=Frontend
+      - status-success=build_and_test
       - files=.github/workflows/angular.yml
     actions:
       merge:
@@ -18,7 +18,7 @@ pull_request_rules:
   - name: automatic merge Backend/ 🤖
     conditions:
       - author=dependabot[bot]
-      - status-success=Backend
+      - status-success=build_and_test
       - files~=^Backend/
     actions:
       merge:
@@ -26,7 +26,7 @@ pull_request_rules:
   - name: automatic merge dotnetcore.yml 🤖
     conditions:
       - author=dependabot[bot]
-      - status-success=Backend
+      - status-success=build_and_test
       - files=.github/workflows/dotnetcore.yml
     actions:
       merge:
