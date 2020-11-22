@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BCrypt.Net-Next.StrongName" Version="4.0.0" />
+    <PackageReference Include="BCrypt.Net-Next.StrongName" Version="4.0.2" />
   </ItemGroup>
 
   <ItemGroup>
