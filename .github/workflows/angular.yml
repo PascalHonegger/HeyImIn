@@ -22,7 +22,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Use latest Node.js 14
-      uses: actions/setup-node@v2.1.2
+      uses: actions/setup-node@v2.1.4
       with:
         node-version: '14.x'
     - name: Install dependencies
