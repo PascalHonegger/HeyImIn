@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Sendgrid" Version="9.21.1" />
+    <PackageReference Include="Sendgrid" Version="9.22.0" />
   </ItemGroup>
 
   <ItemGroup>
